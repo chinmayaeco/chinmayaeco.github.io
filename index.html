@@ -1,593 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managerial Economics: Demand-Supply Simulation (₹)</title>
-    <!-- Front page CSS -->
-    <link rel="stylesheet" href="fr.css">
-    <!-- Main simulation CSS -->
-    <style>
-        body:not(.front-page) {
-            font-family: Arial, sans-serif;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-            background-color: #f5f5f5;
-        }
-        .simulation-container {
-            display: none;
-        }
-        
-        /* Simulation styles */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .controls {
-            flex: 1;
-            min-width: 300px;
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .graph {
-            flex: 2;
-            min-width: 400px;
-        }
-        canvas {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-        }
-        h2 {
-            color: #3498db;
-            margin-top: 0;
-        }
-        h3 {
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        input[type="range"] {
-            width: 100%;
-        }
-        .price-display {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #e74c3c;
-            margin: 10px 0;
-        }
-        .equilibrium {
-            background-color: #eaf7ea;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-        .managerial-panel {
-            background-color: #f0f7fd;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 5px 5px 0;
-        }
-        .implication {
-            background-color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .implication h4 {
-            margin-top: 0;
-            color: #2980b9;
-        }
-        .tab {
-            display: inline-block;
-            padding: 10px 15px;
-            cursor: pointer;
-            background-color: #eee;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
-        }
-        .tab.active {
-            background-color: #3498db;
-            color: white;
-        }
-        .tab-content {
-            display: none;
-            padding: 15px;
-            background-color: white;
-            border-radius: 0 5px 5px 5px;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .tab-container {
-            margin: 20px 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Alok Tiwari</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
 </head>
-<body class="front-page">
-    <div class="login-container" id="loginSection">
-        <div class="logo">₹$</div>
-        <h1>Managerial Economics Simulation</h1>
-        <p>Access the demand-supply simulation with Indian market data</p>
-        
-        <div class="password-input">
-            <input type="password" id="passwordInput" placeholder="Enter your password">
-            <i class="toggle-password">👁️</i>
-        </div>
-        
-        <button class="login-btn" onclick="checkPassword()">Access Simulation</button>
-        <div class="error-message" id="errorMessage">Incorrect password. Please try again.</div>
-        
-        <div class="features">
-            <h3>Simulation Features:</h3>
-            <ul>
-                <li>Interactive demand-supply curves</li>
-                <li>Real-time equilibrium calculation</li>
-                <li>Managerial decision insights</li>
-                <li>Indian market case studies</li>
-            </ul>
-        </div>
-        
-        <div class="footer">
-            For educational use only | <a href="#">Privacy Policy</a>
-        </div>
-    </div>
+<body onload="AOS.init();">
+  <header class="navbar">
+    <nav>
+      <ul>
+        <li class="active">About</li>
+        <li><a href="education.html">Education</a></li>
+        <li><a href="publications.html">Publications</a></li>
+        <li><a href="teaching.html">Teaching</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="skills.html">Skills</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <div class="simulation-container" id="simulationSection">
-        <h1>Managerial Implications of Demand and Supply (Indian Rupees)</h1>
-        
-        <div class="tab-container">
-            <div class="tab active" onclick="switchTab('simulation')">Simulation</div>
-            <div class="tab" onclick="switchTab('implications')">Managerial Implications</div>
-            <div class="tab" onclick="switchTab('case-study')">Case Study</div>
-        </div>
-        
-        <div id="simulation-tab" class="tab-content active">
-            <div class="container">
-                <div class="controls">
-                    <h2>Market Controls</h2>
-                    
-                    <label for="basePrice">Base Price (₹):</label>
-                    <input type="range" id="basePrice" min="10" max="1000" value="200" step="10">
-                    <div class="price-display">Current Base Price: ₹<span id="basePriceValue">200</span></div>
-                    
-                    <label for="demandFactor">Demand Factor:</label>
-                    <input type="range" id="demandFactor" min="0.5" max="2" value="1" step="0.1">
-                    <div>Demand Multiplier: <span id="demandFactorValue">1.0</span>x</div>
-                    
-                    <label for="supplyFactor">Supply Factor:</label>
-                    <input type="range" id="supplyFactor" min="0.5" max="2" value="1" step="0.1">
-                    <div>Supply Multiplier: <span id="supplyFactorValue">1.0</span>x</div>
-                    
-                    <button id="resetBtn">Reset to Default</button>
-                    
-                    <div class="equilibrium">
-                        <h3>Market Equilibrium</h3>
-                        <p>Equilibrium Price: ₹<span id="eqPrice">0</span></p>
-                        <p>Equilibrium Quantity: <span id="eqQuantity">0</span> units</p>
-                    </div>
-                    
-                    <div class="managerial-panel">
-                        <h3>Current Market Analysis</h3>
-                        <div id="dynamic-analysis">Adjust the sliders to see managerial implications...</div>
-                    </div>
-                </div>
-                
-                <div class="graph">
-                    <h2>Demand and Supply Curve</h2>
-                    <canvas id="marketGraph" width="500" height="400"></canvas>
-                </div>
-            </div>
-        </div>
-        
-        <div id="implications-tab" class="tab-content">
-            <h2>Managerial Implications of Demand and Supply</h2>
-            
-            <div class="implication">
-                <h4>1. Pricing Strategy</h4>
-                <p>Understanding where the equilibrium price settles helps managers set competitive prices. If the market price is above equilibrium, consider lowering prices to clear inventory. If below, you may have pricing power to increase.</p>
-                <p><strong>Action:</strong> Monitor the equilibrium price and adjust your pricing strategy accordingly to maximize revenue while maintaining market share.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>2. Inventory Management</h4>
-                <p>The equilibrium quantity indicates the market-clearing volume. Producing significantly more than this leads to excess inventory, while producing less means missed opportunities.</p>
-                <p><strong>Action:</strong> Align production schedules with equilibrium quantities to optimize inventory carrying costs and storage requirements.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>3. Demand Shocks</h4>
-                <p>When demand increases (rightward shift), prices and quantities both rise. Managers should prepare supply chain for increased volume while enjoying higher margins.</p>
-                <p><strong>Action:</strong> Build flexible supply chains that can ramp up quickly when demand increases unexpectedly.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>4. Supply Shocks</h4>
-                <p>Supply decreases (leftward shift) cause prices to rise but quantities to fall. This may require finding alternative suppliers or passing costs to consumers.</p>
-                <p><strong>Action:</strong> Develop contingency plans and alternative supplier relationships to mitigate supply disruptions.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>5. Elasticity Considerations</h4>
-                <p>The steepness of the curves indicates elasticity. Steeper demand means consumers are less price-sensitive, allowing for more pricing power.</p>
-                <p><strong>Action:</strong> Conduct market research to understand your product's price elasticity and adjust strategies accordingly.</p>
-            </div>
-        </div>
-        
-        <div id="case-study-tab" class="tab-content">
-            <h2>Case Study: Indian Smartphone Market</h2>
-            
-            <div class="implication">
-                <h4>Situation Analysis</h4>
-                <p>In 2020, India's smartphone market saw a demand surge due to increased remote work and education, while supply was constrained by COVID-19 disruptions.</p>
-                <p>This created a new equilibrium with 15% higher prices and 8% lower quantities sold compared to pre-pandemic levels.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>Managerial Responses</h4>
-                <ul>
-                    <li><strong>Xiaomi:</strong> Leveraged existing inventory to meet demand, gaining market share</li>
-                    <li><strong>Samsung:</strong> Focused on premium segment where consumers were less price-sensitive</li>
-                    <li><strong>Oppo:</strong> Partnered with local manufacturers to reduce supply chain disruptions</li>
-                </ul>
-            </div>
-            
-            <div class="implication">
-                <h4>Key Takeaways</h4>
-                <ol>
-                    <li>During demand surges, inventory management becomes crucial</li>
-                    <li>Supply chain diversification protects against disruptions</li>
-                    <li>Different market segments respond differently to price changes</li>
-                    <li>Agile companies can gain advantage during market shifts</li>
-                </ol>
-            </div>
-            
-            <div class="managerial-panel">
-                <h3>Exercise: Apply to Your Simulation</h3>
-                <p>Try recreating this scenario in the simulation:</p>
-                <ol>
-                    <li>Increase demand by 30% (set demand factor to 1.3)</li>
-                    <li>Decrease supply by 20% (set supply factor to 0.8)</li>
-                    <li>Observe the new equilibrium and consider what strategies would be effective</li>
-                </ol>
-            </div>
-        </div>
-    </div>
+  <main class="about-section" data-aos="fade-up">
+    <div class="intro">
+      <div class="avatar">
+        <img src="assets/img/prof_pic.jpg" alt="Dr. Alok Tiwari" style="width: 120px; border-radius: 50%;" />
+      </div>
+      <div class="intro-text">
+        <h1>Hi, I’m Dr. Alok Tiwari (PhD, IIT-BHU)</h1>
+        <p class="title" style="text-align: justify;">AI researcher and educator transforming healthcare through scalable, ethical, and explainable intelligence</p>
 
-    <script>
-        // Password protection
-        const CORRECT_PASSWORD = "economics123";
+         <a href="mailto:shodhkarta.alok@gmail.com" title="Email">
+            <img src="assets/icons/email.svg" alt="Email" width="30" />
+          </a>
+          <a href="https://github.com/dr-alok-tiwari" target="_blank" title="GitHub">
+            <img src="assets/icons/github.svg" alt="GitHub" width="30" />
+          </a>
+          <a href="https://www.linkedin.com/in/dr-alok-tiwari/" target="_blank" title="LinkedIn">
+            <img src="assets/icons/linkedin.svg" alt="LinkedIn" width="30" />
+          </a>
+          <a href="https://orcid.org/0000-0003-3605-8565?lang=en" target="_blank" title="ORCID iD">
+            <img src="assets/icons/orcid.svg" alt="ORCID" width="30" />
+          </a>
+          <a href="https://scholar.google.com/citations?hl=en&user=jE6HZ0gAAAAJ" target="_blank" title="Google Scholar">
+            <img src="assets/icons/google-scholar.svg" alt="Google Scholar" width="30" />
+          </a>
+          <a href="https://www.researchgate.net/profile/Alok-Tiwari-5?ev=hdr_xprf" target="_blank" title="ResearchGate">
+            <img src="assets/icons/researchgate.svg" alt="ResearchGate" width="30" />
+          </a>
+          <a href="https://www.instagram.com/dr.alok.tiwari/" target="_blank" title="Instagram">
+            <img src="assets/icons/instagram.svg" alt="Instagram" width="30" />
+          </a>
+          <a href="https://www.facebook.com/Shodhkarta.T" target="_blank" title="Facebook">
+            <img src="assets/icons/facebook.svg" alt="Facebook" width="30" />
+          </a>
+          </a>
+          <a href="https://dr-alok-tiwari.github.io/ai4edu.github.io/" target="_blank" title="AI-HUB: Demystifying Artificial Intelligence for Everyone">
+            <img src="assets/icons/ai-solid.svg" alt="AI-HUB" width="30" />
+          </a>
         
-        function checkPassword() {
-            const enteredPassword = document.getElementById('passwordInput').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const loginSection = document.getElementById('loginSection');
-            const simulationSection = document.getElementById('simulationSection');
-            
-            if (enteredPassword === CORRECT_PASSWORD) {
-                document.body.classList.remove('front-page');
-                loginSection.style.display = 'none';
-                simulationSection.style.display = 'block';
-                errorMessage.style.display = 'none';
-                initializeSimulation();
-            } else {
-                errorMessage.style.display = 'block';
-                document.getElementById('passwordInput').value = '';
-                errorMessage.classList.add('error-animation');
-                setTimeout(() => {
-                    errorMessage.classList.remove('error-animation');
-                }, 500);
-            }
-        }
-        
-        // Tab switching
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabName + '-tab').classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-        
-        // Toggle password visibility
-        document.querySelector('.toggle-password').addEventListener('click', function() {
-            const passwordInput = document.getElementById('passwordInput');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                this.textContent = '👁️';
-            } else {
-                passwordInput.type = 'password';
-                this.textContent = '👁️';
-            }
-        });
-        
-        // Simulation code
-        function initializeSimulation() {
-            // Get DOM elements
-            const basePriceSlider = document.getElementById('basePrice');
-            const basePriceValue = document.getElementById('basePriceValue');
-            const demandFactorSlider = document.getElementById('demandFactor');
-            const demandFactorValue = document.getElementById('demandFactorValue');
-            const supplyFactorSlider = document.getElementById('supplyFactor');
-            const supplyFactorValue = document.getElementById('supplyFactorValue');
-            const eqPrice = document.getElementById('eqPrice');
-            const eqQuantity = document.getElementById('eqQuantity');
-            const resetBtn = document.getElementById('resetBtn');
-            const canvas = document.getElementById('marketGraph');
-            const ctx = canvas.getContext('2d');
-            const dynamicAnalysis = document.getElementById('dynamic-analysis');
-            
-            // Initialize values
-            let basePrice = 200;
-            let demandFactor = 1.0;
-            let supplyFactor = 1.0;
-            
-            // Update displayed values
-            function updateDisplay() {
-                basePriceValue.textContent = basePrice;
-                demandFactorValue.textContent = demandFactor.toFixed(1);
-                supplyFactorValue.textContent = supplyFactor.toFixed(1);
-                
-                // Update managerial implications
-                updateManagerialImplications();
-            }
-            
-            // Calculate demand quantity
-            function calculateDemand(price) {
-                // Demand decreases as price increases
-                return Math.max(0, 1000 * demandFactor - price * 5 * demandFactor);
-            }
-            
-            // Calculate supply quantity
-            function calculateSupply(price) {
-                // Supply increases as price increases
-                return Math.max(0, -500 * supplyFactor + price * 5 * supplyFactor);
-            }
-            
-            // Find equilibrium point
-            function findEquilibrium() {
-                // Simple linear solution for equilibrium
-                const equilibriumQuantity = (1000 * demandFactor + 500 * supplyFactor) / 
-                                           (1 + demandFactor/supplyFactor);
-                const equilibriumPrice = (equilibriumQuantity + 500 * supplyFactor) / (5 * supplyFactor);
-                
-                return {
-                    price: Math.round(equilibriumPrice),
-                    quantity: Math.round(equilibriumQuantity)
-                };
-            }
-            
-            // Update managerial implications based on current values
-            function updateManagerialImplications() {
-                const equilibrium = findEquilibrium();
-                let analysis = `<h4>Current Market Conditions</h4>`;
-                
-                // Price analysis
-                if (equilibrium.price > basePrice) {
-                    analysis += `<p>Market price (₹${equilibrium.price}) is above your base price (₹${basePrice}). 
-                                <strong>Consider raising prices</strong> to match market conditions and increase profitability.</p>`;
-                } else if (equilibrium.price < basePrice) {
-                    analysis += `<p>Market price (₹${equilibrium.price}) is below your base price (₹${basePrice}). 
-                                <strong>Consider lowering prices</strong> to remain competitive and maintain market share.</p>`;
-                } else {
-                    analysis += `<p>Your pricing is perfectly aligned with market equilibrium. Maintain this position for optimal results.</p>`;
-                }
-                
-                // Demand factor analysis
-                if (demandFactor > 1.2) {
-                    analysis += `<p>High demand conditions (${demandFactor.toFixed(1)}x normal). 
-                                <strong>Expand production</strong> and ensure supply chain can meet increased demand.</p>`;
-                } else if (demandFactor < 0.8) {
-                    analysis += `<p>Low demand conditions (${demandFactor.toFixed(1)}x normal). 
-                                <strong>Reduce inventory</strong> and consider promotional activities to stimulate demand.</p>`;
-                }
-                
-                // Supply factor analysis
-                if (supplyFactor < 0.8) {
-                    analysis += `<p>Supply constraints (${supplyFactor.toFixed(1)}x normal). 
-                                <strong>Explore alternative suppliers</strong> or consider price increases to manage limited inventory.</p>`;
-                } else if (supplyFactor > 1.2) {
-                    analysis += `<p>Excess supply capacity (${supplyFactor.toFixed(1)}x normal). 
-                                <strong>Negotiate better terms</strong> with suppliers or consider diversifying product offerings.</p>`;
-                }
-                
-                dynamicAnalysis.innerHTML = analysis;
-            }
-            
-            // Draw the graph
-            function drawGraph() {
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Graph dimensions
-                const margin = 50;
-                const graphWidth = canvas.width - 2 * margin;
-                const graphHeight = canvas.height - 2 * margin;
-                
-                // Find max quantity for scaling
-                const maxQuantity = Math.max(
-                    calculateDemand(0),
-                    calculateSupply(2000)
-                );
-                
-                // Draw axes
-                ctx.beginPath();
-                ctx.moveTo(margin, margin);
-                ctx.lineTo(margin, canvas.height - margin);
-                ctx.lineTo(canvas.width - margin, canvas.height - margin);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Draw axis labels
-                ctx.font = '14px Arial';
-                ctx.fillStyle = '#000';
-                ctx.textAlign = 'center';
-                ctx.fillText('Quantity', canvas.width / 2, canvas.height - 10);
-                ctx.save();
-                ctx.translate(20, canvas.height / 2);
-                ctx.rotate(-Math.PI / 2);
-                ctx.fillText('Price (₹)', 0, 0);
-                ctx.restore();
-                
-                // Draw tick marks and labels
-                // Price (Y-axis)
-                ctx.textAlign = 'right';
-                for (let p = 0; p <= 1000; p += 200) {
-                    const y = canvas.height - margin - (p / 1000) * graphHeight;
-                    ctx.beginPath();
-                    ctx.moveTo(margin - 5, y);
-                    ctx.lineTo(margin, y);
-                    ctx.stroke();
-                    ctx.fillText('₹' + p, margin - 10, y + 5);
-                }
-                
-                // Quantity (X-axis)
-                ctx.textAlign = 'center';
-                for (let q = 0; q <= maxQuantity; q += 200) {
-                    const x = margin + (q / maxQuantity) * graphWidth;
-                    ctx.beginPath();
-                    ctx.moveTo(x, canvas.height - margin);
-                    ctx.lineTo(x, canvas.height - margin + 5);
-                    ctx.stroke();
-                    ctx.fillText(q, x, canvas.height - margin + 20);
-                }
-                
-                // Draw demand curve (blue)
-                ctx.beginPath();
-                for (let p = 0; p <= 1000; p += 10) {
-                    const q = calculateDemand(p);
-                    const x = margin + (q / maxQuantity) * graphWidth;
-                    const y = canvas.height - margin - (p / 1000) * graphHeight;
-                    
-                    if (p === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                }
-                ctx.strokeStyle = '#3498db';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-                ctx.fillText('Demand', margin + (calculateDemand(0) / maxQuantity) * graphWidth, 
-                            canvas.height - margin - (0 / 1000) * graphHeight - 10);
-                
-                // Draw supply curve (red)
-                ctx.beginPath();
-                for (let p = 0; p <= 1000; p += 10) {
-                    const q = calculateSupply(p);
-                    const x = margin + (q / maxQuantity) * graphWidth;
-                    const y = canvas.height - margin - (p / 1000) * graphHeight;
-                    
-                    if (p === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                }
-                ctx.strokeStyle = '#e74c3c';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-                ctx.fillText('Supply', margin + (calculateSupply(1000) / maxQuantity) * graphWidth, 
-                            canvas.height - margin - (1000 / 1000) * graphHeight - 10);
-                
-                // Find and mark equilibrium point
-                const equilibrium = findEquilibrium();
-                eqPrice.textContent = equilibrium.price;
-                eqQuantity.textContent = equilibrium.quantity;
-                
-                const eqX = margin + (equilibrium.quantity / maxQuantity) * graphWidth;
-                const eqY = canvas.height - margin - (equilibrium.price / 1000) * graphHeight;
-                
-                ctx.beginPath();
-                ctx.arc(eqX, eqY, 6, 0, Math.PI * 2);
-                ctx.fillStyle = '#2ecc71';
-                ctx.fill();
-                ctx.strokeStyle = '#27ae60';
-                ctx.stroke();
-                
-                // Draw dashed lines to axes
-                ctx.beginPath();
-                ctx.moveTo(eqX, eqY);
-                ctx.lineTo(eqX, canvas.height - margin);
-                ctx.moveTo(eqX, eqY);
-                ctx.lineTo(margin, eqY);
-                ctx.strokeStyle = '#27ae60';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 3]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                
-                // Label equilibrium point
-                ctx.fillStyle = '#27ae60';
-                ctx.font = 'bold 14px Arial';
-                ctx.fillText(`Equilibrium (${equilibrium.quantity}, ₹${equilibrium.price})`, 
-                            eqX, eqY - 15);
-            }
-            
-            // Event listeners
-            basePriceSlider.addEventListener('input', function() {
-                basePrice = parseInt(this.value);
-                updateDisplay();
-                drawGraph();
-            });
-            
-            demandFactorSlider.addEventListener('input', function() {
-                demandFactor = parseFloat(this.value);
-                updateDisplay();
-                drawGraph();
-            });
-            
-            supplyFactorSlider.addEventListener('input', function() {
-                supplyFactor = parseFloat(this.value);
-                updateDisplay();
-                drawGraph();
-            });
-            
-            resetBtn.addEventListener('click', function() {
-                basePriceSlider.value = 200;
-                demandFactorSlider.value = 1.0;
-                supplyFactorSlider.value = 1.0;
-                
-                basePrice = 200;
-                demandFactor = 1.0;
-                supplyFactor = 1.0;
-                
-                updateDisplay();
-                drawGraph();
-            });
-            
-            // Initialize
-            updateDisplay();
-            drawGraph();
-        }
-        
-        // Allow pressing Enter to submit password
-        document.getElementById('passwordInput').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                checkPassword();
-            }
-        });
-    </script>
+      </div>
+
+  <div class="cards">
+    <div class="card red" data-aos="zoom-in">
+      <h3>AI-Powered Healthcare</h3>
+      <p>Innovating diagnostics and treatment with deep learning on medical images</p>
+    </div>
+    
+    <div class="card blue" data-aos="zoom-in" data-aos-delay="100">
+      <h3>Data Science Research</h3>
+      <p>Advancing computational models for real-world problems in health & society</p>
+    </div>
+    
+    <div class="card yellow" data-aos="zoom-in" data-aos-delay="200">
+      <h3>Machine Learning Education</h3>
+      <p>Empowering future professionals through hands-on AI and ML instruction</p>
+    </div>
+    
+    <div class="card green" data-aos="zoom-in" data-aos-delay="300">
+      <h3>Applied Analytics</h3>
+      <p>Bridging theory and practice through corporate training in analytics & strategy</p>
+    </div>
+    
+    <div class="card purple" data-aos="zoom-in" data-aos-delay="400">
+      <h3>MLOps & Cloud Integration</h3>
+      <p>Building scalable, production-ready AI systems with CI/CD, Docker & Azure</p>
+    </div>
+    
+    <div class="card orange" data-aos="zoom-in" data-aos-delay="500">
+      <h3>Academic Mentorship</h3>
+      <p>Guiding students on sectoral projects, internships, and research publications</p>
+    </div>
+  </div>
+
+  </main>
 </body>
 </html>
