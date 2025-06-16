@@ -61,19 +61,19 @@
 
   <main>
     <body>
-    <div class="login-container" id="loginSection">
+    <div class="tabs">
+      <button class="tab-button active" onclick="switchTab('Games and Simulation')">Games</button>
+      <button class="tab-button" onclick="switchTab('Managerial Implication')">Application</button>
+      <button class="tab-button" onclick="switchTab('A case study')">A Case</button>
+    </div>
+      <div class="login-container" id="loginSection">
         <h1>Managerial Economics Simulation</h1>
         <p>Please enter the password to access the simulation:</p>
         <input type="password" id="passwordInput" placeholder="Enter password">
         <button onclick="checkPassword()">Access Simulation</button>
         <div class="error" id="errorMessage">Incorrect password. Please try again.</div>
     </div>
- <div class="tabs">
-      <button class="tab-button active" onclick="switchTab('Games and Simulation')">Games</button>
-      <button class="tab-button" onclick="switchTab('Managerial Implication')">Application</button>
-      <button class="tab-button" onclick="switchTab('A case study')">A Case</button>
-    </div>
-   
+  
       <div class="simulation-container" id="simulationSection">
         <h1>Managerial Implications of Demand and Supply (Indian Rupees)</h1>
         
