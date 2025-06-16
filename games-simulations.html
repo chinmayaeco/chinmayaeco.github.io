@@ -68,8 +68,13 @@
         <button onclick="checkPassword()">Access Simulation</button>
         <div class="error" id="errorMessage">Incorrect password. Please try again.</div>
     </div>
-
-    <div class="simulation-container" id="simulationSection">
+ <div class="tabs">
+      <button class="tab-button active" onclick="switchTab('Games and Simulation')">Games</button>
+      <button class="tab-button" onclick="switchTab('Managerial Implication')">Application</button>
+      <button class="tab-button" onclick="switchTab('A case study')">A Case</button>
+    </div>
+   
+      <div class="simulation-container" id="simulationSection">
         <h1>Managerial Implications of Demand and Supply (Indian Rupees)</h1>
         
         <div class="tab-container">
