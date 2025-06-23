@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Polls - Dr. Chinmaya Behera</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+  <style>
+    .poll-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .poll-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .poll-question {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    
+    .poll-type-selector {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .poll-type-btn {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .poll-type-btn.active {
+      border-color: var(--primary-color);
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .poll-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .poll-option {
+      padding: 1.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .poll-option:hover {
+      border-color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .poll-option.selected {
+      border-color: var(--primary-color);
+      background: rgba(46, 134, 222, 0.1);
+    }
+    
+    .poll-results {
+      margin-top: 2rem;
+      display: none;
+    }
+    
+    .result-item {
+      margin-bottom: 1.5rem;
+    }
+    
+    .result-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-bar {
+      height: 30px;
+      background: #f0f0f0;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    
+    .result-fill {
+      height: 100%;
+      background: var(--primary-color);
+      width: 0%;
+      transition: width 1s ease;
+    }
+    
+    .chart-container {
+      margin-top: 2rem;
+      height: 400px;
+    }
+    
+    .poll-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .presentation-code {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin: 1rem 0;
+      font-family: monospace;
+      font-size: 1.5rem;
+      letter-spacing: 0.2rem;
+    }
+    
+    .participant-view {
+      display: none;
+      text-align: center;
+    }
+    
+    .participant-input {
+      margin: 1rem 0;
+      padding: 0.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .qr-code {
+      margin: 1rem auto;
+      width: 150px;
+      height: 150px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+    }
+    
+    @media (max-width: 768px) {
+      .poll-options {
+        grid-template-columns: 1fr;
+      }
+      
+      .poll-type-selector {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body onload="AOS.init();">
+  <header class="navbar">
+    <nav>
+      <ul>
+        <li><a href="index.html">About</a></li>
+        <li><a href="education.html">Education</a></li>
+        <li><a href="publications.html">Publications</a></li>
+        <li><a href="teaching.html">Teaching</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="skills.html">Skill</a></li>
+        <li><a href="games-simulations.html">Games</a></li>
+        <li><a href="poll.html">Polls</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container-main">
+    <div class="poll-container">
+      <div class="poll-header">
+        <h1>Interactive Polling System</h1>
+        <p>Engage your audience with live polls and quizzes</p>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-button active" onclick="switchView('presenter')">Presenter View</button>
+        <button class="tab-button" onclick="switchView('participant')">Participant View</button>
+      </div>
+      
+      <!-- Presenter View -->
+      <div id="presenterView">
+        <div class="poll-type-selector">
+          <div class="poll-type-btn active" onclick="setPollType('multiple-choice')">Multiple Choice</div>
+          <div class="poll-type-btn" onclick="setPollType('word-cloud')">Word Cloud</div>
+          <div class="poll-type-btn" onclick="setPollType('quiz')">Quiz</div>
+          <div class="poll-type-btn" onclick="setPollType('scale')">Scale Rating</div>
+          <div class="poll-type-btn" onclick="setPollType('open-ended')">Open Ended</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="pollQuestion">Poll Question</label>
+          <input type="text" id="pollQuestion" class="form-control" placeholder="Enter your question here..." value="How effective was today's session?">
+        </div>
+        
+        <div id="multipleChoiceOptions">
+          <div class="form-group">
+            <label>Poll Options</label>
+            <div class="poll-options">
+              <div class="poll-option" onclick="selectOption(this)">Very Effective</div>
+              <div class="poll-option" onclick="selectOption(this)">Effective</div>
+              <div class="poll-option" onclick="selectOption(this)">Neutral</div>
+              <div class="poll-option" onclick="selectOption(this)">Ineffective</div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="wordCloudOptions" style="display: none;">
+          <div class="form-group">
+            <label>Word Cloud Instructions</label>
+            <p>Participants will submit words that will be displayed in a cloud format, with more frequent words appearing larger.</p>
+          </div>
+        </div>
+        
+        <div id="quizOptions" style="display: none;">
+          <div class="form-group">
+            <label>Quiz Options</label>
+            <div class="poll-options">
+              <div class="poll-option" onclick="selectOption(this)">Option A</div>
+              <div class="poll-option" onclick="selectOption(this)">Option B</div>
+              <div class="poll-option" onclick="selectOption(this)">Option C</div>
+              <div class="poll-option" onclick="selectOption(this)">Option D</div>
+            </div>
+            <div class="form-group">
+              <label for="correctAnswer">Correct Answer</label>
+              <select id="correctAnswer" class="form-control">
+                <option value="0">Option A</option>
+                <option value="1">Option B</option>
+                <option value="2">Option C</option>
+                <option value="3">Option D</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div id="scaleOptions" style="display: none;">
+          <div class="form-group">
+            <label>Scale Settings</label>
+            <div class="form-group">
+              <label for="scaleMin">Minimum Value</label>
+              <input type="number" id="scaleMin" class="form-control" value="1">
+            </div>
+            <div class="form-group">
+              <label for="scaleMax">Maximum Value</label>
+              <input type="number" id="scaleMax" class="form-control" value="5">
+            </div>
+            <div class="form-group">
+              <label for="scaleStep">Step</label>
+              <input type="number" id="scaleStep" class="form-control" value="1">
+            </div>
+          </div>
+        </div>
+        
+        <div id="openEndedOptions" style="display: none;">
+          <div class="form-group">
+            <label>Open Ended Question</label>
+            <p>Participants will be able to submit text responses that you can review later.</p>
+          </div>
+        </div>
+        
+        <div class="poll-controls">
+          <button class="btn-secondary" onclick="addOption()">Add Option</button>
+          <button class="btn-primary" onclick="launchPoll()">Launch Poll</button>
+        </div>
+        
+        <div class="presentation-code">
+          <p>Participants join using code:</p>
+          <div style="font-size: 2rem; letter-spacing: 0.5rem; font-weight: bold;">XK7J9</div>
+          <p>or scan QR code:</p>
+          <div class="qr-code">QR Code</div>
+          <p>www.yourdomain.com/poll/XK7J9</p>
+        </div>
+        
+        <div class="poll-results" id="pollResults">
+          <h2>Live Results</h2>
+          <div class="result-item">
+            <div class="result-label">
+              <span>Very Effective</span>
+              <span>42% (21 votes)</span>
+            </div>
+            <div class="result-bar">
+              <div class="result-fill" style="width: 42%"></div>
+            </div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">
+              <span>Effective</span>
+              <span>34% (17 votes)</span>
+            </div>
+            <div class="result-bar">
+              <div class="result-fill" style="width: 34%"></div>
+            </div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">
+              <span>Neutral</span>
+              <span>16% (8 votes)</span>
+            </div>
+            <div class="result-bar">
+              <div class="result-fill" style="width: 16%"></div>
+            </div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">
+              <span>Ineffective</span>
+              <span>8% (4 votes)</span>
+            </div>
+            <div class="result-bar">
+              <div class="result-fill" style="width: 8%"></div>
+            </div>
+          </div>
+          
+          <div class="chart-container">
+            <canvas id="resultsChart"></canvas>
+          </div>
+          
+          <div class="poll-controls">
+            <button class="btn-secondary" onclick="hideResults()">Hide Results</button>
+            <button class="btn-primary" onclick="exportResults()">Export Results</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Participant View -->
+      <div id="participantView" class="participant-view">
+        <h2>Join the Poll</h2>
+        <p>Enter the code provided by your presenter</p>
+        <input type="text" class="participant-input" placeholder="Enter poll code">
+        <button class="btn-primary" onclick="joinPoll()">Join</button>
+        
+        <div id="participantPoll" style="display: none;">
+          <h2 id="participantQuestion">How effective was today's session?</h2>
+          <div class="poll-options">
+            <div class="poll-option" onclick="submitVote(this)">Very Effective</div>
+            <div class="poll-option" onclick="submitVote(this)">Effective</div>
+            <div class="poll-option" onclick="submitVote(this)">Neutral</div>
+            <div class="poll-option" onclick="submitVote(this)">Ineffective</div>
+          </div>
+        </div>
+        
+        <div id="participantThanks" style="display: none;">
+          <h2>Thank you for participating!</h2>
+          <p>Your response has been recorded.</p>
+          <p>Waiting for presenter to show results...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Current poll type
+    let currentPollType = 'multiple-choice';
+    let resultsChart = null;
+    
+    // Switch between presenter and participant views
+    function switchView(view) {
+      if (view === 'presenter') {
+        document.getElementById('presenterView').style.display = 'block';
+        document.getElementById('participantView').style.display = 'none';
+        document.querySelectorAll('.tab-button')[0].classList.add('active');
+        document.querySelectorAll('.tab-button')[1].classList.remove('active');
+      } else {
+        document.getElementById('presenterView').style.display = 'none';
+        document.getElementById
