@@ -276,23 +276,19 @@
               <label for="supplyShift">Supply Shift</label>
               <input type="range" id="supplyShift" min="-50" max="50" value="0" oninput="updateMarketSimulation()">
               <div class="market-value">0%</div>
-            </div>  
-            
+            </div> 
             <div class="control-group">
               <div class="market-slider">
                 <label for="priceCeiling">Price Ceiling</label>
                 <input type="range" id="priceCeiling" min="0" max="200" value="100" oninput="updateMarketSimulation()">
                 <div class="market-value">₹100</div>
-              </div>
-            </div>
-            
+              </div
             <div class="control-group">
               <div class="market-slider">
                 <label for="priceFloor">Price Floor</label>
                 <input type="range" id="priceFloor" min="0" max="200" value="0" oninput="updateMarketSimulation()">
                 <div class="market-value">₹0 (No floor)</div>
-              </div>      
-            
+              </div>     
             <button class="btn-secondary" onclick="resetMarket()">Reset to Equilibrium</button>
           </div>
           
