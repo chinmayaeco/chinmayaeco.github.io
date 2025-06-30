@@ -278,17 +278,7 @@
               <div class="market-value">0%</div>
             </div>
             
-            <div class="market-slider">
-              <label for="priceCeiling">Price Ceiling</label>
-              <input type="range" id="priceCeiling" min="0" max="200" value="100" oninput="updateMarketSimulation()">
-              <div class="market-value">₹100</div>
-            </div>
-            
-            <div class="market-slider">
-              <label for="priceFloor">Price Floor</label>
-              <input type="range" id="priceFloor" min="0" max="200" value="0" oninput="updateMarketSimulation()">
-              <div class="market-value">₹0 (No floor)</div>
-            </div>
+      
             
             <button class="btn-secondary" onclick="resetMarket()">Reset to Equilibrium</button>
           </div>
@@ -307,7 +297,7 @@
       
       <!-- Theories & Models Theme -->
       <div id="theories-theme" class="theme-content">
-        <h2>Economic Theories & Business Models</h2>
+        <h2>Economic Theories &  Models</h2>
         <p>Explore how different economic theories explain business behavior and market outcomes.</p>
         
         <div class="theory-card" onclick="explainTheory('comparative')">
