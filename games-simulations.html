@@ -3,52 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> BDA Business Economics I Simulation - Dr. Chinmaya Behera</title>
+  <title>Business Economics Simulation - Dr. Chinmaya Behera</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
   <style>
+    :root {
+      --primary-color: #4361ee;
+      --primary-light: #4895ef;
+      --primary-dark: #3a0ca3;
+      --secondary-color: #f72585;
+      --success-color: #4cc9f0;
+      --warning-color: #f8961e;
+      --error-color: #ef233c;
+      --dark-color: #2b2d42;
+      --light-color: #f8f9fa;
+    }
+
     .simulation-container {
       max-width: 1200px;
       margin: 2rem auto;
       padding: 2rem;
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
+      background: var(--light-color);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .login-container {
+      max-width: 500px;
+      margin: 5rem auto;
+      padding: 2.5rem;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .login-container h1 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+    
+    .login-container input {
+      width: 100%;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .login-container input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    .error-message {
+      color: var(--error-color);
+      margin-top: 1rem;
+      display: none;
     }
     
     .theme-tabs {
       display: flex;
       margin-bottom: 2rem;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 2px solid #e9ecef;
+      overflow-x: auto;
+      padding-bottom: 2px;
     }
     
     .theme-tab {
       padding: 1rem 2rem;
       cursor: pointer;
-      border-bottom: 3px solid transparent;
+      border-bottom: 4px solid transparent;
       transition: all 0.3s ease;
       font-weight: 600;
+      color: var(--dark-color);
+      white-space: nowrap;
     }
     
     .theme-tab.active {
-      border-bottom: 3px solid var(--primary-color);
+      border-bottom: 4px solid var(--primary-color);
       color: var(--primary-color);
+      background: rgba(67, 97, 238, 0.05);
     }
     
     .theme-content {
       display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     .theme-content.active {
       display: block;
     }
     
+    /* Trade-off Section */
     .tradeoff-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
     
     .tradeoff-options {
@@ -58,21 +124,28 @@
     }
     
     .tradeoff-option {
-      padding: 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
+      background: white;
     }
     
     .tradeoff-option:hover {
-      border-color: var(--primary-color);
-      background: rgba(46, 134, 222, 0.05);
+      border-color: var(--primary-light);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
     }
     
     .tradeoff-option.selected {
       border-color: var(--primary-color);
-      background: rgba(46, 134, 222, 0.1);
+      background: rgba(67, 97, 238, 0.05);
+    }
+    
+    .tradeoff-option h4 {
+      color: var(--primary-dark);
+      margin-top: 0;
     }
     
     .tradeoff-visual {
@@ -80,24 +153,40 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
     
     .tradeoff-graph {
       width: 100%;
       height: 300px;
-      margin-top: 2rem;
+      margin-top: 1rem;
     }
     
+    /* Market Section */
     .market-simulator {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
     
     .market-controls {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
+    }
+    
+    .control-group {
+      background: rgba(248, 249, 250, 0.8);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid var(--primary-color);
     }
     
     .market-slider {
@@ -108,11 +197,44 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
+      color: var(--dark-color);
+    }
+    
+    .market-slider input[type="range"] {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      background: #e9ecef;
+      border-radius: 5px;
+      outline: none;
+    }
+    
+    .market-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .market-slider input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      background: var(--primary-dark);
     }
     
     .market-value {
       font-weight: bold;
       color: var(--primary-color);
+      margin-top: 0.5rem;
+    }
+    
+    .market-visual {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
     
     .market-graph {
@@ -120,24 +242,46 @@
       height: 400px;
     }
     
+    /* Theories Section */
+    .theory-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
     .theory-card {
       padding: 1.5rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      margin-bottom: 1.5rem;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      cursor: pointer;
       transition: all 0.3s ease;
+      background: white;
     }
     
     .theory-card:hover {
-      border-color: var(--primary-color);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-color: var(--primary-light);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(67, 97, 238, 0.1);
     }
     
     .theory-card h3 {
-      color: var(--primary-color);
+      color: var(--primary-dark);
       margin-top: 0;
     }
     
+    .theory-explanation {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      margin-top: 0;
+    }
+    
+    .theory-card.active .theory-explanation {
+      max-height: 500px;
+      margin-top: 1rem;
+    }
+    
+    /* Analysis Section */
     .analysis-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -146,8 +290,9 @@
     
     .analysis-type {
       padding: 1.5rem;
-      border-radius: var(--border-radius);
-      background: rgba(0,0,0,0.03);
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
     
     .analysis-type h3 {
@@ -165,56 +310,110 @@
     .analysis-example {
       margin-top: 1rem;
       padding: 1rem;
-      background: white;
-      border-radius: var(--border-radius);
+      background: rgba(248, 249, 250, 0.8);
+      border-radius: 8px;
     }
     
+    /* Buttons */
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(67, 97, 238, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+    }
+    
+    /* Responsive Design */
     @media (max-width: 768px) {
       .tradeoff-container,
       .market-simulator,
       .analysis-container {
         grid-template-columns: 1fr;
       }
+      
+      .theme-tabs {
+        flex-wrap: wrap;
+      }
+      
+      .theme-tab {
+        padding: 0.8rem 1rem;
+      }
     }
   </style>
 </head>
 <body onload="AOS.init();">
-  <header class="navbar">
-    <nav>
-      <ul>
-        <li><a href="index.html">About</a></li>
-        <li><a href="education.html">Education</a></li>
-        <li><a href="publications.html">Publications</a></li>
-        <li><a href="teaching.html">Teaching</a></li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="skills.html">Skill</a></li>
-        <li><a href="games-simulations.html">Games</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
+  <!-- Login Screen -->
+  <div class="login-container" id="loginSection">
+    <h1>Business Economics Simulation</h1>
+    <p>Enter password to access the simulation</p>
+    <input type="password" id="passwordInput" placeholder="Enter password">
+    <button class="btn-primary" onclick="checkPassword()">Access Simulation</button>
+    <div class="error-message" id="errorMessage">Incorrect password. Please try again.</div>
+  </div>
 
-  <main class="container-main">
-    <div class="simulation-container">
-      <h1> </h1>
-      <p class="subtitle"></p>
+  <!-- Main Simulation -->
+  <div class="simulation-container" id="simulationSection" style="display: none;">
+    <header class="navbar">
+      <nav>
+        <ul>
+          <li><a href="index.html">About</a></li>
+          <li><a href="education.html">Education</a></li>
+          <li><a href="publications.html">Publications</a></li>
+          <li><a href="teaching.html">Teaching</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="skills.html">Skill</a></li>
+          <li><a href="games-simulations.html">Games</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container-main">
+      <h1>Business Economics Simulation</h1>
+      <p class="subtitle">Explore key concepts in business economics through interactive simulations</p>
       
       <div class="theme-tabs">
         <div class="theme-tab active" onclick="switchTheme('tradeoffs')">Trade-offs</div>
         <div class="theme-tab" onclick="switchTheme('markets')">Prices & Markets</div>
         <div class="theme-tab" onclick="switchTheme('theories')">Theories & Models</div>
-        <div class="theme-tab" onclick="switchTheme('analysis')">Positive vs Normative</div>
+        <div class="theme-tab" onclick="switchTheme('analysis')">Analysis Types</div>
       </div>
       
       <!-- Trade-offs Theme -->
       <div id="tradeoffs-theme" class="theme-content active">
-        <h2> </h2>
-        <p></p>
+        <h2>Understanding Trade-offs in Business Decisions</h2>
+        <p>Every business decision involves trade-offs between competing alternatives. Explore how different choices affect your production possibilities.</p>
         
         <div class="tradeoff-container">
           <div class="tradeoff-options">
-            <h3>Production Choices</h3>
-            <p>Your factory can produce two products with limited resources. Choose your production mix:</p>
+            <div class="control-group">
+              <h3>Production Choices</h3>
+              <p>Your factory can produce two products with limited resources. Choose your production mix:</p>
+            </div>
             
             <div class="tradeoff-option selected" onclick="selectTradeoff(this, 'balanced')">
               <h4>Balanced Production</h4>
@@ -246,12 +445,15 @@
           </div>
           
           <div class="tradeoff-visual">
-            <h3>Production Possibility</h3>
+            <div class="control-group">
+              <h3>Production Possibility Frontier</h3>
+              <p>Visual representation of possible production combinations</p>
+            </div>
             <div class="tradeoff-graph">
               <canvas id="tradeoffChart"></canvas>
             </div>
-            <div id="tradeoffResult" class="result-value" style="margin-top: 1rem;">
-              Current Output: 50 Product A, 50 Product B
+            <div id="tradeoffResult" class="result-value" style="margin-top: 1rem; background: rgba(67, 97, 238, 0.1); padding: 0.8rem; border-radius: 8px;">
+              <strong>Current Output:</strong> 50 Product A, 50 Product B
             </div>
           </div>
         </div>
@@ -264,41 +466,56 @@
         
         <div class="market-simulator">
           <div class="market-controls">
-            <h3>Market Controls</h3>
-            
-            <div class="market-slider">
-              <label for="demandShift">Demand Shift</label>
-              <input type="range" id="demandShift" min="-50" max="50" value="0" oninput="updateMarketSimulation()">
-              <div class="market-value">0%</div>
+            <div class="control-group">
+              <h3>Market Controls</h3>
+              <p>Adjust the parameters to see how markets respond</p>
             </div>
             
-            <div class="market-slider">
-              <label for="supplyShift">Supply Shift</label>
-              <input type="range" id="supplyShift" min="-50" max="50" value="0" oninput="updateMarketSimulation()">
-              <div class="market-value">0%</div>
-            </div> 
+            <div class="control-group">
+              <div class="market-slider">
+                <label for="demandShift">Demand Shift</label>
+                <input type="range" id="demandShift" min="-50" max="50" value="0" oninput="updateMarketSimulation()">
+                <div class="market-value">0%</div>
+              </div>
+            </div>
+            
+            <div class="control-group">
+              <div class="market-slider">
+                <label for="supplyShift">Supply Shift</label>
+                <input type="range" id="supplyShift" min="-50" max="50" value="0" oninput="updateMarketSimulation()">
+                <div class="market-value">0%</div>
+              </div>
+            </div>
+            
             <div class="control-group">
               <div class="market-slider">
                 <label for="priceCeiling">Price Ceiling</label>
                 <input type="range" id="priceCeiling" min="0" max="200" value="100" oninput="updateMarketSimulation()">
                 <div class="market-value">₹100</div>
-              </div
+              </div>
+            </div>
+            
             <div class="control-group">
               <div class="market-slider">
                 <label for="priceFloor">Price Floor</label>
                 <input type="range" id="priceFloor" min="0" max="200" value="0" oninput="updateMarketSimulation()">
                 <div class="market-value">₹0 (No floor)</div>
-              </div>     
+              </div>
+            </div>
+            
             <button class="btn-secondary" onclick="resetMarket()">Reset to Equilibrium</button>
           </div>
           
           <div class="market-visual">
-            <h3>Market Equilibrium</h3>
+            <div class="control-group">
+              <h3>Market Equilibrium</h3>
+              <p>Visual representation of supply and demand</p>
+            </div>
             <div class="market-graph">
               <canvas id="marketChart"></canvas>
             </div>
-            <div id="marketResult" class="result-value" style="margin-top: 1rem;">
-              Equilibrium Price: ₹100 | Equilibrium Quantity: 50 units
+            <div id="marketResult" class="result-value" style="margin-top: 1rem; background: rgba(67, 97, 238, 0.1); padding: 0.8rem; border-radius: 8px;">
+              <strong>Equilibrium Price:</strong> ₹100 | <strong>Equilibrium Quantity:</strong> 50 units
             </div>
           </div>
         </div>
@@ -306,38 +523,51 @@
       
       <!-- Theories & Models Theme -->
       <div id="theories-theme" class="theme-content">
-        <h2>Economic Theories &  Models</h2>
+        <h2>Economic Theories & Business Models</h2>
         <p>Explore how different economic theories explain business behavior and market outcomes.</p>
         
-        <div class="theory-card" onclick="explainTheory('comparative')">
-          <h3>Comparative Advantage</h3>
-          <p>Countries should specialize in producing goods where they have a lower opportunity cost.</p>
-          <div id="comparativeExplanation" style="display: none; margin-top: 1rem;">
-            <p>This theory explains why countries trade even when one country is more efficient at producing all goods. It demonstrates how specialization and trade can benefit all parties.</p>
-            <div class="example">
-              <p><strong>Example:</strong> Even if Country A is better at producing both cars and computers than Country B, both can benefit if A specializes in cars (where its advantage is greatest) and B specializes in computers (where its disadvantage is smallest).</p>
+        <div class="theory-container">
+          <div class="theory-card" onclick="explainTheory('comparative')">
+            <h3>Comparative Advantage</h3>
+            <p>Countries should specialize in producing goods where they have a lower opportunity cost.</p>
+            <div class="theory-explanation" id="comparativeExplanation">
+              <p>This theory explains why countries trade even when one country is more efficient at producing all goods. It demonstrates how specialization and trade can benefit all parties.</p>
+              <div class="analysis-example">
+                <p><strong>Example:</strong> Even if Country A is better at producing both cars and computers than Country B, both can benefit if A specializes in cars (where its advantage is greatest) and B specializes in computers (where its disadvantage is smallest).</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="theory-card" onclick="explainTheory('game')">
-          <h3>Game Theory</h3>
-          <p>Studies strategic interactions where the outcome for each participant depends on the actions of others.</p>
-          <div id="gameExplanation" style="display: none; margin-top: 1rem;">
-            <p>Game theory helps explain competitive behavior, pricing strategies, and cooperation in business. The Prisoner's Dilemma is a classic example showing why cooperation is difficult even when it's mutually beneficial.</p>
-            <div class="example">
-              <p><strong>Example:</strong> Two competing firms deciding whether to lower prices. While both would benefit from keeping prices high, each has an incentive to undercut the other, leading to a worse outcome for both.</p>
+          
+          <div class="theory-card" onclick="explainTheory('game')">
+            <h3>Game Theory</h3>
+            <p>Studies strategic interactions where the outcome for each participant depends on the actions of others.</p>
+            <div class="theory-explanation" id="gameExplanation">
+              <p>Game theory helps explain competitive behavior, pricing strategies, and cooperation in business. The Prisoner's Dilemma is a classic example showing why cooperation is difficult even when it's mutually beneficial.</p>
+              <div class="analysis-example">
+                <p><strong>Example:</strong> Two competing firms deciding whether to lower prices. While both would benefit from keeping prices high, each has an incentive to undercut the other, leading to a worse outcome for both.</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="theory-card" onclick="explainTheory('keynesian')">
-          <h3>Keynesian Economics</h3>
-          <p>Emphasizes the role of government intervention in stabilizing the economy.</p>
-          <div id="keynesianExplanation" style="display: none; margin-top: 1rem;">
-            <p>This theory suggests that during recessions, private sector decisions can lead to inefficient outcomes (like unemployment), and government spending can help stimulate demand and restore growth.</p>
-            <div class="example">
-              <p><strong>Example:</strong> During an economic downturn, government infrastructure projects can create jobs and increase spending, which then supports businesses throughout the economy.</p>
+          
+          <div class="theory-card" onclick="explainTheory('keynesian')">
+            <h3>Keynesian Economics</h3>
+            <p>Emphasizes the role of government intervention in stabilizing the economy.</p>
+            <div class="theory-explanation" id="keynesianExplanation">
+              <p>This theory suggests that during recessions, private sector decisions can lead to inefficient outcomes (like unemployment), and government spending can help stimulate demand and restore growth.</p>
+              <div class="analysis-example">
+                <p><strong>Example:</strong> During an economic downturn, government infrastructure projects can create jobs and increase spending, which then supports businesses throughout the economy.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="theory-card" onclick="explainTheory('monetarist')">
+            <h3>Monetarist Theory</h3>
+            <p>Focuses on the role of governments in controlling the money supply.</p>
+            <div class="theory-explanation" id="monetaristExplanation">
+              <p>Monetarists believe that variations in the money supply have major influences on national output in the short run and the price level over longer periods.</p>
+              <div class="analysis-example">
+                <p><strong>Example:</strong> Central banks adjusting interest rates to control inflation and stabilize the currency.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -390,15 +620,48 @@
           </div>
         </div>
         
-        <div id="analysisResult" style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: var(--border-radius); display: none;">
+        <div id="analysisResult" style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: none;">
           <h3>Analysis Result</h3>
           <p id="analysisResultText"></p>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <script>
+    // Password protection
+    const CORRECT_PASSWORD = "econ123";
+    
+    function checkPassword() {
+      const enteredPassword = document.getElementById('passwordInput').value;
+      const errorMessage = document.getElementById('errorMessage');
+      const loginSection = document.getElementById('loginSection');
+      const simulationSection = document.getElementById('simulationSection');
+      
+      if (enteredPassword === CORRECT_PASSWORD) {
+        loginSection.style.display = 'none';
+        simulationSection.style.display = 'block';
+        errorMessage.style.display = 'none';
+        initSimulations();
+      } else {
+        errorMessage.style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+      }
+    }
+    
+    // Allow pressing Enter to submit password
+    document.getElementById('passwordInput').addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
+        checkPassword();
+      }
+    });
+    
+    // Initialize all simulations
+    function initSimulations() {
+      initTradeoffChart();
+      initMarketChart();
+    }
+    
     // Theme switching
     function switchTheme(theme) {
       // Hide all themes
@@ -416,14 +679,6 @@
       
       // Activate selected tab
       event.currentTarget.classList.add('active');
-      
-      // Initialize charts if needed
-      if (theme === 'tradeoffs' && !tradeoffChart) {
-        initTradeoffChart();
-      }
-      if (theme === 'markets' && !marketChart) {
-        initMarketChart();
-      }
     }
     
     // Trade-off Simulation
@@ -440,33 +695,68 @@
           datasets: [{
             label: 'Production Possibility Frontier',
             data: [100, 90, 80, 70, 60],
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: '#4361ee',
+            backgroundColor: 'rgba(67, 97, 238, 0.1)',
             fill: true,
-            tension: 0.1
+            tension: 0.1,
+            borderWidth: 2
           }, {
             label: 'Current Production',
             data: [null, null, 80, null, null],
-            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+            pointBackgroundColor: '#f72585',
             pointRadius: 8,
+            pointHoverRadius: 10,
             showLine: false
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
+          },
           scales: {
             y: {
               title: {
                 display: true,
-                text: 'Product B'
+                text: 'Product B Output',
+                font: {
+                  weight: 'bold'
+                }
               },
-              beginAtZero: true
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0,0,0,0.05)'
+              }
             },
             x: {
               title: {
                 display: true,
-                text: 'Product A'
+                text: 'Product A Output',
+                font: {
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                color: 'rgba(0,0,0,0.05)'
               }
             }
           }
@@ -534,8 +824,8 @@
       tradeoffChart.update();
       
       // Update result text
-      document.getElementById('tradeoffResult').textContent = 
-        `Current Output: ${pointA} Product A, ${pointB} Product B`;
+      document.getElementById('tradeoffResult').innerHTML = 
+        `<strong>Current Output:</strong> ${pointA} Product A, ${pointB} Product B`;
     }
     
     // Market Simulation
@@ -552,23 +842,25 @@
             {
               label: 'Demand',
               data: Array.from({length: 101}, (_, i) => 100 - i),
-              borderColor: 'rgba(54, 162, 235, 1)',
-              backgroundColor: 'rgba(54, 162, 235, 0.1)',
+              borderColor: '#4361ee',
+              backgroundColor: 'rgba(67, 97, 238, 0.1)',
               fill: true,
-              tension: 0.1
+              tension: 0.1,
+              borderWidth: 2
             },
             {
               label: 'Supply',
               data: Array.from({length: 101}, (_, i) => i),
-              borderColor: 'rgba(255, 99, 132, 1)',
-              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+              borderColor: '#f72585',
+              backgroundColor: 'rgba(247, 37, 133, 0.1)',
               fill: true,
-              tension: 0.1
+              tension: 0.1,
+              borderWidth: 2
             },
             {
               label: 'Price Ceiling',
               data: [],
-              borderColor: 'rgba(255, 159, 64, 1)',
+              borderColor: '#4cc9f0',
               borderDash: [5, 5],
               borderWidth: 2,
               pointRadius: 0
@@ -576,7 +868,7 @@
             {
               label: 'Price Floor',
               data: [],
-              borderColor: 'rgba(153, 102, 255, 1)',
+              borderColor: '#f8961e',
               borderDash: [5, 5],
               borderWidth: 2,
               pointRadius: 0
@@ -584,8 +876,9 @@
             {
               label: 'Equilibrium',
               data: [],
-              pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+              pointBackgroundColor: '#3a0ca3',
               pointRadius: 8,
+              pointHoverRadius: 10,
               showLine: false
             }
           ]
@@ -593,18 +886,51 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
+          },
           scales: {
             y: {
               title: {
                 display: true,
-                text: 'Price (₹)'
+                text: 'Price (₹)',
+                font: {
+                  weight: 'bold'
+                }
               },
-              beginAtZero: true
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0,0,0,0.05)'
+              }
             },
             x: {
               title: {
                 display: true,
-                text: 'Quantity'
+                text: 'Quantity',
+                font: {
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                color: 'rgba(0,0,0,0.05)'
               }
             }
           }
@@ -663,75 +989,4 @@
         effectivePrice = priceFloor;
         // Find quantity where supply = price floor
         for (let i = 0; i <= 100; i++) {
-          if (supplyData[i] >= priceFloor) {
-            effectiveQuantity = i;
-            break;
-          }
-        }
-        controlMessage = ` (Price floor binding at ₹${priceFloor})`;
-      }
-      
-      // Update chart data
-      marketChart.data.datasets[0].data = demandData;
-      marketChart.data.datasets[1].data = supplyData;
-      
-      // Price ceiling line
-      marketChart.data.datasets[2].data = priceCeiling > 0 ? 
-        Array(101).fill(priceCeiling) : [];
-      
-      // Price floor line
-      marketChart.data.datasets[3].data = priceFloor > 0 ? 
-        Array(101).fill(priceFloor) : [];
-      
-      // Equilibrium point
-      marketChart.data.datasets[4].data = Array(101).fill(null);
-      marketChart.data.datasets[4].data[effectiveQuantity] = effectivePrice;
-      
-      marketChart.update();
-      
-      // Update result text
-      document.getElementById('marketResult').textContent = 
-        `Market Price: ₹${Math.round(effectivePrice)} | Quantity: ${effectiveQuantity} units${controlMessage}`;
-    }
-    
-    function resetMarket() {
-      document.getElementById('demandShift').value = 0;
-      document.getElementById('supplyShift').value = 0;
-      document.getElementById('priceCeiling').value = 100;
-      document.getElementById('priceFloor').value = 0;
-      updateMarketSimulation();
-    }
-    
-    // Theories & Models
-    function explainTheory(theory) {
-      const element = document.getElementById(theory + 'Explanation');
-      element.style.display = element.style.display === 'block' ? 'none' : 'block';
-    }
-    
-    // Positive vs Normative Analysis
-    function analyzeStatement(type) {
-      const statement = document.getElementById(type + 'Statement').value;
-      const resultElement = document.getElementById('analysisResult');
-      const resultText = document.getElementById('analysisResultText');
-      
-      if (!statement) {
-        alert('Please enter a statement to analyze');
-        return;
-      }
-      
-      resultElement.style.display = 'block';
-      
-      if (type === 'positive') {
-        resultText.textContent = `Your statement "${statement}" appears to be a positive economic statement. Positive statements are factual claims that can be tested with data. They describe what is or what will be, without making value judgments.`;
-      } else {
-        resultText.textContent = `Your statement "${statement}" appears to be a normative economic statement. Normative statements involve value judgments about how the economy should work. They express opinions about what ought to be, often recommending particular policies.`;
-      }
-      
-      resultText.textContent += "\n\nRemember: Positive statements can be verified with evidence, while normative statements depend on personal values and cannot be proven true or false.";
-    }
-    
-    // Initialize first chart
-    initTradeoffChart();
-  </script>
-</body>
-</html>
+          if (supplyData[i] >= priceFloor)
