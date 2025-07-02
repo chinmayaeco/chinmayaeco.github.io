@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Games - Dr. Chinmaya Behera</title>
+  <title>Managerial Economics Simulations - Dr. Chinmaya Behera</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* Additional styles specific to this page */
     .simulation-container {
@@ -112,6 +113,62 @@
       border-bottom: none;
     }
     
+    .scenario-buttons {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    
+    .scenario-btn {
+      padding: 0.5rem 1rem;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .scenario-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .metrics-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .metric-card {
+      padding: 1rem;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .metric-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .graph-container {
+      position: relative;
+      height: 400px;
+    }
+    
+    .time-series-container {
+      margin-top: 2rem;
+    }
+    
     @media (max-width: 768px) {
       .container {
         grid-template-columns: 1fr;
@@ -119,6 +176,10 @@
       
       .tab-container {
         flex-direction: column;
+      }
+      
+      .metrics-container {
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -180,7 +241,33 @@
                   <input type="range" id="supplyFactor" min="0.5" max="2" value="1" step="0.1">
                   <div>Supply Multiplier: <span id="supplyFactorValue">1.0</span>x</div>
                   
+                  <div class="scenario-buttons">
+                    <button class="scenario-btn" onclick="applyScenario('demand-shock')">Demand Shock (+30%)</button>
+                    <button class="scenario-btn" onclick="applyScenario('supply-shock')">Supply Shock (-20%)</button>
+                    <button class="scenario-btn" onclick="applyScenario('recession')">Recession Scenario</button>
+                    <button class="scenario-btn" onclick="applyScenario('boom')">Economic Boom</button>
+                  </div>
+                  
                   <button id="resetBtn" class="btn-secondary">Reset to Default</button>
+                  
+                  <div class="metrics-container">
+                    <div class="metric-card">
+                      <div class="metric-value" id="consumerSurplus">₹0</div>
+                      <div class="metric-label">Consumer Surplus</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="metric-value" id="producerSurplus">₹0</div>
+                      <div class="metric-label">Producer Surplus</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="metric-value" id="totalSurplus">₹0</div>
+                      <div class="metric-label">Total Surplus</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="metric-value" id="elasticity">0.0</div>
+                      <div class="metric-label">Price Elasticity</div>
+                    </div>
+                  </div>
                   
                   <div class="equilibrium">
                       <h3>Market Equilibrium</h3>
@@ -196,7 +283,15 @@
               
               <div class="graph">
                   <h2>Demand and Supply Curve</h2>
-                  <canvas id="marketGraph" width="500" height="400"></canvas>
+                  <div class="graph-container">
+                    <canvas id="marketGraph"></canvas>
+                  </div>
+                  <div class="time-series-container">
+                    <h3>Market Dynamics Over Time</h3>
+                    <div class="graph-container">
+                      <canvas id="timeSeriesGraph"></canvas>
+                    </div>
+                  </div>
               </div>
           </div>
       </div>
@@ -208,30 +303,45 @@
               <h4>1. Pricing Strategy</h4>
               <p>Understanding where the equilibrium price settles helps managers set competitive prices. If the market price is above equilibrium, consider lowering prices to clear inventory. If below, you may have pricing power to increase.</p>
               <p><strong>Action:</strong> Monitor the equilibrium price and adjust your pricing strategy accordingly to maximize revenue while maintaining market share.</p>
+              <div class="graph-container" style="height: 200px;">
+                <canvas id="priceStrategyChart"></canvas>
+              </div>
           </div>
           
           <div class="implication">
               <h4>2. Inventory Management</h4>
               <p>The equilibrium quantity indicates the market-clearing volume. Producing significantly more than this leads to excess inventory, while producing less means missed opportunities.</p>
               <p><strong>Action:</strong> Align production schedules with equilibrium quantities to optimize inventory carrying costs and storage requirements.</p>
+              <div class="graph-container" style="height: 200px;">
+                <canvas id="inventoryChart"></canvas>
+              </div>
           </div>
           
           <div class="implication">
               <h4>3. Demand Shocks</h4>
               <p>When demand increases (rightward shift), prices and quantities both rise. Managers should prepare supply chain for increased volume while enjoying higher margins.</p>
               <p><strong>Action:</strong> Build flexible supply chains that can ramp up quickly when demand increases unexpectedly.</p>
+              <div class="graph-container" style="height: 200px;">
+                <canvas id="demandShockChart"></canvas>
+              </div>
           </div>
           
           <div class="implication">
               <h4>4. Supply Shocks</h4>
               <p>Supply decreases (leftward shift) cause prices to rise but quantities to fall. This may require finding alternative suppliers or passing costs to consumers.</p>
               <p><strong>Action:</strong> Develop contingency plans and alternative supplier relationships to mitigate supply disruptions.</p>
+              <div class="graph-container" style="height: 200px;">
+                <canvas id="supplyShockChart"></canvas>
+              </div>
           </div>
           
           <div class="implication">
               <h4>5. Elasticity Considerations</h4>
               <p>The steepness of the curves indicates elasticity. Steeper demand means consumers are less price-sensitive, allowing for more pricing power.</p>
               <p><strong>Action:</strong> Conduct market research to understand your product's price elasticity and adjust strategies accordingly.</p>
+              <div class="graph-container" style="height: 200px;">
+                <canvas id="elasticityChart"></canvas>
+              </div>
           </div>
       </div>
       
@@ -242,6 +352,9 @@
               <h4>Situation Analysis</h4>
               <p>In 2020, India's smartphone market saw a demand surge due to increased remote work and education, while supply was constrained by COVID-19 disruptions.</p>
               <p>This created a new equilibrium with 15% higher prices and 8% lower quantities sold compared to pre-pandemic levels.</p>
+              <div class="graph-container" style="height: 300px;">
+                <canvas id="caseStudyChart"></canvas>
+              </div>
           </div>
           
           <div class="implication">
@@ -251,6 +364,20 @@
                   <li><strong>Samsung:</strong> Focused on premium segment where consumers were less price-sensitive</li>
                   <li><strong>Oppo:</strong> Partnered with local manufacturers to reduce supply chain disruptions</li>
               </ul>
+              <div class="metrics-container">
+                <div class="metric-card">
+                  <div class="metric-value">+22%</div>
+                  <div class="metric-label">Xiaomi Market Share Growth</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value">+15%</div>
+                  <div class="metric-label">Premium Segment Growth</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value">30%</div>
+                  <div class="metric-label">Local Sourcing Increase</div>
+                </div>
+              </div>
           </div>
           
           <div class="implication">
@@ -271,6 +398,7 @@
                   <li>Decrease supply by 20% (set supply factor to 0.8)</li>
                   <li>Observe the new equilibrium and consider what strategies would be effective</li>
               </ol>
+              <button class="btn-primary" onclick="applyScenario('case-study')">Apply Case Study Scenario</button>
           </div>
       </div>
     </div>
@@ -279,6 +407,12 @@
   <script>
       // Password protection
       const CORRECT_PASSWORD = "economics123";
+      let marketChart;
+      let timeSeriesChart;
+      let priceHistory = [];
+      let quantityHistory = [];
+      let timeData = [];
+      let scenarioHistory = [];
       
       function checkPassword() {
           const enteredPassword = document.getElementById('passwordInput').value;
@@ -291,6 +425,8 @@
               simulationSection.style.display = 'block';
               errorMessage.style.display = 'none';
               initializeSimulation();
+              initializeImplicationsCharts();
+              initializeCaseStudyChart();
           } else {
               errorMessage.style.display = 'block';
               document.getElementById('passwordInput').value = '';
@@ -312,6 +448,237 @@
           event.currentTarget.classList.add('active');
       }
       
+      // Initialize Chart.js charts for implications
+      function initializeImplicationsCharts() {
+        // Pricing Strategy Chart
+        const priceStrategyCtx = document.getElementById('priceStrategyChart').getContext('2d');
+        new Chart(priceStrategyCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Below Equilibrium', 'At Equilibrium', 'Above Equilibrium'],
+            datasets: [{
+              label: 'Profit Impact',
+              data: [80, 100, 65],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Relative Profit (%)'
+                }
+              }
+            }
+          }
+        });
+        
+        // Inventory Management Chart
+        const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
+        new Chart(inventoryCtx, {
+          type: 'line',
+          data: {
+            labels: ['-20%', '-10%', 'Equilibrium', '+10%', '+20%'],
+            datasets: [{
+              label: 'Inventory Cost',
+              data: [95, 98, 100, 105, 112],
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: false,
+                title: {
+                  display: true,
+                  text: 'Cost Index'
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Production vs Equilibrium'
+                }
+              }
+            }
+          }
+        });
+        
+        // Demand Shock Chart
+        const demandShockCtx = document.getElementById('demandShockChart').getContext('2d');
+        new Chart(demandShockCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Price Increase', 'Quantity Increase', 'Market Share Impact'],
+            datasets: [{
+              data: [35, 45, 20],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+        
+        // Supply Shock Chart
+        const supplyShockCtx = document.getElementById('supplyShockChart').getContext('2d');
+        new Chart(supplyShockCtx, {
+          type: 'radar',
+          data: {
+            labels: ['Price Impact', 'Availability', 'Supplier Relations', 'Alternative Sources', 'Customer Retention'],
+            datasets: [{
+              label: 'Supply Shock Factors',
+              data: [8, 4, 7, 6, 5],
+              backgroundColor: 'rgba(153, 102, 255, 0.2)',
+              borderColor: 'rgba(153, 102, 255, 1)'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                angleLines: {
+                  display: true
+                },
+                suggestedMin: 0,
+                suggestedMax: 10
+              }
+            }
+          }
+        });
+        
+        // Elasticity Chart
+        const elasticityCtx = document.getElementById('elasticityChart').getContext('2d');
+        new Chart(elasticityCtx, {
+          type: 'scatter',
+          data: {
+            datasets: [{
+              label: 'Elastic Demand',
+              data: [{x:1,y:8}, {x:2,y:6}, {x:3,y:4}, {x:4,y:2}],
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              showLine: true
+            }, {
+              label: 'Inelastic Demand',
+              data: [{x:1,y:5}, {x:2,y:4.5}, {x:3,y:4}, {x:4,y:3.5}],
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              showLine: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Price'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Quantity Demanded'
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      // Initialize Case Study Chart
+      function initializeCaseStudyChart() {
+        const ctx = document.getElementById('caseStudyChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            datasets: [{
+              label: 'Smartphone Prices (Index)',
+              data: [100, 102, 98, 115, 120, 118, 116, 114, 112],
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+              yAxisID: 'y',
+              tension: 0.3
+            }, {
+              label: 'Units Sold (Index)',
+              data: [100, 105, 92, 85, 88, 90, 92, 93, 95],
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.1)',
+              yAxisID: 'y1',
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            scales: {
+              y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Price Index'
+                }
+              },
+              y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'Units Sold Index'
+                },
+                grid: {
+                  drawOnChartArea: false,
+                }
+              }
+            },
+            plugins: {
+              annotation: {
+                annotations: {
+                  box1: {
+                    type: 'box',
+                    xMin: 2,
+                    xMax: 3,
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    borderColor: 'rgba(255, 99, 132, 0.5)',
+                    label: {
+                      content: 'Lockdown Period',
+                      enabled: true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+      
       // Simulation code
       function initializeSimulation() {
           // Get DOM elements
@@ -323,15 +690,22 @@
           const supplyFactorValue = document.getElementById('supplyFactorValue');
           const eqPrice = document.getElementById('eqPrice');
           const eqQuantity = document.getElementById('eqQuantity');
+          const consumerSurplus = document.getElementById('consumerSurplus');
+          const producerSurplus = document.getElementById('producerSurplus');
+          const totalSurplus = document.getElementById('totalSurplus');
+          const elasticity = document.getElementById('elasticity');
           const resetBtn = document.getElementById('resetBtn');
-          const canvas = document.getElementById('marketGraph');
-          const ctx = canvas.getContext('2d');
           const dynamicAnalysis = document.getElementById('dynamic-analysis');
           
           // Initialize values
           let basePrice = 200;
           let demandFactor = 1.0;
           let supplyFactor = 1.0;
+          let timeCounter = 0;
+          
+          // Initialize charts
+          initializeMarketChart();
+          initializeTimeSeriesChart();
           
           // Update displayed values
           function updateDisplay() {
@@ -341,6 +715,9 @@
               
               // Update managerial implications
               updateManagerialImplications();
+              
+              // Update time series data
+              updateTimeSeriesData();
           }
           
           // Calculate demand quantity
@@ -359,7 +736,7 @@
           function findEquilibrium() {
               // Simple linear solution for equilibrium
               const equilibriumQuantity = (1000 * demandFactor + 500 * supplyFactor) / 
-                                         (1 + demandFactor/supplyFactor);
+                                       (1 + demandFactor/supplyFactor);
               const equilibriumPrice = (equilibriumQuantity + 500 * supplyFactor) / (5 * supplyFactor);
               
               return {
@@ -368,9 +745,37 @@
               };
           }
           
+          // Calculate economic surpluses
+          function calculateSurpluses(equilibrium) {
+              // Consumer surplus (area above price and below demand curve)
+              const maxWillingnessToPay = 1000 * demandFactor / (5 * demandFactor);
+              const consumerSurplusValue = 0.5 * (maxWillingnessToPay - equilibrium.price) * equilibrium.quantity;
+              
+              // Producer surplus (area below price and above supply curve)
+              const minWillingnessToSell = 500 * supplyFactor / (5 * supplyFactor);
+              const producerSurplusValue = 0.5 * (equilibrium.price - minWillingnessToSell) * equilibrium.quantity;
+              
+              return {
+                  consumer: Math.round(consumerSurplusValue),
+                  producer: Math.round(producerSurplusValue),
+                  total: Math.round(consumerSurplusValue + producerSurplusValue)
+              };
+          }
+          
+          // Calculate price elasticity of demand at equilibrium
+          function calculateElasticity(equilibrium) {
+              // Price elasticity of demand = (dQ/dP)*(P/Q)
+              const dQdP = -5 * demandFactor; // Slope of demand curve
+              const elasticityValue = dQdP * (equilibrium.price / equilibrium.quantity);
+              return Math.abs(elasticityValue).toFixed(2);
+          }
+          
           // Update managerial implications based on current values
           function updateManagerialImplications() {
               const equilibrium = findEquilibrium();
+              const surpluses = calculateSurpluses(equilibrium);
+              const elasticityValue = calculateElasticity(equilibrium);
+              
               let analysis = `<h4>Current Market Conditions</h4>`;
               
               // Price analysis
@@ -402,157 +807,377 @@
                               <strong>Negotiate better terms</strong> with suppliers or consider diversifying product offerings.</p>`;
               }
               
+              // Elasticity analysis
+              if (elasticityValue > 1) {
+                  analysis += `<p>Demand is elastic (${elasticityValue}). Consumers are price-sensitive. 
+                              <strong>Small price reductions</strong> may lead to disproportionate quantity increases.</p>`;
+              } else {
+                  analysis += `<p>Demand is inelastic (${elasticityValue}). Consumers are less price-sensitive. 
+                              <strong>Price increases</strong> may be possible with minimal quantity impact.</p>`;
+              }
+              
+              // Update surplus displays
+              consumerSurplus.textContent = `₹${surpluses.consumer}`;
+              producerSurplus.textContent = `₹${surpluses.producer}`;
+              totalSurplus.textContent = `₹${surpluses.total}`;
+              elasticity.textContent = elasticityValue;
+              
               dynamicAnalysis.innerHTML = analysis;
           }
           
-          // Draw the graph
-          function drawGraph() {
-              // Clear canvas
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // Initialize market chart
+          function initializeMarketChart() {
+              const canvas = document.getElementById('marketGraph');
+              const ctx = canvas.getContext('2d');
               
-              // Graph dimensions
-              const margin = 50;
-              const graphWidth = canvas.width - 2 * margin;
-              const graphHeight = canvas.height - 2 * margin;
-              
-              // Find max quantity for scaling
-              const maxQuantity = Math.max(
-                  calculateDemand(0),
-                  calculateSupply(2000)
-              );
-              
-              // Draw axes
-              ctx.beginPath();
-              ctx.moveTo(margin, margin);
-              ctx.lineTo(margin, canvas.height - margin);
-              ctx.lineTo(canvas.width - margin, canvas.height - margin);
-              ctx.strokeStyle = '#000';
-              ctx.lineWidth = 2;
-              ctx.stroke();
-              
-              // Draw axis labels
-              ctx.font = '14px Arial';
-              ctx.fillStyle = '#000';
-              ctx.textAlign = 'center';
-              ctx.fillText('Quantity', canvas.width / 2, canvas.height - 10);
-              ctx.save();
-              ctx.translate(20, canvas.height / 2);
-              ctx.rotate(-Math.PI / 2);
-              ctx.fillText('Price (₹)', 0, 0);
-              ctx.restore();
-              
-              // Draw tick marks and labels
-              // Price (Y-axis)
-              ctx.textAlign = 'right';
-              for (let p = 0; p <= 1000; p += 200) {
-                  const y = canvas.height - margin - (p / 1000) * graphHeight;
-                  ctx.beginPath();
-                  ctx.moveTo(margin - 5, y);
-                  ctx.lineTo(margin, y);
-                  ctx.stroke();
-                  ctx.fillText('₹' + p, margin - 10, y + 5);
-              }
-              
-              // Quantity (X-axis)
-              ctx.textAlign = 'center';
-              for (let q = 0; q <= maxQuantity; q += 200) {
-                  const x = margin + (q / maxQuantity) * graphWidth;
-                  ctx.beginPath();
-                  ctx.moveTo(x, canvas.height - margin);
-                  ctx.lineTo(x, canvas.height - margin + 5);
-                  ctx.stroke();
-                  ctx.fillText(q, x, canvas.height - margin + 20);
-              }
-              
-              // Draw demand curve (blue)
-              ctx.beginPath();
-              for (let p = 0; p <= 1000; p += 10) {
-                  const q = calculateDemand(p);
-                  const x = margin + (q / maxQuantity) * graphWidth;
-                  const y = canvas.height - margin - (p / 1000) * graphHeight;
-                  
-                  if (p === 0) {
-                      ctx.moveTo(x, y);
-                  } else {
-                      ctx.lineTo(x, y);
+              marketChart = new Chart(ctx, {
+                  type: 'line',
+                  data: {
+                      labels: Array.from({length: 21}, (_, i) => i * 50), // Quantity labels
+                      datasets: [
+                          {
+                              label: 'Demand',
+                              data: [],
+                              borderColor: 'rgba(54, 162, 235, 1)',
+                              backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                              borderWidth: 3,
+                              tension: 0.1,
+                              fill: false
+                          },
+                          {
+                              label: 'Supply',
+                              data: [],
+                              borderColor: 'rgba(255, 99, 132, 1)',
+                              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                              borderWidth: 3,
+                              tension: 0.1,
+                              fill: false
+                          },
+                          {
+                              label: 'Equilibrium',
+                              data: [],
+                              borderColor: 'rgba(75, 192, 192, 1)',
+                              backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                              borderWidth: 2,
+                              pointRadius: 6,
+                              pointHoverRadius: 8,
+                              showLine: false
+                          }
+                      ]
+                  },
+                  options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                          x: {
+                              title: {
+                                  display: true,
+                                  text: 'Quantity'
+                              }
+                          },
+                          y: {
+                              title: {
+                                  display: true,
+                                  text: 'Price (₹)'
+                              },
+                              min: 0,
+                              max: 1000
+                          }
+                      },
+                      plugins: {
+                          tooltip: {
+                              callbacks: {
+                                  label: function(context) {
+                                      let label = context.dataset.label || '';
+                                      if (label) {
+                                          label += ': ';
+                                      }
+                                      if (context.datasetIndex === 2) {
+                                          // Equilibrium point
+                                          const eq = findEquilibrium();
+                                          label += `Price: ₹${eq.price}, Quantity: ${eq.quantity}`;
+                                      } else {
+                                          label += context.parsed.y ? `₹${context.parsed.y}` : '';
+                                      }
+                                      return label;
+                                  }
+                              }
+                          },
+                          annotation: {
+                              annotations: {
+                                  equilibriumLineX: {
+                                      type: 'line',
+                                      yMin: 0,
+                                      yMax: 0,
+                                      xMin: 0,
+                                      xMax: 0,
+                                      borderColor: 'rgba(75, 192, 192, 0.5)',
+                                      borderWidth: 1,
+                                      borderDash: [6, 6]
+                                  },
+                                  equilibriumLineY: {
+                                      type: 'line',
+                                      xMin: 0,
+                                      xMax: 0,
+                                      yMin: 0,
+                                      yMax: 0,
+                                      borderColor: 'rgba(75, 192, 192, 0.5)',
+                                      borderWidth: 1,
+                                      borderDash: [6, 6]
+                                  }
+                              }
+                          }
+                      }
                   }
-              }
-              ctx.strokeStyle = '#3498db';
-              ctx.lineWidth = 3;
-              ctx.stroke();
-              ctx.fillText('Demand', margin + (calculateDemand(0) / maxQuantity) * graphWidth, 
-                          canvas.height - margin - (0 / 1000) * graphHeight - 10);
+              });
               
-              // Draw supply curve (red)
-              ctx.beginPath();
-              for (let p = 0; p <= 1000; p += 10) {
-                  const q = calculateSupply(p);
-                  const x = margin + (q / maxQuantity) * graphWidth;
-                  const y = canvas.height - margin - (p / 1000) * graphHeight;
-                  
-                  if (p === 0) {
-                      ctx.moveTo(x, y);
-                  } else {
-                      ctx.lineTo(x, y);
-                  }
-              }
-              ctx.strokeStyle = '#e74c3c';
-              ctx.lineWidth = 3;
-              ctx.stroke();
-              ctx.fillText('Supply', margin + (calculateSupply(1000) / maxQuantity) * graphWidth, 
-                          canvas.height - margin - (1000 / 1000) * graphHeight - 10);
-              
-              // Find and mark equilibrium point
+              updateMarketChart();
+          }
+          
+          // Update market chart data
+          function updateMarketChart() {
               const equilibrium = findEquilibrium();
+              
+              // Update demand curve data
+              const demandData = [];
+              for (let p = 0; p <= 1000; p += 50) {
+                  const q = calculateDemand(p);
+                  demandData.push({x: q, y: p});
+              }
+              
+              // Update supply curve data
+              const supplyData = [];
+              for (let p = 0; p <= 1000; p += 50) {
+                  const q = calculateSupply(p);
+                  supplyData.push({x: q, y: p});
+              }
+              
+              // Update equilibrium point
+              const equilibriumData = [{x: equilibrium.quantity, y: equilibrium.price}];
+              
+              // Update chart data
+              marketChart.data.datasets[0].data = demandData;
+              marketChart.data.datasets[1].data = supplyData;
+              marketChart.data.datasets[2].data = equilibriumData;
+              
+              // Update equilibrium annotation lines
+              marketChart.options.plugins.annotation.annotations.equilibriumLineX.xMin = equilibrium.quantity;
+              marketChart.options.plugins.annotation.annotations.equilibriumLineX.xMax = equilibrium.quantity;
+              marketChart.options.plugins.annotation.annotations.equilibriumLineX.yMax = equilibrium.price;
+              
+              marketChart.options.plugins.annotation.annotations.equilibriumLineY.yMin = equilibrium.price;
+              marketChart.options.plugins.annotation.annotations.equilibriumLineY.yMax = equilibrium.price;
+              marketChart.options.plugins.annotation.annotations.equilibriumLineY.xMax = equilibrium.quantity;
+              
+              marketChart.update();
+              
+              // Update equilibrium displays
               eqPrice.textContent = equilibrium.price;
               eqQuantity.textContent = equilibrium.quantity;
+          }
+          
+          // Initialize time series chart
+          function initializeTimeSeriesChart() {
+              const canvas = document.getElementById('timeSeriesGraph');
+              const ctx = canvas.getContext('2d');
               
-              const eqX = margin + (equilibrium.quantity / maxQuantity) * graphWidth;
-              const eqY = canvas.height - margin - (equilibrium.price / 1000) * graphHeight;
+              timeSeriesChart = new Chart(ctx, {
+                  type: 'line',
+                  data: {
+                      labels: timeData,
+                      datasets: [
+                          {
+                              label: 'Price (₹)',
+                              data: priceHistory,
+                              borderColor: 'rgba(255, 99, 132, 1)',
+                              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                              borderWidth: 2,
+                              yAxisID: 'y',
+                              tension: 0.3
+                          },
+                          {
+                              label: 'Quantity',
+                              data: quantityHistory,
+                              borderColor: 'rgba(54, 162, 235, 1)',
+                              backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                              borderWidth: 2,
+                              yAxisID: 'y1',
+                              tension: 0.3
+                          }
+                      ]
+                  },
+                  options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      interaction: {
+                          mode: 'index',
+                          intersect: false,
+                      },
+                      scales: {
+                          x: {
+                              title: {
+                                  display: true,
+                                  text: 'Time'
+                              }
+                          },
+                          y: {
+                              type: 'linear',
+                              display: true,
+                              position: 'left',
+                              title: {
+                                  display: true,
+                                  text: 'Price (₹)'
+                              }
+                          },
+                          y1: {
+                              type: 'linear',
+                              display: true,
+                              position: 'right',
+                              title: {
+                                  display: true,
+                                  text: 'Quantity'
+                              },
+                              grid: {
+                                  drawOnChartArea: false,
+                              }
+                          }
+                      },
+                      plugins: {
+                          tooltip: {
+                              callbacks: {
+                                  label: function(context) {
+                                      let label = context.dataset.label || '';
+                                      if (label) {
+                                          label += ': ';
+                                      }
+                                      if (context.datasetIndex === 0) {
+                                          label += '₹' + context.parsed.y;
+                                      } else {
+                                          label += context.parsed.y;
+                                      }
+                                      return label;
+                                  }
+                              }
+                          }
+                      }
+                  }
+              });
+          }
+          
+          // Update time series data
+          function updateTimeSeriesData() {
+              const equilibrium = findEquilibrium();
               
-              ctx.beginPath();
-              ctx.arc(eqX, eqY, 6, 0, Math.PI * 2);
-              ctx.fillStyle = '#2ecc71';
-              ctx.fill();
-              ctx.strokeStyle = '#27ae60';
-              ctx.stroke();
+              // Limit history to 20 data points
+              if (timeData.length >= 20) {
+                  timeData.shift();
+                  priceHistory.shift();
+                  quantityHistory.shift();
+                  scenarioHistory.shift();
+              }
               
-              // Draw dashed lines to axes
-              ctx.beginPath();
-              ctx.moveTo(eqX, eqY);
-              ctx.lineTo(eqX, canvas.height - margin);
-              ctx.moveTo(eqX, eqY);
-              ctx.lineTo(margin, eqY);
-              ctx.strokeStyle = '#27ae60';
-              ctx.lineWidth = 1;
-              ctx.setLineDash([5, 3]);
-              ctx.stroke();
-              ctx.setLineDash([]);
+              // Add current data
+              timeCounter++;
+              timeData.push(timeCounter);
+              priceHistory.push(equilibrium.price);
+              quantityHistory.push(equilibrium.quantity);
               
-              // Label equilibrium point
-              ctx.fillStyle = '#27ae60';
-              ctx.font = 'bold 14px Arial';
-              ctx.fillText(`Equilibrium (${equilibrium.quantity}, ₹${equilibrium.price})`, 
-                          eqX, eqY - 15);
+              // Determine scenario label
+              let scenario = 'Normal';
+              if (demandFactor > 1.2 && supplyFactor < 0.8) scenario = 'Demand↑ Supply↓';
+              else if (demandFactor > 1.2) scenario = 'Demand↑';
+              else if (supplyFactor < 0.8) scenario = 'Supply↓';
+              else if (demandFactor < 0.8 && supplyFactor > 1.2) scenario = 'Demand↓ Supply↑';
+              else if (demandFactor < 0.8) scenario = 'Demand↓';
+              else if (supplyFactor > 1.2) scenario = 'Supply↑';
+              
+              scenarioHistory.push(scenario);
+              
+              // Update chart
+              timeSeriesChart.data.labels = timeData;
+              timeSeriesChart.data.datasets[0].data = priceHistory;
+              timeSeriesChart.data.datasets[1].data = quantityHistory;
+              
+              // Add annotations for significant changes
+              if (timeData.length > 1) {
+                  const lastScenario = scenarioHistory[scenarioHistory.length - 2];
+                  if (scenario !== lastScenario) {
+                      timeSeriesChart.options.plugins.annotation = timeSeriesChart.options.plugins.annotation || {};
+                      timeSeriesChart.options.plugins.annotation.annotations = timeSeriesChart.options.plugins.annotation.annotations || {};
+                      
+                      timeSeriesChart.options.plugins.annotation.annotations[`scenarioChange${timeCounter}`] = {
+                          type: 'line',
+                          xMin: timeCounter - 0.5,
+                          xMax: timeCounter - 0.5,
+                          yMin: 0,
+                          yMax: Math.max(...priceHistory) * 1.1,
+                          borderColor: 'rgba(255, 159, 64, 0.7)',
+                          borderWidth: 2,
+                          borderDash: [6, 6],
+                          label: {
+                              content: scenario,
+                              enabled: true,
+                              position: 'top'
+                          }
+                      };
+                  }
+              }
+              
+              timeSeriesChart.update();
+          }
+          
+          // Apply predefined scenarios
+          function applyScenario(scenario) {
+              switch(scenario) {
+                  case 'demand-shock':
+                      demandFactorSlider.value = 1.3;
+                      demandFactor = 1.3;
+                      break;
+                  case 'supply-shock':
+                      supplyFactorSlider.value = 0.8;
+                      supplyFactor = 0.8;
+                      break;
+                  case 'recession':
+                      demandFactorSlider.value = 0.7;
+                      supplyFactorSlider.value = 1.1;
+                      demandFactor = 0.7;
+                      supplyFactor = 1.1;
+                      break;
+                  case 'boom':
+                      demandFactorSlider.value = 1.4;
+                      supplyFactorSlider.value = 0.9;
+                      demandFactor = 1.4;
+                      supplyFactor = 0.9;
+                      break;
+                  case 'case-study':
+                      demandFactorSlider.value = 1.3;
+                      supplyFactorSlider.value = 0.8;
+                      demandFactor = 1.3;
+                      supplyFactor = 0.8;
+                      break;
+              }
+              
+              updateDisplay();
+              updateMarketChart();
           }
           
           // Event listeners
           basePriceSlider.addEventListener('input', function() {
               basePrice = parseInt(this.value);
               updateDisplay();
-              drawGraph();
+              updateMarketChart();
           });
           
           demandFactorSlider.addEventListener('input', function() {
               demandFactor = parseFloat(this.value);
               updateDisplay();
-              drawGraph();
+              updateMarketChart();
           });
           
           supplyFactorSlider.addEventListener('input', function() {
               supplyFactor = parseFloat(this.value);
               updateDisplay();
-              drawGraph();
+              updateMarketChart();
           });
           
           resetBtn.addEventListener('click', function() {
@@ -565,12 +1190,12 @@
               supplyFactor = 1.0;
               
               updateDisplay();
-              drawGraph();
+              updateMarketChart();
           });
           
           // Initialize
           updateDisplay();
-          drawGraph();
+          updateMarketChart();
       }
       
       // Allow pressing Enter to submit password
