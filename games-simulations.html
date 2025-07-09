@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Managerial Economics Simulations - Dr. Chinmaya Behera</title>
+  <title>Price Elasticity Simulation - Dr. Chinmaya Behera</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
@@ -17,6 +17,7 @@
       background: var(--card-bg);
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
+      display: none;
     }
     
     .login-container {
@@ -169,6 +170,20 @@
       margin-top: 2rem;
     }
     
+    .case-study {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+    }
+    
+    .decision-panel {
+      background: #e8f4fd;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-top: 2rem;
+    }
+    
     @media (max-width: 768px) {
       .container {
         grid-template-columns: 1fr;
@@ -194,205 +209,758 @@
         <li><a href="teaching.html">Teaching</a></li>
         <li><a href="projects.html">Projects</a></li>
         <li><a href="skills.html">Skill</a></li>
-         <li><a href="games-simulations.html">Games</a></li>
+        <li><a href="games-simulations.html">Games</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
-</head>
-<body>
-  <div class="container">
-    <h1>Price Elasticity of Demand</h1>
-    <p>Shows how quantity demanded responds to price changes</p>
-    
-    <div class="controls">
-      <div class="slider-container">
-        <label for="priceChange">Price Change (%):</label>
-        <input type="range" id="priceChange" min="-50" max="50" value="0" step="5">
-        <div class="value-display">Current: <span id="priceChangeValue">0</span>%</div>
+  </header>
+
+  <main class="container-main">
+    <div class="login-container" id="loginSection">
+      <h1>Price Elasticity Simulation</h1>
+      <p>Please enter the password to access the simulation:</p>
+      <input type="password" id="passwordInput" placeholder="Enter password">
+      <button class="btn-primary" onclick="checkPassword()">Access Simulation</button>
+      <div class="error" id="errorMessage">Incorrect password. Please try again.</div>
+    </div>
+  
+    <div class="simulation-container" id="simulationSection">
+      <h1>Price Elasticity of Demand Analysis</h1>
+      
+      <div class="tab-container">
+          <div class="tab active" onclick="switchTab('simulation')">Simulation</div>
+          <div class="tab" onclick="switchTab('case-study')">Case Study</div>
+          <div class="tab" onclick="switchTab('decisions')">Managerial Decisions</div>
       </div>
       
-      <div class="slider-container">
-        <label for="elasticity">Elasticity Coefficient:</label>
-        <input type="range" id="elasticity" min="0" max="3" value="1" step="0.1">
-        <div class="value-display">Current: <span id="elasticityValue">1.0</span> (Elastic)</div>
+      <div id="simulation-tab" class="tab-content active">
+          <div class="container">
+              <div class="controls">
+                  <h2>Market Controls</h2>
+                  
+                  <div class="slider-container">
+                    <label for="priceChange">Price Change (%):</label>
+                    <input type="range" id="priceChange" min="-50" max="50" value="0" step="5">
+                    <div class="price-display">Current: <span id="priceChangeValue">0</span>%</div>
+                  </div>
+                  
+                  <div class="slider-container">
+                    <label for="elasticity">Elasticity Coefficient:</label>
+                    <input type="range" id="elasticity" min="0" max="3" value="1" step="0.1">
+                    <div class="price-display">Current: <span id="elasticityValue">1.0</span> (Elastic)</div>
+                  </div>
+                  
+                  <div class="scenario-buttons">
+                    <button class="scenario-btn" onclick="applyScenario('luxury')">Luxury Good (PED > 1)</button>
+                    <button class="scenario-btn" onclick="applyScenario('necessity')">Necessity (PED < 1)</button>
+                    <button class="scenario-btn" onclick="applyScenario('unitary')">Unitary Elastic (PED = 1)</button>
+                  </div>
+                  
+                  <button id="resetBtn" class="btn-secondary">Reset to Default</button>
+                  
+                  <div class="metrics-container">
+                    <div class="metric-card">
+                      <div class="metric-value" id="originalRevenue">₹500</div>
+                      <div class="metric-label">Original Revenue</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="metric-value" id="newRevenue">₹500</div>
+                      <div class="metric-label">New Revenue</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="metric-value" id="revenueChange">0%</div>
+                      <div class="metric-label">Revenue Change</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="metric-value" id="currentElasticity">1.0</div>
+                      <div class="metric-label">Price Elasticity</div>
+                    </div>
+                  </div>
+                  
+                  <div class="managerial-panel">
+                      <h3>Current Market Analysis</h3>
+                      <div id="dynamic-analysis">Adjust the sliders to see managerial implications...</div>
+                  </div>
+              </div>
+              
+              <div class="graph">
+                  <h2>Demand Curve Analysis</h2>
+                  <div class="graph-container">
+                    <canvas id="demandChart"></canvas>
+                  </div>
+                  <div class="time-series-container">
+                    <h3>Revenue Impact Over Time</h3>
+                    <div class="graph-container">
+                      <canvas id="revenueChart"></canvas>
+                    </div>
+                  </div>
+              </div>
+          </div>
       </div>
       
-      <button id="resetBtn">Reset to Default</button>
+      <div id="case-study-tab" class="tab-content">
+          <h2>Case Study: Pharmaceutical Pricing</h2>
+          
+          <div class="case-study">
+              <h4>Situation Analysis</h4>
+              <p>In 2022, a major pharmaceutical company faced a decision about pricing for a new diabetes medication. The drug had two key characteristics:</p>
+              <ul>
+                  <li>Essential treatment with few substitutes (inelastic demand)</li>
+                  <li>High development costs needing recovery</li>
+              </ul>
+              <p>The company conducted elasticity analysis showing PED of -0.3, indicating:</p>
+              <ul>
+                  <li>10% price increase would lead to only 3% quantity decrease</li>
+                  <li>Revenue would increase by approximately 6.7%</li>
+              </ul>
+          </div>
+          
+          <div class="case-study">
+              <h4>Managerial Decision</h4>
+              <p>The company decided to implement a 15% price increase based on:</p>
+              <ol>
+                  <li>Inelastic demand characteristics</li>
+                  <li>Projected revenue increase of ₹2.4 billion annually</li>
+                  <li>Limited impact on patient access due to insurance coverage</li>
+              </ol>
+              <div class="graph-container" style="height: 300px;">
+                <canvas id="pharmaChart"></canvas>
+              </div>
+          </div>
+          
+          <div class="case-study">
+              <h4>Outcome and Lessons</h4>
+              <p>Results after 12 months:</p>
+              <div class="metrics-container">
+                <div class="metric-card">
+                  <div class="metric-value">+14.2%</div>
+                  <div class="metric-label">Revenue Increase</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value">-4.3%</div>
+                  <div class="metric-label">Quantity Sold</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value">+22%</div>
+                  <div class="metric-label">Profit Margin</div>
+                </div>
+              </div>
+              <p><strong>Key Takeaways:</strong></p>
+              <ul>
+                  <li>Inelastic goods can sustain price increases with minimal volume impact</li>
+                  <li>Understanding PED is crucial for pricing strategy</li>
+                  <li>Ethical considerations are important for essential medicines</li>
+              </ul>
+          </div>
+          
+          <div class="managerial-panel">
+              <h3>Exercise: Apply to Your Simulation</h3>
+              <p>Try recreating this scenario in the simulation:</p>
+              <ol>
+                  <li>Set elasticity to 0.3 (necessity good)</li>
+                  <li>Increase price by 15%</li>
+                  <li>Observe the revenue impact compared to quantity change</li>
+              </ol>
+              <button class="btn-primary" onclick="applyScenario('pharma-case')">Apply Pharma Scenario</button>
+          </div>
+      </div>
+      
+      <div id="decisions-tab" class="tab-content">
+          <h2>Managerial Decision Framework</h2>
+          
+          <div class="implication">
+              <h4>1. Pricing Strategy Based on Elasticity</h4>
+              <p>Elasticity determines optimal pricing approach:</p>
+              <div class="graph-container" style="height: 250px;">
+                <canvas id="pricingStrategyChart"></canvas>
+              </div>
+              <p><strong>Decision Rule:</strong> For elastic goods (PED > 1), consider price reductions to increase revenue. For inelastic goods (PED < 1), price increases may boost revenue.</p>
+          </div>
+          
+          <div class="implication">
+              <h4>2. Market Segmentation</h4>
+              <p>Different segments may have different elasticities:</p>
+              <div class="graph-container" style="height: 250px;">
+                <canvas id="segmentationChart"></canvas>
+              </div>
+              <p><strong>Decision Rule:</strong> Implement differential pricing strategies for different customer segments based on their price sensitivity.</p>
+          </div>
+          
+          <div class="implication">
+              <h4>3. Product Positioning</h4>
+              <p>How product positioning affects elasticity:</p>
+              <div class="graph-container" style="height: 250px;">
+                <canvas id="positioningChart"></canvas>
+              </div>
+              <p><strong>Decision Rule:</strong> Invest in branding and differentiation to reduce price sensitivity for your products.</p>
+          </div>
+          
+          <div class="decision-panel">
+              <h3>Decision Support Tool</h3>
+              <p>Based on current elasticity (<span id="decisionElasticity">1.0</span>):</p>
+              <div id="decisionRecommendation">
+                <p>With unitary elasticity (PED = 1), price changes will not affect total revenue. Focus on cost optimization or demand shifting strategies.</p>
+              </div>
+              <div class="metrics-container">
+                <div class="metric-card">
+                  <div class="metric-value" id="optimalPriceChange">0%</div>
+                  <div class="metric-label">Recommended Price Change</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value" id="expectedRevenueImpact">0%</div>
+                  <div class="metric-label">Expected Revenue Impact</div>
+                </div>
+              </div>
+          </div>
+      </div>
     </div>
-    
-    <div class="chart-container">
-      <canvas id="demandChart"></canvas>
-    </div>
-    
-    <div class="elasticity-info">
-      <h3>Interpretation:</h3>
-      <p><strong>Elastic Demand (|PED| > 1):</strong> Quantity changes more than price (luxury goods)</p>
-      <p><strong>Unitary Elastic (|PED| = 1):</strong> Quantity changes equal to price change</p>
-      <p><strong>Inelastic Demand (|PED| < 1):</strong> Quantity changes less than price (necessities)</p>
-      <p id="currentInterpretation">Current elasticity: 1.0 (Elastic)</p>
-    </div>
-    
-    <div class="chart-container">
-      <canvas id="revenueChart"></canvas>
-    </div>
-  </div>
+  </main>
 
   <script>
-    // Initialize charts
-    const demandCtx = document.getElementById('demandChart').getContext('2d');
-    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-    
-    let demandChart = new Chart(demandCtx, {
-      type: 'line',
-      data: {
-        labels: Array.from({length: 11}, (_, i) => i * 10),
-        datasets: [{
-          label: 'Original Demand',
-          data: Array.from({length: 11}, (_, i) => 100 - i * 5),
-          borderColor: 'rgba(54, 162, 235, 1)',
-          backgroundColor: 'rgba(54, 162, 235, 0.1)',
-          borderWidth: 2,
-          tension: 0.1
-        },
-        {
-          label: 'New Demand',
-          data: Array.from({length: 11}, (_, i) => 100 - i * 5),
-          borderColor: 'rgba(255, 99, 132, 1)',
-          backgroundColor: 'rgba(255, 99, 132, 0.1)',
-          borderWidth: 2,
-          tension: 0.1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Quantity Demanded'
-            }
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Price (₹)'
-            },
-            min: 0,
-            max: 100
+      // Password protection
+      const CORRECT_PASSWORD = "economics123";
+      let demandChart, revenueChart, pharmaChart, pricingStrategyChart, segmentationChart, positioningChart;
+      let priceHistory = [], revenueHistory = [], timeData = [];
+      
+      function checkPassword() {
+          const enteredPassword = document.getElementById('passwordInput').value;
+          const errorMessage = document.getElementById('errorMessage');
+          const loginSection = document.getElementById('loginSection');
+          const simulationSection = document.getElementById('simulationSection');
+          
+          if (enteredPassword === CORRECT_PASSWORD) {
+              loginSection.style.display = 'none';
+              simulationSection.style.display = 'block';
+              errorMessage.style.display = 'none';
+              initializeSimulation();
+              initializeCaseStudyCharts();
+              initializeDecisionCharts();
+          } else {
+              errorMessage.style.display = 'block';
+              document.getElementById('passwordInput').value = '';
           }
-        }
       }
-    });
-    
-    let revenueChart = new Chart(revenueCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Original Revenue', 'New Revenue'],
-        datasets: [{
-          label: 'Total Revenue',
-          data: [500, 500],
-          backgroundColor: [
-            'rgba(54, 162, 235, 0.7)',
-            'rgba(255, 99, 132, 0.7)'
-          ]
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Revenue (₹)'
-            }
+      
+      // Tab switching
+      function switchTab(tabName) {
+          // Hide all tabs
+          document.querySelectorAll('.tab-content').forEach(tab => {
+              tab.classList.remove('active');
+          });
+          document.querySelectorAll('.tab').forEach(tab => {
+              tab.classList.remove('active');
+          });
+          
+          // Show selected tab
+          document.getElementById(tabName + '-tab').classList.add('active');
+          event.currentTarget.classList.add('active');
+          
+          // Update decision panel if on decisions tab
+          if (tabName === 'decisions') {
+              updateDecisionPanel();
           }
-        }
       }
-    });
-    
-    // Get DOM elements
-    const priceChangeSlider = document.getElementById('priceChange');
-    const priceChangeValue = document.getElementById('priceChangeValue');
-    const elasticitySlider = document.getElementById('elasticity');
-    const elasticityValue = document.getElementById('elasticityValue');
-    const currentInterpretation = document.getElementById('currentInterpretation');
-    const resetBtn = document.getElementById('resetBtn');
-    
-    // Initialize values
-    let priceChange = 0;
-    let elasticity = 1.0;
-    
-    // Update charts
-    function updateCharts() {
-      // Calculate new demand curve based on elasticity
-      const newDemandData = Array.from({length: 11}, (_, i) => {
-        const originalQty = 100 - i * 10;
-        const price = i * 10;
-        const newQty = originalQty * (1 + (elasticity * priceChange/100));
-        return Math.max(0, newQty);
+      
+      // Initialize simulation
+      function initializeSimulation() {
+          // Get DOM elements
+          const priceChangeSlider = document.getElementById('priceChange');
+          const priceChangeValue = document.getElementById('priceChangeValue');
+          const elasticitySlider = document.getElementById('elasticity');
+          const elasticityValue = document.getElementById('elasticityValue');
+          const originalRevenue = document.getElementById('originalRevenue');
+          const newRevenue = document.getElementById('newRevenue');
+          const revenueChange = document.getElementById('revenueChange');
+          const currentElasticity = document.getElementById('currentElasticity');
+          const resetBtn = document.getElementById('resetBtn');
+          const dynamicAnalysis = document.getElementById('dynamic-analysis');
+          
+          // Initialize values
+          let priceChange = 0;
+          let elasticity = 1.0;
+          
+          // Initialize charts
+          initializeDemandChart();
+          initializeRevenueChart();
+          
+          // Update displayed values
+          function updateDisplay() {
+              priceChangeValue.textContent = priceChange;
+              elasticityValue.textContent = elasticity.toFixed(1);
+              
+              // Update elasticity type display
+              if (elasticity > 1) {
+                  elasticityValue.textContent += " (Elastic)";
+              } else if (elasticity == 1) {
+                  elasticityValue.textContent += " (Unitary)";
+              } else {
+                  elasticityValue.textContent += " (Inelastic)";
+              }
+              
+              // Update managerial implications
+              updateManagerialImplications();
+              
+              // Update time series data
+              updateTimeSeriesData();
+              
+              // Update current elasticity display
+              currentElasticity.textContent = elasticity.toFixed(1);
+          }
+          
+          // Update managerial implications
+          function updateManagerialImplications() {
+              const originalRev = 500;
+              const newRev = originalRev * (1 + priceChange/100) * (1 - elasticity * priceChange/100);
+              const revChange = ((newRev - originalRev) / originalRev) * 100;
+              
+              originalRevenue.textContent = '₹' + originalRev.toFixed(0);
+              newRevenue.textContent = '₹' + newRev.toFixed(0);
+              revenueChange.textContent = revChange.toFixed(1) + '%';
+              
+              let analysis = `<h4>Current Market Conditions</h4>`;
+              
+              if (elasticity > 1) {
+                  analysis += `<p>Product has <strong>elastic demand</strong>. Quantity demanded is highly responsive to price changes.</p>`;
+                  if (priceChange > 0) {
+                      analysis += `<p><strong>Warning:</strong> Price increase is causing disproportionate quantity decrease, reducing revenue.</p>`;
+                  } else if (priceChange < 0) {
+                      analysis += `<p><strong>Opportunity:</strong> Price decrease is causing more than proportional quantity increase, boosting revenue.</p>`;
+                  }
+              } else if (elasticity < 1) {
+                  analysis += `<p>Product has <strong>inelastic demand</strong>. Quantity demanded is less responsive to price changes.</p>`;
+                  if (priceChange > 0) {
+                      analysis += `<p><strong>Opportunity:</strong> Price increase is causing less than proportional quantity decrease, increasing revenue.</p>`;
+                  } else if (priceChange < 0) {
+                      analysis += `<p><strong>Warning:</strong> Price decrease is not generating sufficient additional quantity to offset lower price.</p>`;
+                  }
+              } else {
+                  analysis += `<p>Product has <strong>unitary elasticity</strong>. Revenue remains constant regardless of price changes.</p>`;
+              }
+              
+              analysis += `<p>Current price change: ${priceChange}% → Revenue change: ${revChange.toFixed(1)}%</p>`;
+              
+              dynamicAnalysis.innerHTML = analysis;
+          }
+          
+          // Initialize demand chart
+          function initializeDemandChart() {
+              const canvas = document.getElementById('demandChart').getContext('2d');
+              
+              demandChart = new Chart(canvas, {
+                  type: 'line',
+                  data: {
+                      labels: Array.from({length: 11}, (_, i) => i * 10),
+                      datasets: [{
+                          label: 'Original Demand',
+                          data: Array.from({length: 11}, (_, i) => 100 - i * 5),
+                          borderColor: 'rgba(54, 162, 235, 1)',
+                          backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                          borderWidth: 2,
+                          tension: 0.1
+                      },
+                      {
+                          label: 'New Demand',
+                          data: Array.from({length: 11}, (_, i) => 100 - i * 5),
+                          borderColor: 'rgba(255, 99, 132, 1)',
+                          backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                          borderWidth: 2,
+                          tension: 0.1
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                          x: {
+                              title: {
+                                  display: true,
+                                  text: 'Quantity Demanded'
+                              }
+                          },
+                          y: {
+                              title: {
+                                  display: true,
+                                  text: 'Price (₹)'
+                              },
+                              min: 0,
+                              max: 100
+                          }
+                      }
+                  }
+              });
+              
+              updateDemandChart();
+          }
+          
+          // Update demand chart
+          function updateDemandChart() {
+              const newDemandData = Array.from({length: 11}, (_, i) => {
+                  const originalQty = 100 - i * 10;
+                  const newQty = originalQty * (1 + (elasticity * priceChange/100));
+                  return Math.max(0, newQty);
+              });
+              
+              demandChart.data.datasets[1].data = newDemandData;
+              demandChart.update();
+          }
+          
+          // Initialize revenue chart
+          function initializeRevenueChart() {
+              const canvas = document.getElementById('revenueChart').getContext('2d');
+              
+              revenueChart = new Chart(canvas, {
+                  type: 'line',
+                  data: {
+                      labels: [],
+                      datasets: [{
+                          label: 'Revenue',
+                          data: [],
+                          borderColor: 'rgba(75, 192, 192, 1)',
+                          backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                          borderWidth: 3,
+                          tension: 0.1,
+                          fill: true
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                          x: {
+                              title: {
+                                  display: true,
+                                  text: 'Time Period'
+                              }
+                          },
+                          y: {
+                              title: {
+                                  display: true,
+                                  text: 'Revenue (₹)'
+                              },
+                              min: 0
+                          }
+                      }
+                  }
+              });
+          }
+          
+          // Update time series data
+          function updateTimeSeriesData() {
+              const originalRev = 500;
+              const newRev = originalRev * (1 + priceChange/100) * (1 - elasticity * priceChange/100);
+              
+              // Limit history to 10 data points
+              if (timeData.length >= 10) {
+                  timeData.shift();
+                  revenueHistory.shift();
+                  priceHistory.shift();
+              }
+              
+              // Add current data
+              const timeLabel = 'T' + (timeData.length + 1);
+              timeData.push(timeLabel);
+              revenueHistory.push(newRev);
+              priceHistory.push(priceChange);
+              
+              // Update chart
+              revenueChart.data.labels = timeData;
+              revenueChart.data.datasets[0].data = revenueHistory;
+              revenueChart.update();
+          }
+          
+          // Apply predefined scenarios
+          function applyScenario(scenario) {
+              switch(scenario) {
+                  case 'luxury':
+                      elasticitySlider.value = 1.8;
+                      elasticity = 1.8;
+                      break;
+                  case 'necessity':
+                      elasticitySlider.value = 0.3;
+                      elasticity = 0.3;
+                      break;
+                  case 'unitary':
+                      elasticitySlider.value = 1.0;
+                      elasticity = 1.0;
+                      break;
+                  case 'pharma-case':
+                      elasticitySlider.value = 0.3;
+                      priceChangeSlider.value = 15;
+                      elasticity = 0.3;
+                      priceChange = 15;
+                      break;
+              }
+              
+              updateDisplay();
+              updateDemandChart();
+          }
+          
+          // Event listeners
+          priceChangeSlider.addEventListener('input', function() {
+              priceChange = parseInt(this.value);
+              updateDisplay();
+              updateDemandChart();
+          });
+          
+          elasticitySlider.addEventListener('input', function() {
+              elasticity = parseFloat(this.value);
+              updateDisplay();
+              updateDemandChart();
+          });
+          
+          resetBtn.addEventListener('click', function() {
+              priceChangeSlider.value = 0;
+              elasticitySlider.value = 1.0;
+              priceChange = 0;
+              elasticity = 1.0;
+              timeData = [];
+              revenueHistory = [];
+              priceHistory = [];
+              updateDisplay();
+              updateDemandChart();
+              revenueChart.data.labels = [];
+              revenueChart.data.datasets[0].data = [];
+              revenueChart.update();
+          });
+          
+          // Initial update
+          updateDisplay();
+      }
+      
+      // Initialize case study charts
+      function initializeCaseStudyCharts() {
+          // Pharma case study chart
+          const pharmaCtx = document.getElementById('pharmaChart').getContext('2d');
+          
+          pharmaChart = new Chart(pharmaCtx, {
+              type: 'bar',
+              data: {
+                  labels: ['Before Price Increase', 'After Price Increase'],
+                  datasets: [{
+                      label: 'Revenue (₹ Billion)',
+                      data: [18.2, 20.8],
+                      backgroundColor: [
+                          'rgba(54, 162, 235, 0.7)',
+                          'rgba(255, 99, 132, 0.7)'
+                      ]
+                  },
+                  {
+                      label: 'Quantity (Million Units)',
+                      data: [12.4, 11.87],
+                      backgroundColor: [
+                          'rgba(54, 162, 235, 0.4)',
+                          'rgba(255, 99, 132, 0.4)'
+                      ],
+                      type: 'line',
+                      yAxisID: 'y1'
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                      y: {
+                          title: {
+                              display: true,
+                              text: 'Revenue (₹ Billion)'
+                          },
+                          beginAtZero: true
+                      },
+                      y1: {
+                          position: 'right',
+                          title: {
+                              display: true,
+                              text: 'Quantity (Million Units)'
+                          },
+                          beginAtZero: true,
+                          grid: {
+                              drawOnChartArea: false
+                          }
+                      }
+                  }
+              }
+          });
+      }
+      
+      // Initialize decision charts
+      function initializeDecisionCharts() {
+          // Pricing strategy chart
+          const pricingCtx = document.getElementById('pricingStrategyChart').getContext('2d');
+          
+          pricingStrategyChart = new Chart(pricingCtx, {
+              type: 'bar',
+              data: {
+                  labels: ['Elastic (PED > 1)', 'Unitary (PED = 1)', 'Inelastic (PED < 1)'],
+                  datasets: [{
+                      label: 'Optimal Price Change',
+                      data: [-10, 0, +10],
+                      backgroundColor: [
+                          'rgba(255, 99, 132, 0.7)',
+                          'rgba(54, 162, 235, 0.7)',
+                          'rgba(75, 192, 192, 0.7)'
+                      ]
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                      y: {
+                          title: {
+                              display: true,
+                              text: 'Recommended Price Change (%)'
+                          }
+                      }
+                  }
+              }
+          });
+          
+          // Segmentation chart
+          const segmentationCtx = document.getElementById('segmentationChart').getContext('2d');
+          
+          segmentationChart = new Chart(segmentationCtx, {
+              type: 'radar',
+              data: {
+                  labels: ['Budget Consumers', 'Middle Market', 'Premium Segment'],
+                  datasets: [{
+                      label: 'Price Elasticity',
+                      data: [1.8, 1.2, 0.5],
+                      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                      borderColor: 'rgba(54, 162, 235, 1)'
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                      r: {
+                          angleLines: {
+                              display: true
+                          },
+                          suggestedMin: 0,
+                          suggestedMax: 2
+                      }
+                  }
+              }
+          });
+          
+          // Positioning chart
+          const positioningCtx = document.getElementById('positioningChart').getContext('2d');
+          
+          positioningChart = new Chart(positioningCtx, {
+              type: 'scatter',
+              data: {
+                  datasets: [{
+                      label: 'Commodity',
+                      data: [{x:1,y:1.8}],
+                      backgroundColor: 'rgba(255, 99, 132, 1)'
+                  },
+                  {
+                      label: 'Branded',
+                      data: [{x:2,y:1.2}],
+                      backgroundColor: 'rgba(54, 162, 235, 1)'
+                  },
+                  {
+                      label: 'Premium',
+                      data: [{x:3,y:0.6}],
+                      backgroundColor: 'rgba(75, 192, 192, 1)'
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                      x: {
+                          title: {
+                              display: true,
+                              text: 'Product Positioning'
+                          },
+                          min: 0,
+                          max: 4
+                      },
+                      y: {
+                          title: {
+                              display: true,
+                              text: 'Price Elasticity'
+                          },
+                          min: 0,
+                          max: 2
+                      }
+                  }
+              }
+          });
+      }
+      
+      // Update decision panel
+      function updateDecisionPanel() {
+          const elasticity = parseFloat(document.getElementById('elasticity').value);
+          const decisionElasticity = document.getElementById('decisionElasticity');
+          const decisionRecommendation = document.getElementById('decisionRecommendation');
+          const optimalPriceChange = document.getElementById('optimalPriceChange');
+          const expectedRevenueImpact = document.getElementById('expectedRevenueImpact');
+          
+          decisionElasticity.textContent = elasticity.toFixed(1);
+          
+          let recommendation, priceChange, revenueImpact;
+          
+          if (elasticity > 1.5) {
+              recommendation = `<p>Product has <strong>highly elastic demand</strong>. Consider:</p>
+                              <ul>
+                                  <li>Price reductions to increase market share</li>
+                                  <li>Bundle pricing strategies</li>
+                                  <li>Volume discounts to encourage larger purchases</li>
+                              </ul>`;
+              priceChange = "-15% to -20%";
+              revenueImpact = "+10% to +25%";
+          } else if (elasticity > 1) {
+              recommendation = `<p>Product has <strong>elastic demand</strong>. Consider:</p>
+                              <ul>
+                                  <li>Modest price reductions</li>
+                                  <li>Promotional pricing</li>
+                                  <li>Loyalty programs to increase volume</li>
+                              </ul>`;
+              priceChange = "-5% to -10%";
+              revenueImpact = "+2% to +8%";
+          } else if (elasticity == 1) {
+              recommendation = `<p>Product has <strong>unitary elasticity</strong>. Consider:</p>
+                              <ul>
+                                  <li>Maintaining current pricing</li>
+                                  <li>Cost optimization strategies</li>
+                                  <li>Non-price competition (quality, service)</li>
+                              </ul>`;
+              priceChange = "0%";
+              revenueImpact = "0%";
+          } else if (elasticity > 0.5) {
+              recommendation = `<p>Product has <strong>moderately inelastic demand</strong>. Consider:</p>
+                              <ul>
+                                  <li>Small price increases</li>
+                                  <li>Value-added features to justify higher prices</li>
+                                  <li>Segmented pricing strategies</li>
+                              </ul>`;
+              priceChange = "+5% to +10%";
+              revenueImpact = "+3% to +7%";
+          } else {
+              recommendation = `<p>Product has <strong>highly inelastic demand</strong>. Consider:</p>
+                              <ul>
+                                  <li>Significant price increases</li>
+                                  <li>Premium positioning</li>
+                                  <li>Subscription or membership models</li>
+                              </ul>`;
+              priceChange = "+15% to +25%";
+              revenueImpact = "+12% to +20%";
+          }
+          
+          decisionRecommendation.innerHTML = recommendation;
+          optimalPriceChange.textContent = priceChange;
+          expectedRevenueImpact.textContent = revenueImpact;
+      }
+      
+      // Allow pressing Enter to submit password
+      document.getElementById('passwordInput').addEventListener('keyup', function(event) {
+          if (event.key === 'Enter') {
+              checkPassword();
+          }
       });
-      
-      // Update demand chart
-      demandChart.data.datasets[1].data = newDemandData;
-      demandChart.update();
-      
-      // Calculate revenues
-      const originalRevenue = 50 * 50; // Midpoint of original curve
-      const newRevenue = (50 * (1 + priceChange/100)) * (50 * (1 - elasticity * priceChange/100));
-      
-      // Update revenue chart
-      revenueChart.data.datasets[0].data = [originalRevenue, newRevenue];
-      revenueChart.update();
-      
-      // Update interpretation
-      let interpretation;
-      if (elasticity > 1) interpretation = "Elastic";
-      else if (elasticity == 1) interpretation = "Unitary Elastic";
-      else interpretation = "Inelastic";
-      
-      currentInterpretation.textContent = `Current elasticity: ${elasticity.toFixed(1)} (${interpretation})`;
-    }
-    
-    // Event listeners
-    priceChangeSlider.addEventListener('input', function() {
-      priceChange = parseInt(this.value);
-      priceChangeValue.textContent = priceChange;
-      updateCharts();
-    });
-    
-    elasticitySlider.addEventListener('input', function() {
-      elasticity = parseFloat(this.value);
-      elasticityValue.textContent = elasticity.toFixed(1);
-      
-      // Update elasticity type display
-      if (elasticity > 1) {
-        elasticityValue.textContent += " (Elastic)";
-      } else if (elasticity == 1) {
-        elasticityValue.textContent += " (Unitary)";
-      } else {
-        elasticityValue.textContent += " (Inelastic)";
-      }
-      
-      updateCharts();
-    });
-    
-    resetBtn.addEventListener('click', function() {
-      priceChangeSlider.value = 0;
-      elasticitySlider.value = 1.0;
-      priceChange = 0;
-      elasticity = 1.0;
-      priceChangeValue.textContent = "0";
-      elasticityValue.textContent = "1.0 (Elastic)";
-      updateCharts();
-    });
-    
-    // Initial update
-    updateCharts();
   </script>
 </body>
 </html>
-  
-         
