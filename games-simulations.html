@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enhanced Indifference Curve Simulation</title>
+  <title>Optimal Consumption Bundle Simulator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -35,40 +35,6 @@
       text-align: center;
     }
     
-    .password-input {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    
-    .password-input input {
-      padding: 0.8rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-    }
-    
-    .password-input button {
-      padding: 0.8rem;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s;
-    }
-    
-    .password-input button:hover {
-      background-color: var(--secondary-color);
-    }
-    
-    .password-error {
-      color: var(--accent-color);
-      margin-top: 1rem;
-      display: none;
-    }
-    
     .main-container {
       max-width: 1400px;
       margin: 2rem auto;
@@ -76,402 +42,208 @@
       display: none; /* Initially hidden */
     }
     
-    .simulation-bar {
+    .simulation-header {
       background: var(--dark-color);
       color: white;
       padding: 1rem;
       border-radius: var(--border-radius);
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .simulation-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-    
-    .simulation-controls {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .nav-tabs .nav-link {
-      color: var(--dark-color);
-      font-weight: 600;
-      border: none;
-      padding: 1rem 2rem;
-    }
-    
-    .nav-tabs .nav-link.active {
-      color: var(--primary-color);
-      border-bottom: 3px solid var(--primary-color);
-      background: transparent;
-    }
-    
-    .tab-content {
-      padding: 2rem 0;
-    }
-    
-    .simulation-box {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 2rem;
       margin-bottom: 2rem;
-      border-left: 4px solid var(--primary-color);
-      transition: transform 0.3s ease;
-    }
-    
-    .simulation-box:hover {
-      transform: translateY(-5px);
-    }
-    
-    .simulation-header {
-      color: var(--primary-color);
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #eee;
+      text-align: center;
     }
     
     .control-panel {
       background: rgba(52, 152, 219, 0.05);
       padding: 1.5rem;
       border-radius: var(--border-radius);
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .graph-container {
+      height: 450px;
+      position: relative;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+    }
+    
+    .result-highlight {
+      background: rgba(46, 204, 113, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin-top: 1.5rem;
     }
     
     .form-range::-webkit-slider-thumb {
       background: var(--primary-color);
     }
     
-    .form-label {
-      font-weight: 500;
-      color: var(--dark-color);
+    .utility-badge {
+      background: var(--primary-color);
+      color: white;
     }
     
-    .value-display {
-      font-weight: bold;
-      color: var(--primary-color);
-      font-size: 1.1rem;
-    }
-    
-    .graph-container {
-      height: 400px;
-      position: relative;
-    }
-    
-    .results-panel {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    
-    .result-box {
-      background: var(--light-color);
-      padding: 1rem;
-      border-radius: var(--border-radius);
-      text-align: center;
-    }
-    
-    .result-label {
-      font-size: 0.9rem;
-      color: var(--dark-color);
-    }
-    
-    .result-value {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: var(--primary-color);
-    }
-    
-    .case-study {
-      background: rgba(46, 204, 113, 0.05);
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-      margin-bottom: 1.5rem;
-      border-left: 4px solid var(--secondary-color);
-    }
-    
-    .implication-card {
-      background: rgba(231, 76, 60, 0.05);
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-      margin-bottom: 1.5rem;
-      border-left: 4px solid var(--accent-color);
-    }
-    
-    @media (max-width: 992px) {
-      .results-panel {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .simulation-bar {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-    }
-    
-    @media (max-width: 576px) {
-      .results-panel {
-        grid-template-columns: 1fr;
-      }
-      
-      .nav-tabs .nav-link {
-        padding: 0.8rem 1rem;
-        font-size: 0.9rem;
+    @media (max-width: 768px) {
+      .graph-container {
+        height: 350px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Password Protection Section -->
+  <!-- Password Protection -->
   <div id="passwordSection" class="password-container">
-    <h2>Enter Password to Access Simulation</h2>
-    <div class="password-input">
-      <input type="password" id="passwordInput" placeholder="Enter your password">
-      <button onclick="checkPassword()">Access Simulation</button>
+    <h2><i class="bi bi-lock"></i> Access Simulation</h2>
+    <div class="mb-3">
+      <input type="password" id="passwordInput" class="form-control" placeholder="Enter password">
     </div>
-    <div id="passwordError" class="password-error">
+    <button class="btn btn-primary w-100" onclick="checkPassword()">
+      <i class="bi bi-unlock"></i> Unlock
+    </button>
+    <div id="passwordError" class="text-danger mt-2" style="display: none;">
       Incorrect password. Please try again.
     </div>
   </div>
 
+  <!-- Main Simulation Content -->
   <div class="main-container" id="mainContent">
-    <div class="simulation-bar">
-      <div class="simulation-title">
-        <i class="bi bi-graph-up"></i> Indifference Curve Simulation
+    <div class="simulation-header">
+      <h2><i class="bi bi-graph-up"></i> Optimal Consumption Bundle Finder</h2>
+      <p class="mb-0">Find the utility-maximizing combination of goods given preferences and budget constraints</p>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="control-panel">
+          <h4 class="mb-4"><i class="bi bi-sliders"></i> Simulation Controls</h4>
+          
+          <div class="mb-3">
+            <label for="utilityType" class="form-label">Utility Function</label>
+            <select class="form-select" id="utilityType" onchange="updateSimulation()">
+              <option value="cobbDouglas">Cobb-Douglas</option>
+              <option value="perfectSubstitutes">Perfect Substitutes</option>
+              <option value="perfectComplements">Perfect Complements</option>
+              <option value="quasilinear">Quasilinear</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="goodXPreference" class="form-label">Preference for Good X (α)</label>
+            <input type="range" class="form-range" id="goodXPreference" min="0.1" max="0.9" step="0.1" value="0.5" oninput="updateSimulation()">
+            <div class="d-flex justify-content-between">
+              <small>0.1</small>
+              <span class="fw-bold" id="goodXValue">0.5</span>
+              <small>0.9</small>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="incomeLevel" class="form-label">Income (₹)</label>
+            <input type="range" class="form-range" id="incomeLevel" min="100" max="1000" step="50" value="500" oninput="updateSimulation()">
+            <div class="d-flex justify-content-between">
+              <small>₹100</small>
+              <span class="fw-bold" id="incomeValue">₹500</span>
+              <small>₹1000</small>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <label for="priceX" class="form-label">Price of X (₹)</label>
+              <input type="range" class="form-range" id="priceX" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
+              <span class="fw-bold" id="priceXValue">₹10</span>
+            </div>
+            <div class="col-md-6">
+              <label for="priceY" class="form-label">Price of Y (₹)</label>
+              <input type="range" class="form-range" id="priceY" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
+              <span class="fw-bold" id="priceYValue">₹10</span>
+            </div>
+          </div>
+          
+          <button class="btn btn-outline-primary mt-3 w-100" onclick="resetSimulation()">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
+          </button>
+        </div>
+        
+        <div class="result-highlight">
+          <h5><i class="bi bi-check-circle"></i> Optimal Solution</h5>
+          <div class="row">
+            <div class="col-6">
+              <div class="mb-2">
+                <span class="badge utility-badge">X</span>
+                <span id="optimalX" class="fw-bold ms-2">25.0</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-2">
+                <span class="badge utility-badge">Y</span>
+                <span id="optimalY" class="fw-bold ms-2">25.0</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-2">
+                <span class="badge bg-secondary">Utility</span>
+                <span id="totalUtility" class="fw-bold ms-2">50.0</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-2">
+                <span class="badge bg-secondary">MRS</span>
+                <span id="mrsValue" class="fw-bold ms-2">1.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="simulation-controls">
-        <button class="btn btn-sm btn-outline-light" onclick="resetIndifferenceCurve()">
-          <i class="bi bi-arrow-counterclockwise"></i> Reset
-        </button>
-        <button class="btn btn-sm btn-outline-light" onclick="toggleFullscreen()">
-          <i class="bi bi-fullscreen"></i> Fullscreen
-        </button>
+      
+      <div class="col-lg-7">
+        <div class="graph-container">
+          <canvas id="consumptionChart"></canvas>
+        </div>
+        <div class="mt-3 text-center">
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" onclick="zoomIn()">
+              <i class="bi bi-zoom-in"></i> Zoom In
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="zoomOut()">
+              <i class="bi bi-zoom-out"></i> Zoom Out
+            </button>
+            <button class="btn btn-sm btn-outline-primary" onclick="toggleFullscreen()">
+              <i class="bi bi-fullscreen"></i> Fullscreen
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     
-    <h1 class="text-center mb-4" style="color: var(--primary-color);">Indifference Curve Analysis</h1>
-    <p class="text-center mb-5">Explore consumer choice theory with improved indifference curves and practical applications</p>
-    
-    <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="simulation-tab" data-bs-toggle="tab" data-bs-target="#simulation" type="button" role="tab">Simulation</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="cases-tab" data-bs-toggle="tab" data-bs-target="#cases" type="button" role="tab">Case Studies</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="implications-tab" data-bs-toggle="tab" data-bs-target="#implications" type="button" role="tab">Managerial Implications</button>
-      </li>
-    </ul>
-    
-    <div class="tab-content" id="myTabContent">
-      <!-- Simulation Tab -->
-      <div class="tab-pane fade show active" id="simulation" role="tabpanel">
-        <div class="simulation-box">
-          <h2 class="simulation-header">Indifference Curve Simulation</h2>
-          
-          <div class="row">
-            <div class="col-md-5">
-              <div class="control-panel">
-                <div class="mb-4">
-                  <label for="utilityType" class="form-label">Utility Function Type</label>
-                  <select class="form-select" id="utilityType" onchange="updateIndifferenceCurve()">
-                    <option value="quasilinear">Quasilinear (Convex)</option>
-                    <option value="perfectSubstitutes">Perfect Substitutes</option>
-                    <option value="perfectComplements">Perfect Complements</option>
-                    <option value="ces">CES Utility</option>
-                  </select>
-                </div>
-                
-                <div class="mb-4">
-                  <label for="goodXPreference" class="form-label">Preference for Good X</label>
-                  <input type="range" class="form-range" id="goodXPreference" min="0.1" max="1" step="0.1" value="0.5" oninput="updateIndifferenceCurve()">
-                  <div class="value-display" id="goodXValue">0.5</div>
-                </div>
-                
-                <div class="mb-4">
-                  <label for="goodYPreference" class="form-label">Preference for Good Y</label>
-                  <input type="range" class="form-range" id="goodYPreference" min="0.1" max="1" step="0.1" value="0.5" oninput="updateIndifferenceCurve()">
-                  <div class="value-display" id="goodYValue">0.5</div>
-                </div>
-                
-                <div class="mb-4">
-                  <label for="incomeLevel" class="form-label">Income (₹)</label>
-                  <input type="range" class="form-range" id="incomeLevel" min="100" max="1000" step="50" value="500" oninput="updateIndifferenceCurve()">
-                  <div class="value-display" id="incomeValue">₹500</div>
-                </div>
-                
-                <div class="mb-4">
-                  <label for="priceX" class="form-label">Price of Good X (₹)</label>
-                  <input type="range" class="form-range" id="priceX" min="5" max="50" step="1" value="10" oninput="updateIndifferenceCurve()">
-                  <div class="value-display" id="priceXValue">₹10</div>
-                </div>
-                
-                <div class="mb-4">
-                  <label for="priceY" class="form-label">Price of Good Y (₹)</label>
-                  <input type="range" class="form-range" id="priceY" min="5" max="50" step="1" value="10" oninput="updateIndifferenceCurve()">
-                  <div class="value-display" id="priceYValue">₹10</div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-7">
-              <div class="graph-container">
-                <canvas id="indifferenceChart"></canvas>
-              </div>
-              
-              <div class="results-panel">
-                <div class="result-box">
-                  <div class="result-label">Optimal X</div>
-                  <div class="result-value" id="optimalX">25.0</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Optimal Y</div>
-                  <div class="result-value" id="optimalY">25.0</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Total Utility</div>
-                  <div class="result-value" id="totalUtility">50.0</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">MRS at Bundle</div>
-                  <div class="result-value" id="mrsValue">1.00</div>
-                </div>
-              </div>
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-primary text-white">
+            <i class="bi bi-lightbulb"></i> Economic Interpretation
+          </div>
+          <div class="card-body">
+            <h5 id="solutionType">Cobb-Douglas Solution</h5>
+            <p id="solutionExplanation">The optimal bundle occurs where the budget line is tangent to the highest possible indifference curve. The Marginal Rate of Substitution (MRS) equals the price ratio at this point.</p>
+            <div id="mathSolution" class="mt-3 p-2 bg-light rounded">
+              <code id="mathNotation">α = 0.5, MRS = Px/Py = 1.0</code>
             </div>
           </div>
         </div>
       </div>
-      
-      <!-- Case Studies Tab -->
-      <div class="tab-pane fade" id="cases" role="tabpanel">
-        <div class="simulation-box">
-          <h2 class="simulation-header">Case Studies</h2>
-          
-          <div class="case-study">
-            <h4><i class="bi bi-phone"></i> Smartphone vs Laptop Purchase Decision</h4>
-            <p>Analyze how consumers allocate budget between high-end smartphones and laptops when prices change.</p>
-            
-            <div class="utility-results" id="techCaseResults" style="display: none;">
-              <div class="results-panel">
-                <div class="result-box">
-                  <div class="result-label">Smartphones</div>
-                  <div class="result-value">1.2</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Laptops</div>
-                  <div class="result-value">0.4</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Total Utility</div>
-                  <div class="result-value">0.82</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">MRS</div>
-                  <div class="result-value">2.5</div>
-                </div>
-              </div>
-            </div>
-            
-            <button class="btn btn-outline-success mt-3" onclick="loadCaseStudy('tech')">Load This Case</button>
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-success text-white">
+            <i class="bi bi-briefcase"></i> Managerial Insight
           </div>
-          
-          <div class="case-study">
-            <h4><i class="bi bi-cup-hot"></i> Coffee Shop Bundle Pricing</h4>
-            <p>Determine optimal bundle pricing for coffee and pastries based on consumer preferences.</p>
-            
-            <div class="utility-results" id="coffeeCaseResults" style="display: none;">
-              <div class="results-panel">
-                <div class="result-box">
-                  <div class="result-label">Coffees</div>
-                  <div class="result-value">4.2</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Pastries</div>
-                  <div class="result-value">1.1</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Total Utility</div>
-                  <div class="result-value">3.4</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">MRS</div>
-                  <div class="result-value">0.5</div>
-                </div>
-              </div>
-            </div>
-            
-            <button class="btn btn-outline-success mt-3" onclick="loadCaseStudy('coffee')">Load This Case</button>
-          </div>
-          
-          <div class="case-study">
-            <h4><i class="bi bi-bus-front"></i> Transportation Mode Choice</h4>
-            <p>Analyze commuter choices between ride-hailing and public transportation with changing prices.</p>
-            
-            <div class="utility-results" id="transportCaseResults" style="display: none;">
-              <div class="results-panel">
-                <div class="result-box">
-                  <div class="result-label">Ride-hails</div>
-                  <div class="result-value">4.0</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Transit Trips</div>
-                  <div class="result-value">30.0</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">Total Utility</div>
-                  <div class="result-value">12.6</div>
-                </div>
-                <div class="result-box">
-                  <div class="result-label">MRS</div>
-                  <div class="result-value">0.2</div>
-                </div>
-              </div>
-            </div>
-            
-            <button class="btn btn-outline-success mt-3" onclick="loadCaseStudy('transport')">Load This Case</button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Managerial Implications Tab -->
-      <div class="tab-pane fade" id="implications" role="tabpanel">
-        <div class="simulation-box">
-          <h2 class="simulation-header">Managerial Implications</h2>
-          
-          <div class="implication-card">
-            <h4><i class="bi bi-tags"></i> Pricing Strategy Optimization</h4>
-            <p>The shape of indifference curves reveals how consumers trade off between products. Steeper curves indicate consumers are willing to pay more for small improvements, allowing for premium pricing strategies.</p>
-            <p class="mt-2"><strong>Application:</strong> When indifference curves are convex (MRS decreasing), bundle pricing often works better than individual pricing.</p>
-          </div>
-          
-          <div class="implication-card">
-            <h4><i class="bi bi-graph-up"></i> Product Portfolio Management</h4>
-            <p>Different curve shapes suggest different product positioning strategies. Perfect substitutes need competitive pricing, while complements benefit from bundling.</p>
-            <p class="mt-2"><strong>Application:</strong> For products with L-shaped indifference curves (perfect complements), ensure balanced quality improvements across components.</p>
-          </div>
-          
-          <div class="implication-card">
-            <h4><i class="bi bi-people"></i> Market Segmentation</h4>
-            <p>Different consumer segments will have differently shaped indifference curves. Identifying these allows for targeted product development and marketing.</p>
-            <p class="mt-2"><strong>Application:</strong> Luxury buyers typically have convex indifference curves, while budget buyers often have near-linear curves.</p>
-          </div>
-          
-          <div class="implication-card">
-            <h4><i class="bi bi-megaphone"></i> Promotional Effectiveness</h4>
-            <p>Temporary price changes rotate the budget constraint. The impact depends on the curvature of indifference curves at that point.</p>
-            <p class="mt-2"><strong>Application:</strong> "Buy one get one half off" promotions work best when MRS is around 1 at the promotion point.</p>
-          </div>
-          
-          <div class="implication-card">
-            <h4><i class="bi bi-lightbulb"></i> Innovation Strategy</h4>
-            <p>Products that create new indifference curves (by satisfying unmet needs) can command premium pricing and create new markets.</p>
-            <p class="mt-2"><strong>Application:</strong> Smartphones created new curves between communication, internet, and entertainment that didn't exist with feature phones.</p>
+          <div class="card-body">
+            <h5>Business Application</h5>
+            <p id="managerialInsight">Understanding consumer optimal choices helps businesses set prices, create product bundles, and design marketing strategies that align with how consumers make trade-offs between goods.</p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item" id="pricingInsight">Pricing: Set prices where MRS equals your cost ratio</li>
+              <li class="list-group-item" id="productInsight">Product Design: Create bundles that match consumer preferences</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -481,50 +253,30 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // Password Protection
-    const CORRECT_PASSWORD = "economics123"; // Change this to your desired password
+    const CORRECT_PASSWORD = "economics123";
     
     function checkPassword() {
       const enteredPassword = document.getElementById('passwordInput').value;
-      const errorElement = document.getElementById('passwordError');
-      
       if (enteredPassword === CORRECT_PASSWORD) {
         document.getElementById('passwordSection').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
-        initIndifferenceChart();
+        initChart();
       } else {
-        errorElement.style.display = 'block';
+        document.getElementById('passwordError').style.display = 'block';
         document.getElementById('passwordInput').value = '';
         document.getElementById('passwordInput').focus();
       }
     }
     
-    // Allow pressing Enter to submit password
-    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        checkPassword();
-      }
-    });
-
-    // Fullscreen toggle
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-          console.error(`Error attempting to enable fullscreen: ${err.message}`);
-        });
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    }
-
     // Initialize chart
-    let indifferenceChart;
+    let consumptionChart;
+    let currentMaxX = 60;
+    let currentMaxY = 60;
     
-    function initIndifferenceChart() {
-      const ctx = document.getElementById('indifferenceChart').getContext('2d');
+    function initChart() {
+      const ctx = document.getElementById('consumptionChart').getContext('2d');
       
-      indifferenceChart = new Chart(ctx, {
+      consumptionChart = new Chart(ctx, {
         type: 'scatter',
         data: {
           datasets: [
@@ -555,6 +307,17 @@
               backgroundColor: 'rgba(46, 204, 113, 1)',
               pointRadius: 8,
               pointHoverRadius: 10
+            },
+            {
+              label: 'Tangent Line',
+              data: [],
+              borderColor: 'rgba(155, 89, 182, 1)',
+              backgroundColor: 'rgba(155, 89, 182, 0.1)',
+              showLine: true,
+              fill: false,
+              pointRadius: 0,
+              borderWidth: 1.5,
+              borderDash: [3, 3]
             }
           ]
         },
@@ -565,25 +328,33 @@
             y: {
               title: {
                 display: true,
-                text: 'Quantity of Good Y'
+                text: 'Quantity of Good Y',
+                font: {
+                  weight: 'bold'
+                }
               },
               beginAtZero: true,
-              min: 0
+              min: 0,
+              max: currentMaxY
             },
             x: {
               title: {
                 display: true,
-                text: 'Quantity of Good X'
+                text: 'Quantity of Good X',
+                font: {
+                  weight: 'bold'
+                }
               },
               beginAtZero: true,
-              min: 0
+              min: 0,
+              max: currentMaxX
             }
           },
           plugins: {
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  return `X: ${context.parsed.x.toFixed(1)}, Y: ${context.parsed.y.toFixed(1)}`;
+                  return `${context.dataset.label}: (${context.parsed.x.toFixed(1)}, ${context.parsed.y.toFixed(1)})`;
                 }
               }
             },
@@ -591,43 +362,24 @@
               position: 'top',
               labels: {
                 boxWidth: 12,
-                padding: 20
+                padding: 20,
+                font: {
+                  size: 12
+                }
               }
             }
           }
         }
       });
       
-      updateIndifferenceCurve();
+      updateSimulation();
     }
     
-    // Utility functions
-    const utilityFunctions = {
-      quasilinear: function(x, y, alpha) {
-        // U(x,y) = α√x + y (convex indifference curves)
-        return alpha * Math.sqrt(x) + y;
-      },
-      perfectSubstitutes: function(x, y, alpha, beta) {
-        // U(x,y) = αx + βy (linear indifference curves)
-        return alpha * x + beta * y;
-      },
-      perfectComplements: function(x, y, alpha) {
-        // U(x,y) = min(αx, y) (L-shaped indifference curves)
-        return Math.min(alpha * x, y);
-      },
-      ces: function(x, y, alpha, rho) {
-        // Constant Elasticity of Substitution: U(x,y) = (αx^ρ + y^ρ)^(1/ρ)
-        // Using ρ = 0.5 for this example
-        return Math.pow(alpha * Math.pow(x, 0.5) + Math.pow(y, 0.5), 1/0.5);
-      }
-    };
-    
-    function updateIndifferenceCurve() {
+    // Update simulation based on controls
+    function updateSimulation() {
       // Update displayed values
       document.getElementById('goodXValue').textContent = 
         document.getElementById('goodXPreference').value;
-      document.getElementById('goodYValue').textContent = 
-        document.getElementById('goodYPreference').value;
       document.getElementById('incomeValue').textContent = 
         '₹' + document.getElementById('incomeLevel').value;
       document.getElementById('priceXValue').textContent = 
@@ -638,160 +390,214 @@
       // Get current parameters
       const utilityType = document.getElementById('utilityType').value;
       const alpha = parseFloat(document.getElementById('goodXPreference').value);
-      const beta = parseFloat(document.getElementById('goodYPreference').value);
       const income = parseFloat(document.getElementById('incomeLevel').value);
       const priceX = parseFloat(document.getElementById('priceX').value);
       const priceY = parseFloat(document.getElementById('priceY').value);
       
-      // Calculate optimal bundle based on utility function type
+      // Calculate optimal bundle
       let optimalX, optimalY, utilityAtOptimum, mrs;
+      let solutionText, explanationText, mathText, pricingText, productText;
       
       switch(utilityType) {
-        case 'quasilinear':
-          optimalX = Math.pow((alpha * priceY) / (2 * priceX), 2);
-          optimalY = (income - priceX * optimalX) / priceY;
-          utilityAtOptimum = utilityFunctions.quasilinear(optimalX, optimalY, alpha);
-          mrs = alpha / (2 * Math.sqrt(optimalX));
+        case 'cobbDouglas':
+          // U(X,Y) = X^α Y^(1-α)
+          optimalX = (alpha * income) / priceX;
+          optimalY = ((1 - alpha) * income) / priceY;
+          utilityAtOptimum = Math.pow(optimalX, alpha) * Math.pow(optimalY, 1 - alpha);
+          mrs = (alpha * optimalY) / ((1 - alpha) * optimalX);
+          
+          solutionText = "Cobb-Douglas Solution";
+          explanationText = "The optimal bundle occurs where the budget line is tangent to the convex indifference curve. The MRS equals the price ratio (Px/Py) at this point, showing the optimal tradeoff between goods.";
+          mathText = `α = ${alpha.toFixed(2)}, X* = (αI)/Px = ${optimalX.toFixed(1)}, Y* = ((1-α)I)/Py = ${optimalY.toFixed(1)}`;
+          pricingText = "For Cobb-Douglas preferences, consumers always spend a fixed proportion of income on each good. Price changes affect quantities but not expenditure shares.";
+          productText = "Bundle products according to typical expenditure shares (e.g., if α=0.6, expect 60% of budget spent on X).";
           break;
           
         case 'perfectSubstitutes':
-          if (alpha/priceX > beta/priceY) {
+          // U(X,Y) = αX + Y
+          if (alpha/priceX > 1/priceY) {
             optimalX = income / priceX;
             optimalY = 0;
           } else {
             optimalX = 0;
             optimalY = income / priceY;
           }
-          utilityAtOptimum = utilityFunctions.perfectSubstitutes(optimalX, optimalY, alpha, beta);
-          mrs = alpha / beta;
+          utilityAtOptimum = alpha * optimalX + optimalY;
+          mrs = alpha;
+          
+          solutionText = "Perfect Substitutes Solution";
+          explanationText = "With perfect substitutes, consumers will spend all their income on the good that gives more utility per rupee. The solution is always a corner solution.";
+          mathText = `MRS = α = ${alpha.toFixed(2)}, Buy only ${optimalX > 0 ? 'X' : 'Y'} since ${(alpha/priceX).toFixed(2)} ${optimalX > 0 ? '>' : '<'} ${(1/priceY).toFixed(2)}`;
+          pricingText = "Small price differences cause complete switching between goods. Maintain competitive pricing or differentiate products.";
+          productText = "Differentiation is key - make products imperfect substitutes through branding or features.";
           break;
           
         case 'perfectComplements':
+          // U(X,Y) = min(αX, Y)
           optimalX = income / (priceX + alpha * priceY);
           optimalY = alpha * optimalX;
-          utilityAtOptimum = utilityFunctions.perfectComplements(optimalX, optimalY, alpha);
-          mrs = Infinity; // Undefined at the kink point
+          utilityAtOptimum = Math.min(alpha * optimalX, optimalY);
+          mrs = "∞ (undefined)";
+          
+          solutionText = "Perfect Complements Solution";
+          explanationText = "With perfect complements, goods are consumed in fixed proportions. The optimal bundle lies at the corner of the L-shaped indifference curves.";
+          mathText = `Fixed proportion: Y = ${alpha.toFixed(2)}X, X* = I/(Px + ${alpha.toFixed(2)}Py) = ${optimalX.toFixed(1)}`;
+          pricingText = "Pricing should consider the bundle value. Consumers evaluate the total cost of the required combination.";
+          productText = "Sell as bundles or ensure compatible products are available at the right ratio.";
           break;
           
-        case 'ces':
-          // For CES with ρ = 0.5
-          optimalX = income / (priceX + priceY * Math.pow(alpha, -2));
-          optimalY = Math.pow(alpha, -2) * optimalX;
-          utilityAtOptimum = utilityFunctions.ces(optimalX, optimalY, alpha, 0.5);
-          mrs = Math.pow(alpha, 2) * Math.sqrt(optimalY / optimalX);
+        case 'quasilinear':
+          // U(X,Y) = α√X + Y
+          optimalX = Math.pow((alpha * priceY) / (2 * priceX), 2);
+          optimalY = (income - priceX * optimalX) / priceY;
+          utilityAtOptimum = alpha * Math.sqrt(optimalX) + optimalY;
+          mrs = alpha / (2 * Math.sqrt(optimalX));
+          
+          solutionText = "Quasilinear Solution";
+          explanationText = "With quasilinear utility, consumption of X doesn't depend on income (for sufficiently high income). The solution shows constant consumption of X regardless of income changes.";
+          mathText = `X* = (αPy/2Px)² = ${optimalX.toFixed(1)}, Y* = (I - PxX*)/Py = ${optimalY.toFixed(1)}`;
+          pricingText = "Pricing of X affects its consumption non-linearly. Income changes only affect consumption of Y.";
+          productText = "Position X as a 'necessity' with stable demand, while Y is income-sensitive.";
           break;
       }
       
       // Generate indifference curve data
       const curvePoints = [];
-      const maxX = income / priceX * 1.5;
-      const maxY = income / priceY * 1.5;
-      
-      for (let x = 0.1; x <= maxX; x += maxX/20) {
-        let y;
-        
-        switch(utilityType) {
-          case 'quasilinear':
-            y = utilityAtOptimum - alpha * Math.sqrt(x);
-            break;
-          case 'perfectSubstitutes':
-            y = (utilityAtOptimum - alpha * x) / beta;
-            break;
-          case 'perfectComplements':
-            y = utilityAtOptimum / alpha;
-            break;
-          case 'ces':
-            y = Math.pow(Math.pow(utilityAtOptimum, 0.5) - alpha * Math.pow(x, 0.5), 2);
-            break;
-        }
-        
-        if (y >= 0) {
-          curvePoints.push({x, y});
-        }
-      }
-      
-      // Generate budget line data
       const budgetPoints = [
         {x: 0, y: income/priceY},
         {x: income/priceX, y: 0}
       ];
       
+      // Different curve generation for each utility type
+      switch(utilityType) {
+        case 'cobbDouglas':
+          for (let x = 0.1; x <= income/priceX * 2; x += income/priceX/10) {
+            const y = Math.pow(utilityAtOptimum / Math.pow(x, alpha), 1/(1 - alpha));
+            if (y >= 0) curvePoints.push({x, y});
+          }
+          break;
+          
+        case 'perfectSubstitutes':
+          for (let x = 0; x <= income/priceX * 1.2; x += income/priceX/5) {
+            const y = (utilityAtOptimum - alpha * x);
+            if (y >= 0) curvePoints.push({x, y});
+          }
+          break;
+          
+        case 'perfectComplements':
+          // Vertical part
+          for (let y = 0; y <= alpha * income/priceX; y += income/priceY/10) {
+            curvePoints.push({x: y/alpha, y});
+          }
+          // Horizontal part
+          for (let x = optimalX; x <= income/priceX * 1.2; x += income/priceX/10) {
+            curvePoints.push({x, y: alpha * optimalX});
+          }
+          break;
+          
+        case 'quasilinear':
+          for (let x = 0.1; x <= income/priceX * 2; x += income/priceX/10) {
+            const y = utilityAtOptimum - alpha * Math.sqrt(x);
+            if (y >= 0) curvePoints.push({x, y});
+          }
+          break;
+      }
+      
+      // Generate tangent line (showing MRS = price ratio)
+      const tangentPoints = [];
+      if (utilityType !== 'perfectSubstitutes' && utilityType !== 'perfectComplements') {
+        const slope = -priceX/priceY;
+        const tangentLength = Math.min(income/priceX, income/priceY) / 3;
+        
+        tangentPoints.push(
+          {x: optimalX - tangentLength, y: optimalY - slope * tangentLength},
+          {x: optimalX + tangentLength, y: optimalY + slope * tangentLength}
+        );
+      }
+      
       // Update chart data
-      indifferenceChart.data.datasets[0].data = curvePoints;
-      indifferenceChart.data.datasets[1].data = budgetPoints;
-      indifferenceChart.data.datasets[2].data = [{x: optimalX, y: optimalY}];
+      consumptionChart.data.datasets[0].data = curvePoints;
+      consumptionChart.data.datasets[1].data = budgetPoints;
+      consumptionChart.data.datasets[2].data = [{x: optimalX, y: optimalY}];
+      consumptionChart.data.datasets[3].data = tangentPoints;
       
-      // Adjust axes based on data
-      indifferenceChart.options.scales.x.max = Math.max(maxX, optimalX * 1.2);
-      indifferenceChart.options.scales.y.max = Math.max(maxY, optimalY * 1.2);
+      // Adjust axes
+      currentMaxX = Math.max(income/priceX * 1.2, optimalX * 1.5, 50);
+      currentMaxY = Math.max(income/priceY * 1.2, optimalY * 1.5, 50);
       
-      indifferenceChart.update();
+      consumptionChart.options.scales.x.max = currentMaxX;
+      consumptionChart.options.scales.y.max = currentMaxY;
+      
+      consumptionChart.update();
       
       // Update results display
       document.getElementById('optimalX').textContent = optimalX.toFixed(1);
       document.getElementById('optimalY').textContent = optimalY.toFixed(1);
       document.getElementById('totalUtility').textContent = utilityAtOptimum.toFixed(2);
-      document.getElementById('mrsValue').textContent = isFinite(mrs) ? mrs.toFixed(2) : "∞";
+      document.getElementById('mrsValue').textContent = typeof mrs === 'string' ? mrs : mrs.toFixed(2);
+      
+      // Update explanations
+      document.getElementById('solutionType').textContent = solutionText;
+      document.getElementById('solutionExplanation').textContent = explanationText;
+      document.getElementById('mathNotation').textContent = mathText;
+      document.getElementById('pricingInsight').textContent = pricingText;
+      document.getElementById('productInsight').textContent = productText;
+      document.getElementById('managerialInsight').textContent = 
+        "The optimal solution shows how consumers balance preferences and budget constraints. " + 
+        (utilityType === 'perfectSubstitutes' ? "With perfect substitutes, small price differences lead to complete switching between goods." : 
+         utilityType === 'perfectComplements' ? "With perfect complements, products are consumed in fixed ratios regardless of price changes." :
+         "The convex shape of indifference curves shows diminishing marginal rate of substitution between goods.");
     }
     
-    function resetIndifferenceCurve() {
-      document.getElementById('utilityType').value = 'quasilinear';
+    // Reset simulation to defaults
+    function resetSimulation() {
+      document.getElementById('utilityType').value = 'cobbDouglas';
       document.getElementById('goodXPreference').value = 0.5;
-      document.getElementById('goodYPreference').value = 0.5;
       document.getElementById('incomeLevel').value = 500;
       document.getElementById('priceX').value = 10;
       document.getElementById('priceY').value = 10;
       
-      updateIndifferenceCurve();
+      updateSimulation();
     }
     
-    function loadCaseStudy(caseType) {
-      // Hide all case results
-      document.querySelectorAll('.utility-results').forEach(el => {
-        el.style.display = 'none';
-      });
-      
-      switch(caseType) {
-        case 'tech':
-          document.getElementById('utilityType').value = 'ces';
-          document.getElementById('goodXPreference').value = 0.6;
-          document.getElementById('goodYPreference').value = 0.4;
-          document.getElementById('incomeLevel').value = 50000;
-          document.getElementById('priceX').value = 25000;
-          document.getElementById('priceY').value = 50000;
-          document.getElementById('techCaseResults').style.display = 'block';
-          break;
-          
-        case 'coffee':
-          document.getElementById('utilityType').value = 'quasilinear';
-          document.getElementById('goodXPreference').value = 0.7;
-          document.getElementById('goodYPreference').value = 0.3;
-          document.getElementById('incomeLevel').value = 300;
-          document.getElementById('priceX').value = 50;
-          document.getElementById('priceY').value = 80;
-          document.getElementById('coffeeCaseResults').style.display = 'block';
-          break;
-          
-        case 'transport':
-          document.getElementById('utilityType').value = 'perfectSubstitutes';
-          document.getElementById('goodXPreference').value = 0.4;
-          document.getElementById('goodYPreference').value = 0.6;
-          document.getElementById('incomeLevel').value = 2000;
-          document.getElementById('priceX').value = 200;
-          document.getElementById('priceY').value = 40;
-          document.getElementById('transportCaseResults').style.display = 'block';
-          break;
+    // View controls
+    function zoomIn() {
+      currentMaxX *= 0.8;
+      currentMaxY *= 0.8;
+      consumptionChart.options.scales.x.max = currentMaxX;
+      consumptionChart.options.scales.y.max = currentMaxY;
+      consumptionChart.update();
+    }
+    
+    function zoomOut() {
+      currentMaxX *= 1.2;
+      currentMaxY *= 1.2;
+      consumptionChart.options.scales.x.max = currentMaxX;
+      consumptionChart.options.scales.y.max = currentMaxY;
+      consumptionChart.update();
+    }
+    
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
       }
-      
-      updateIndifferenceCurve();
-      
-      // Switch to simulation tab
-      const tab = new bootstrap.Tab(document.querySelector('#simulation-tab'));
-      tab.show();
     }
     
-    // Focus password input on load
+    // Initialize password input focus
     document.getElementById('passwordInput').focus();
+    
+    // Allow Enter key for password submission
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        checkPassword();
+      }
+    });
   </script>
 </body>
 </html>
