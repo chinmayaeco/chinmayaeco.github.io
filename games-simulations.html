@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Optimal Consumption Bundle Simulator</title>
+  <title>Indifference Curve Analysis</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -42,20 +42,40 @@
       display: none; /* Initially hidden */
     }
     
-    .simulation-header {
+    .container-header {
       background: var(--dark-color);
       color: white;
-      padding: 1rem;
+      padding: 1.5rem;
       border-radius: var(--border-radius);
       margin-bottom: 2rem;
       text-align: center;
+    }
+    
+    .content-container {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-top: 4px solid var(--primary-color);
+    }
+    
+    .simulation-panel {
+      border-top-color: var(--primary-color);
+    }
+    
+    .case-panel {
+      border-top-color: var(--secondary-color);
+    }
+    
+    .implication-panel {
+      border-top-color: var(--accent-color);
     }
     
     .control-panel {
       background: rgba(52, 152, 219, 0.05);
       padding: 1.5rem;
       border-radius: var(--border-radius);
-      border-left: 4px solid var(--primary-color);
     }
     
     .graph-container {
@@ -67,21 +87,41 @@
       padding: 1rem;
     }
     
-    .result-highlight {
-      background: rgba(46, 204, 113, 0.1);
+    .result-card {
+      background: rgba(46, 204, 113, 0.05);
       border-left: 4px solid var(--secondary-color);
       padding: 1rem;
       border-radius: var(--border-radius);
-      margin-top: 1.5rem;
     }
     
-    .form-range::-webkit-slider-thumb {
-      background: var(--primary-color);
+    .case-card {
+      background: rgba(52, 152, 219, 0.05);
+      border-left: 4px solid var(--primary-color);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s;
     }
     
-    .utility-badge {
-      background: var(--primary-color);
-      color: white;
+    .case-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .implication-card {
+      background: rgba(231, 76, 60, 0.05);
+      border-left: 4px solid var(--accent-color);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s;
+    }
+    
+    .implication-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .nav-pills .nav-link.active {
+      background-color: var(--primary-color);
     }
     
     @media (max-width: 768px) {
@@ -106,144 +146,256 @@
     </div>
   </div>
 
-  <!-- Main Simulation Content -->
+  <!-- Main Content -->
   <div class="main-container" id="mainContent">
-    <div class="simulation-header">
-      <h2><i class="bi bi-graph-up"></i> Optimal Consumption Bundle Finder</h2>
-      <p class="mb-0">Find the utility-maximizing combination of goods given preferences and budget constraints</p>
+    <div class="container-header">
+      <h2><i class="bi bi-graph-up"></i> Indifference Curve Analysis</h2>
+      <p class="mb-0">Explore consumer choice theory through simulation, case studies, and managerial insights</p>
     </div>
     
-    <div class="row">
-      <div class="col-lg-5">
-        <div class="control-panel">
-          <h4 class="mb-4"><i class="bi bi-sliders"></i> Simulation Controls</h4>
+    <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-simulation-tab" data-bs-toggle="pill" data-bs-target="#pills-simulation" type="button" role="tab">
+          <i class="bi bi-sliders"></i> Simulation
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-cases-tab" data-bs-toggle="pill" data-bs-target="#pills-cases" type="button" role="tab">
+          <i class="bi bi-journal-text"></i> Case Studies
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-implications-tab" data-bs-toggle="pill" data-bs-target="#pills-implications" type="button" role="tab">
+          <i class="bi bi-lightbulb"></i> Managerial Insights
+        </button>
+      </li>
+    </ul>
+    
+    <div class="tab-content" id="pills-tabContent">
+      <!-- Simulation Container -->
+      <div class="tab-pane fade show active" id="pills-simulation" role="tabpanel">
+        <div class="content-container simulation-panel">
+          <h3><i class="bi bi-sliders"></i> Interactive Simulation</h3>
+          <p class="text-muted">Adjust parameters to explore how consumers make optimal choices between two goods</p>
           
-          <div class="mb-3">
-            <label for="utilityType" class="form-label">Utility Function</label>
-            <select class="form-select" id="utilityType" onchange="updateSimulation()">
-              <option value="cobbDouglas">Cobb-Douglas</option>
-              <option value="perfectSubstitutes">Perfect Substitutes</option>
-              <option value="perfectComplements">Perfect Complements</option>
-              <option value="quasilinear">Quasilinear</option>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label for="goodXPreference" class="form-label">Preference for Good X (α)</label>
-            <input type="range" class="form-range" id="goodXPreference" min="0.1" max="0.9" step="0.1" value="0.5" oninput="updateSimulation()">
-            <div class="d-flex justify-content-between">
-              <small>0.1</small>
-              <span class="fw-bold" id="goodXValue">0.5</span>
-              <small>0.9</small>
-            </div>
-          </div>
-          
-          <div class="mb-3">
-            <label for="incomeLevel" class="form-label">Income (₹)</label>
-            <input type="range" class="form-range" id="incomeLevel" min="100" max="1000" step="50" value="500" oninput="updateSimulation()">
-            <div class="d-flex justify-content-between">
-              <small>₹100</small>
-              <span class="fw-bold" id="incomeValue">₹500</span>
-              <small>₹1000</small>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <label for="priceX" class="form-label">Price of X (₹)</label>
-              <input type="range" class="form-range" id="priceX" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
-              <span class="fw-bold" id="priceXValue">₹10</span>
-            </div>
-            <div class="col-md-6">
-              <label for="priceY" class="form-label">Price of Y (₹)</label>
-              <input type="range" class="form-range" id="priceY" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
-              <span class="fw-bold" id="priceYValue">₹10</span>
-            </div>
-          </div>
-          
-          <button class="btn btn-outline-primary mt-3 w-100" onclick="resetSimulation()">
-            <i class="bi bi-arrow-counterclockwise"></i> Reset
-          </button>
-        </div>
-        
-        <div class="result-highlight">
-          <h5><i class="bi bi-check-circle"></i> Optimal Solution</h5>
-          <div class="row">
-            <div class="col-6">
-              <div class="mb-2">
-                <span class="badge utility-badge">X</span>
-                <span id="optimalX" class="fw-bold ms-2">25.0</span>
+          <div class="row mt-4">
+            <div class="col-lg-5">
+              <div class="control-panel">
+                <div class="mb-3">
+                  <label for="utilityType" class="form-label">Utility Function</label>
+                  <select class="form-select" id="utilityType" onchange="updateSimulation()">
+                    <option value="cobbDouglas">Cobb-Douglas</option>
+                    <option value="perfectSubstitutes">Perfect Substitutes</option>
+                    <option value="perfectComplements">Perfect Complements</option>
+                    <option value="quasilinear">Quasilinear</option>
+                  </select>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="goodXPreference" class="form-label">Preference for Good X (α)</label>
+                  <input type="range" class="form-range" id="goodXPreference" min="0.1" max="0.9" step="0.1" value="0.5" oninput="updateSimulation()">
+                  <div class="d-flex justify-content-between">
+                    <small>0.1</small>
+                    <span class="fw-bold" id="goodXValue">0.5</span>
+                    <small>0.9</small>
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="incomeLevel" class="form-label">Income (₹)</label>
+                  <input type="range" class="form-range" id="incomeLevel" min="100" max="1000" step="50" value="500" oninput="updateSimulation()">
+                  <div class="d-flex justify-content-between">
+                    <small>₹100</small>
+                    <span class="fw-bold" id="incomeValue">₹500</span>
+                    <small>₹1000</small>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="priceX" class="form-label">Price of X (₹)</label>
+                    <input type="range" class="form-range" id="priceX" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
+                    <span class="fw-bold" id="priceXValue">₹10</span>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="priceY" class="form-label">Price of Y (₹)</label>
+                    <input type="range" class="form-range" id="priceY" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
+                    <span class="fw-bold" id="priceYValue">₹10</span>
+                  </div>
+                </div>
+                
+                <button class="btn btn-outline-primary mt-3 w-100" onclick="resetSimulation()">
+                  <i class="bi bi-arrow-counterclockwise"></i> Reset
+                </button>
+              </div>
+              
+              <div class="result-card mt-3">
+                <h5><i class="bi bi-check-circle"></i> Optimal Solution</h5>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-2">
+                      <span class="badge bg-primary">X</span>
+                      <span id="optimalX" class="fw-bold ms-2">25.0</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-2">
+                      <span class="badge bg-primary">Y</span>
+                      <span id="optimalY" class="fw-bold ms-2">25.0</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-2">
+                      <span class="badge bg-secondary">Utility</span>
+                      <span id="totalUtility" class="fw-bold ms-2">50.0</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-2">
+                      <span class="badge bg-secondary">MRS</span>
+                      <span id="mrsValue" class="fw-bold ms-2">1.00</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-6">
-              <div class="mb-2">
-                <span class="badge utility-badge">Y</span>
-                <span id="optimalY" class="fw-bold ms-2">25.0</span>
+            
+            <div class="col-lg-7">
+              <div class="graph-container">
+                <canvas id="consumptionChart"></canvas>
               </div>
-            </div>
-            <div class="col-6">
-              <div class="mb-2">
-                <span class="badge bg-secondary">Utility</span>
-                <span id="totalUtility" class="fw-bold ms-2">50.0</span>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="mb-2">
-                <span class="badge bg-secondary">MRS</span>
-                <span id="mrsValue" class="fw-bold ms-2">1.00</span>
+              <div class="mt-3 text-center">
+                <button class="btn btn-sm btn-outline-secondary" onclick="zoomIn()">
+                  <i class="bi bi-zoom-in"></i> Zoom In
+                </button>
+                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="zoomOut()">
+                  <i class="bi bi-zoom-out"></i> Zoom Out
+                </button>
+                <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleFullscreen()">
+                  <i class="bi bi-fullscreen"></i> Fullscreen
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <div class="col-lg-7">
-        <div class="graph-container">
-          <canvas id="consumptionChart"></canvas>
-        </div>
-        <div class="mt-3 text-center">
-          <div class="btn-group">
-            <button class="btn btn-sm btn-outline-secondary" onclick="zoomIn()">
-              <i class="bi bi-zoom-in"></i> Zoom In
-            </button>
-            <button class="btn btn-sm btn-outline-secondary" onclick="zoomOut()">
-              <i class="bi bi-zoom-out"></i> Zoom Out
-            </button>
-            <button class="btn btn-sm btn-outline-primary" onclick="toggleFullscreen()">
-              <i class="bi bi-fullscreen"></i> Fullscreen
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <div class="card h-100">
-          <div class="card-header bg-primary text-white">
-            <i class="bi bi-lightbulb"></i> Economic Interpretation
-          </div>
-          <div class="card-body">
-            <h5 id="solutionType">Cobb-Douglas Solution</h5>
-            <p id="solutionExplanation">The optimal bundle occurs where the budget line is tangent to the highest possible indifference curve. The Marginal Rate of Substitution (MRS) equals the price ratio at this point.</p>
-            <div id="mathSolution" class="mt-3 p-2 bg-light rounded">
-              <code id="mathNotation">α = 0.5, MRS = Px/Py = 1.0</code>
+      <!-- Case Studies Container -->
+      <div class="tab-pane fade" id="pills-cases" role="tabpanel">
+        <div class="content-container case-panel">
+          <h3><i class="bi bi-journal-text"></i> Case Studies</h3>
+          <p class="text-muted">Real-world applications of indifference curve analysis</p>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="case-card">
+                <h5><i class="bi bi-phone"></i> Tech Bundle Pricing</h5>
+                <p>A consumer must choose between smartphones (₹25,000) and laptops (₹50,000) with a ₹100,000 budget.</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <span class="badge bg-primary">Cobb-Douglas</span>
+                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('tech')">
+                    <i class="bi bi-arrow-right"></i> Load Case
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="case-card">
+                <h5><i class="bi bi-cup-hot"></i> Coffee Shop Menu</h5>
+                <p>A café needs to price coffee (₹50) and pastries (₹80) for customers with ₹300 budgets.</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <span class="badge bg-primary">Quasilinear</span>
+                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('coffee')">
+                    <i class="bi bi-arrow-right"></i> Load Case
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="case-card">
+                <h5><i class="bi bi-bus-front"></i> Transportation Choice</h5>
+                <p>Commuters allocate ₹2,000/month between ride-hailing (₹200/trip) and public transit (₹40/trip).</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <span class="badge bg-primary">Perfect Substitutes</span>
+                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('transport')">
+                    <i class="bi bi-arrow-right"></i> Load Case
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="case-card">
+                <h5><i class="bi bi-cart"></i> Grocery Bundles</h5>
+                <p>Supermarket designs meal kits with fixed proportions of ingredients (meat and vegetables).</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <span class="badge bg-primary">Perfect Complements</span>
+                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('grocery')">
+                    <i class="bi bi-arrow-right"></i> Load Case
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="card h-100">
-          <div class="card-header bg-success text-white">
-            <i class="bi bi-briefcase"></i> Managerial Insight
-          </div>
-          <div class="card-body">
-            <h5>Business Application</h5>
-            <p id="managerialInsight">Understanding consumer optimal choices helps businesses set prices, create product bundles, and design marketing strategies that align with how consumers make trade-offs between goods.</p>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item" id="pricingInsight">Pricing: Set prices where MRS equals your cost ratio</li>
-              <li class="list-group-item" id="productInsight">Product Design: Create bundles that match consumer preferences</li>
-            </ul>
+      
+      <!-- Managerial Implications Container -->
+      <div class="tab-pane fade" id="pills-implications" role="tabpanel">
+        <div class="content-container implication-panel">
+          <h3><i class="bi bi-lightbulb"></i> Managerial Implications</h3>
+          <p class="text-muted">Business applications of consumer choice theory</p>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="implication-card">
+                <h5><i class="bi bi-tags"></i> Pricing Strategy</h5>
+                <p>The shape of indifference curves determines how consumers respond to price changes:</p>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Convex curves: Small price changes have moderate effects</li>
+                  <li class="list-group-item">Linear curves: Consumers switch completely at price thresholds</li>
+                  <li class="list-group-item">L-shaped curves: Price changes don't affect consumption ratios</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="implication-card">
+                <h5><i class="bi bi-box-seam"></i> Product Bundling</h5>
+                <p>Bundle design should match consumer preferences:</p>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Substitutes: Offer variety packs</li>
+                  <li class="list-group-item">Complements: Create fixed-ratio kits</li>
+                  <li class="list-group-item">Normal goods: Tiered bundles by quality</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="implication-card">
+                <h5><i class="bi bi-graph-up"></i> Market Segmentation</h5>
+                <p>Different consumer groups have different preference structures:</p>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Budget shoppers: Near-linear indifference curves</li>
+                  <li class="list-group-item">Quality-focused: Steep convex curves</li>
+                  <li class="list-group-item">Brand-loyal: Kinked indifference curves</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="implication-card">
+                <h5><i class="bi bi-megaphone"></i> Promotional Design</h5>
+                <p>Promotions should consider MRS at different consumption points:</p>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">"Buy X get Y free" works best when MRS ≈ 1</li>
+                  <li class="list-group-item">Percentage discounts better for steep MRS</li>
+                  <li class="list-group-item">Bundle discounts for complementary goods</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -396,25 +548,16 @@
       
       // Calculate optimal bundle
       let optimalX, optimalY, utilityAtOptimum, mrs;
-      let solutionText, explanationText, mathText, pricingText, productText;
       
       switch(utilityType) {
         case 'cobbDouglas':
-          // U(X,Y) = X^α Y^(1-α)
           optimalX = (alpha * income) / priceX;
           optimalY = ((1 - alpha) * income) / priceY;
           utilityAtOptimum = Math.pow(optimalX, alpha) * Math.pow(optimalY, 1 - alpha);
           mrs = (alpha * optimalY) / ((1 - alpha) * optimalX);
-          
-          solutionText = "Cobb-Douglas Solution";
-          explanationText = "The optimal bundle occurs where the budget line is tangent to the convex indifference curve. The MRS equals the price ratio (Px/Py) at this point, showing the optimal tradeoff between goods.";
-          mathText = `α = ${alpha.toFixed(2)}, X* = (αI)/Px = ${optimalX.toFixed(1)}, Y* = ((1-α)I)/Py = ${optimalY.toFixed(1)}`;
-          pricingText = "For Cobb-Douglas preferences, consumers always spend a fixed proportion of income on each good. Price changes affect quantities but not expenditure shares.";
-          productText = "Bundle products according to typical expenditure shares (e.g., if α=0.6, expect 60% of budget spent on X).";
           break;
           
         case 'perfectSubstitutes':
-          // U(X,Y) = αX + Y
           if (alpha/priceX > 1/priceY) {
             optimalX = income / priceX;
             optimalY = 0;
@@ -424,40 +567,20 @@
           }
           utilityAtOptimum = alpha * optimalX + optimalY;
           mrs = alpha;
-          
-          solutionText = "Perfect Substitutes Solution";
-          explanationText = "With perfect substitutes, consumers will spend all their income on the good that gives more utility per rupee. The solution is always a corner solution.";
-          mathText = `MRS = α = ${alpha.toFixed(2)}, Buy only ${optimalX > 0 ? 'X' : 'Y'} since ${(alpha/priceX).toFixed(2)} ${optimalX > 0 ? '>' : '<'} ${(1/priceY).toFixed(2)}`;
-          pricingText = "Small price differences cause complete switching between goods. Maintain competitive pricing or differentiate products.";
-          productText = "Differentiation is key - make products imperfect substitutes through branding or features.";
           break;
           
         case 'perfectComplements':
-          // U(X,Y) = min(αX, Y)
           optimalX = income / (priceX + alpha * priceY);
           optimalY = alpha * optimalX;
           utilityAtOptimum = Math.min(alpha * optimalX, optimalY);
           mrs = "∞ (undefined)";
-          
-          solutionText = "Perfect Complements Solution";
-          explanationText = "With perfect complements, goods are consumed in fixed proportions. The optimal bundle lies at the corner of the L-shaped indifference curves.";
-          mathText = `Fixed proportion: Y = ${alpha.toFixed(2)}X, X* = I/(Px + ${alpha.toFixed(2)}Py) = ${optimalX.toFixed(1)}`;
-          pricingText = "Pricing should consider the bundle value. Consumers evaluate the total cost of the required combination.";
-          productText = "Sell as bundles or ensure compatible products are available at the right ratio.";
           break;
           
         case 'quasilinear':
-          // U(X,Y) = α√X + Y
           optimalX = Math.pow((alpha * priceY) / (2 * priceX), 2);
           optimalY = (income - priceX * optimalX) / priceY;
           utilityAtOptimum = alpha * Math.sqrt(optimalX) + optimalY;
           mrs = alpha / (2 * Math.sqrt(optimalX));
-          
-          solutionText = "Quasilinear Solution";
-          explanationText = "With quasilinear utility, consumption of X doesn't depend on income (for sufficiently high income). The solution shows constant consumption of X regardless of income changes.";
-          mathText = `X* = (αPy/2Px)² = ${optimalX.toFixed(1)}, Y* = (I - PxX*)/Py = ${optimalY.toFixed(1)}`;
-          pricingText = "Pricing of X affects its consumption non-linearly. Income changes only affect consumption of Y.";
-          productText = "Position X as a 'necessity' with stable demand, while Y is income-sensitive.";
           break;
       }
       
@@ -535,18 +658,49 @@
       document.getElementById('optimalY').textContent = optimalY.toFixed(1);
       document.getElementById('totalUtility').textContent = utilityAtOptimum.toFixed(2);
       document.getElementById('mrsValue').textContent = typeof mrs === 'string' ? mrs : mrs.toFixed(2);
+    }
+    
+    // Load case studies
+    function loadCase(caseType) {
+      switch(caseType) {
+        case 'tech':
+          document.getElementById('utilityType').value = 'cobbDouglas';
+          document.getElementById('goodXPreference').value = 0.6;
+          document.getElementById('incomeLevel').value = 100000;
+          document.getElementById('priceX').value = 25000;
+          document.getElementById('priceY').value = 50000;
+          break;
+          
+        case 'coffee':
+          document.getElementById('utilityType').value = 'quasilinear';
+          document.getElementById('goodXPreference').value = 0.7;
+          document.getElementById('incomeLevel').value = 300;
+          document.getElementById('priceX').value = 50;
+          document.getElementById('priceY').value = 80;
+          break;
+          
+        case 'transport':
+          document.getElementById('utilityType').value = 'perfectSubstitutes';
+          document.getElementById('goodXPreference').value = 0.2;
+          document.getElementById('incomeLevel').value = 2000;
+          document.getElementById('priceX').value = 200;
+          document.getElementById('priceY').value = 40;
+          break;
+          
+        case 'grocery':
+          document.getElementById('utilityType').value = 'perfectComplements';
+          document.getElementById('goodXPreference').value = 0.5;
+          document.getElementById('incomeLevel').value = 500;
+          document.getElementById('priceX').value = 100;
+          document.getElementById('priceY').value = 50;
+          break;
+      }
       
-      // Update explanations
-      document.getElementById('solutionType').textContent = solutionText;
-      document.getElementById('solutionExplanation').textContent = explanationText;
-      document.getElementById('mathNotation').textContent = mathText;
-      document.getElementById('pricingInsight').textContent = pricingText;
-      document.getElementById('productInsight').textContent = productText;
-      document.getElementById('managerialInsight').textContent = 
-        "The optimal solution shows how consumers balance preferences and budget constraints. " + 
-        (utilityType === 'perfectSubstitutes' ? "With perfect substitutes, small price differences lead to complete switching between goods." : 
-         utilityType === 'perfectComplements' ? "With perfect complements, products are consumed in fixed ratios regardless of price changes." :
-         "The convex shape of indifference curves shows diminishing marginal rate of substitution between goods.");
+      updateSimulation();
+      
+      // Switch to simulation tab
+      const tab = new bootstrap.Tab(document.querySelector('#pills-simulation-tab'));
+      tab.show();
     }
     
     // Reset simulation to defaults
