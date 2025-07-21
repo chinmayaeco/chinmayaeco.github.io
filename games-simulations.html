@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Indifference Curve Analysis</title>
+  <title>Short-Run Production Function Simulator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -87,7 +87,7 @@
       padding: 1rem;
     }
     
-    .result-card {
+    .score-panel {
       background: rgba(46, 204, 113, 0.05);
       border-left: 4px solid var(--secondary-color);
       padding: 1rem;
@@ -124,6 +124,11 @@
       background-color: var(--primary-color);
     }
     
+    .stage-badge {
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+    }
+    
     @media (max-width: 768px) {
       .graph-container {
         height: 350px;
@@ -134,7 +139,7 @@
 <body>
   <!-- Password Protection -->
   <div id="passwordSection" class="password-container">
-    <h2><i class="bi bi-lock"></i> Access Simulation</h2>
+    <h2><i class="bi bi-lock"></i> Access Production Simulator</h2>
     <div class="mb-3">
       <input type="password" id="passwordInput" class="form-control" placeholder="Enter password">
     </div>
@@ -149,8 +154,8 @@
   <!-- Main Content -->
   <div class="main-container" id="mainContent">
     <div class="container-header">
-      <h2><i class="bi bi-graph-up"></i> Indifference Curve Analysis</h2>
-      <p class="mb-0">Explore consumer choice theory through simulation, case studies, and managerial insights</p>
+      <h2><i class="bi bi-graph-up"></i> Law of Variable Proportions</h2>
+      <p class="mb-0">Explore short-run production functions through simulation, case studies, and managerial insights</p>
     </div>
     
     <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
@@ -175,85 +180,69 @@
       <!-- Simulation Container -->
       <div class="tab-pane fade show active" id="pills-simulation" role="tabpanel">
         <div class="content-container simulation-panel">
-          <h3><i class="bi bi-sliders"></i> Interactive Simulation</h3>
-          <p class="text-muted">Adjust parameters to explore how consumers make optimal choices between two goods</p>
+          <h3><i class="bi bi-sliders"></i> Production Function Simulation</h3>
+          <p class="text-muted">Adjust labor input to explore the three stages of production and maximize efficiency</p>
           
           <div class="row mt-4">
             <div class="col-lg-5">
               <div class="control-panel">
                 <div class="mb-3">
-                  <label for="utilityType" class="form-label">Utility Function</label>
-                  <select class="form-select" id="utilityType" onchange="updateSimulation()">
-                    <option value="cobbDouglas">Cobb-Douglas</option>
-                    <option value="perfectSubstitutes">Perfect Substitutes</option>
-                    <option value="perfectComplements">Perfect Complements</option>
-                    <option value="quasilinear">Quasilinear</option>
+                  <label for="productionType" class="form-label">Production Function Type</label>
+                  <select class="form-select" id="productionType" onchange="resetGame()">
+                    <option value="cubic">Cubic (Typical S-Curve)</option>
+                    <option value="quadratic">Quadratic</option>
+                    <option value="logistic">Logistic</option>
                   </select>
                 </div>
                 
                 <div class="mb-3">
-                  <label for="goodXPreference" class="form-label">Preference for Good X (α)</label>
-                  <input type="range" class="form-range" id="goodXPreference" min="0.1" max="0.9" step="0.1" value="0.5" oninput="updateSimulation()">
+                  <label for="laborInput" class="form-label">Labor Input (Workers)</label>
+                  <input type="range" class="form-range" id="laborInput" min="0" max="20" step="1" value="0" oninput="updateProduction()">
                   <div class="d-flex justify-content-between">
-                    <small>0.1</small>
-                    <span class="fw-bold" id="goodXValue">0.5</span>
-                    <small>0.9</small>
+                    <small>0</small>
+                    <span class="fw-bold" id="laborValue">0</span>
+                    <small>20</small>
                   </div>
                 </div>
                 
                 <div class="mb-3">
-                  <label for="incomeLevel" class="form-label">Income (₹)</label>
-                  <input type="range" class="form-range" id="incomeLevel" min="100" max="1000" step="50" value="500" oninput="updateSimulation()">
+                  <label for="capitalInput" class="form-label">Fixed Capital (Units)</label>
+                  <input type="range" class="form-range" id="capitalInput" min="1" max="10" step="1" value="5" oninput="resetGame()">
                   <div class="d-flex justify-content-between">
-                    <small>₹100</small>
-                    <span class="fw-bold" id="incomeValue">₹500</span>
-                    <small>₹1000</small>
+                    <small>1</small>
+                    <span class="fw-bold" id="capitalValue">5</span>
+                    <small>10</small>
                   </div>
                 </div>
                 
-                <div class="row">
-                  <div class="col-md-6">
-                    <label for="priceX" class="form-label">Price of X (₹)</label>
-                    <input type="range" class="form-range" id="priceX" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
-                    <span class="fw-bold" id="priceXValue">₹10</span>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="priceY" class="form-label">Price of Y (₹)</label>
-                    <input type="range" class="form-range" id="priceY" min="5" max="50" step="1" value="10" oninput="updateSimulation()">
-                    <span class="fw-bold" id="priceYValue">₹10</span>
-                  </div>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary" onclick="nextRound()">
+                    <i class="bi bi-arrow-right-circle"></i> Submit Answer
+                  </button>
+                  <button class="btn btn-outline-secondary" onclick="resetGame()">
+                    <i class="bi bi-arrow-counterclockwise"></i> New Game
+                  </button>
                 </div>
-                
-                <button class="btn btn-outline-primary mt-3 w-100" onclick="resetSimulation()">
-                  <i class="bi bi-arrow-counterclockwise"></i> Reset
-                </button>
               </div>
               
-              <div class="result-card mt-3">
-                <h5><i class="bi bi-check-circle"></i> Optimal Solution</h5>
+              <div class="score-panel mt-3">
+                <h5><i class="bi bi-trophy"></i> Game Progress</h5>
                 <div class="row">
                   <div class="col-6">
                     <div class="mb-2">
-                      <span class="badge bg-primary">X</span>
-                      <span id="optimalX" class="fw-bold ms-2">25.0</span>
+                      <span class="badge bg-primary">Round</span>
+                      <span id="currentRound" class="fw-bold ms-2">1/5</span>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="mb-2">
-                      <span class="badge bg-primary">Y</span>
-                      <span id="optimalY" class="fw-bold ms-2">25.0</span>
+                      <span class="badge bg-primary">Score</span>
+                      <span id="playerScore" class="fw-bold ms-2">0</span>
                     </div>
                   </div>
-                  <div class="col-6">
-                    <div class="mb-2">
-                      <span class="badge bg-secondary">Utility</span>
-                      <span id="totalUtility" class="fw-bold ms-2">50.0</span>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="mb-2">
-                      <span class="badge bg-secondary">MRS</span>
-                      <span id="mrsValue" class="fw-bold ms-2">1.00</span>
+                  <div class="col-12">
+                    <div class="progress mt-2" style="height: 10px;">
+                      <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
                     </div>
                   </div>
                 </div>
@@ -262,18 +251,13 @@
             
             <div class="col-lg-7">
               <div class="graph-container">
-                <canvas id="consumptionChart"></canvas>
+                <canvas id="productionChart"></canvas>
               </div>
-              <div class="mt-3 text-center">
-                <button class="btn btn-sm btn-outline-secondary" onclick="zoomIn()">
-                  <i class="bi bi-zoom-in"></i> Zoom In
-                </button>
-                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="zoomOut()">
-                  <i class="bi bi-zoom-out"></i> Zoom Out
-                </button>
-                <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleFullscreen()">
-                  <i class="bi bi-fullscreen"></i> Fullscreen
-                </button>
+              <div class="mt-3">
+                <div class="alert alert-info" id="stageIndicator">
+                  <strong>Current Stage:</strong> <span id="currentStage">Increasing Returns</span>
+                  <span class="badge bg-primary stage-badge" id="stageBadge">Stage I</span>
+                </div>
               </div>
             </div>
           </div>
@@ -283,58 +267,50 @@
       <!-- Case Studies Container -->
       <div class="tab-pane fade" id="pills-cases" role="tabpanel">
         <div class="content-container case-panel">
-          <h3><i class="bi bi-journal-text"></i> Case Studies</h3>
-          <p class="text-muted">Real-world applications of indifference curve analysis</p>
+          <h3><i class="bi bi-journal-text"></i> Production Case Studies</h3>
+          <p class="text-muted">Real-world applications of the law of variable proportions</p>
           
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="case-card">
-                <h5><i class="bi bi-phone"></i> Tech Bundle Pricing</h5>
-                <p>A consumer must choose between smartphones (₹25,000) and laptops (₹50,000) with a ₹100,000 budget.</p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                  <span class="badge bg-primary">Cobb-Douglas</span>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('tech')">
-                    <i class="bi bi-arrow-right"></i> Load Case
-                  </button>
+                <h5><i class="bi bi-cpu"></i> Tech Manufacturing</h5>
+                <p>A smartphone factory with fixed machinery (10 assembly robots) varies its workforce size. Output peaks at 12 workers, then declines.</p>
+                <div class="mt-3">
+                  <span class="badge bg-primary">Optimal Workforce: 8-10</span>
+                  <span class="badge bg-secondary ms-2">MP Peaks at 6</span>
                 </div>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="case-card">
-                <h5><i class="bi bi-cup-hot"></i> Coffee Shop Menu</h5>
-                <p>A café needs to price coffee (₹50) and pastries (₹80) for customers with ₹300 budgets.</p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                  <span class="badge bg-primary">Quasilinear</span>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('coffee')">
-                    <i class="bi bi-arrow-right"></i> Load Case
-                  </button>
+                <h5><i class="bi bi-basket"></i> Agricultural Production</h5>
+                <p>A 10-acre farm varies labor input. Output increases rapidly up to 5 workers, then slows, peaking at 8 workers per acre.</p>
+                <div class="mt-3">
+                  <span class="badge bg-primary">Stage II: 5-7 workers</span>
+                  <span class="badge bg-secondary ms-2">Stage III after 8</span>
                 </div>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="case-card">
-                <h5><i class="bi bi-bus-front"></i> Transportation Choice</h5>
-                <p>Commuters allocate ₹2,000/month between ride-hailing (₹200/trip) and public transit (₹40/trip).</p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                  <span class="badge bg-primary">Perfect Substitutes</span>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('transport')">
-                    <i class="bi bi-arrow-right"></i> Load Case
-                  </button>
+                <h5><i class="bi bi-cup-hot"></i> Coffee Shop</h5>
+                <p>A café with 3 espresso machines varies baristas. Service capacity peaks at 4 barists (1.33 per machine), then congestion occurs.</p>
+                <div class="mt-3">
+                  <span class="badge bg-primary">AP Max at 3</span>
+                  <span class="badge bg-secondary ms-2">MP Negative after 5</span>
                 </div>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="case-card">
-                <h5><i class="bi bi-cart"></i> Grocery Bundles</h5>
-                <p>Supermarket designs meal kits with fixed proportions of ingredients (meat and vegetables).</p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                  <span class="badge bg-primary">Perfect Complements</span>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadCase('grocery')">
-                    <i class="bi bi-arrow-right"></i> Load Case
-                  </button>
+                <h5><i class="bi bi-truck"></i> Delivery Service</h5>
+                <p>A delivery service with 5 trucks varies drivers. Deliveries peak at 7 drivers (1.4 per truck), then decline due to coordination issues.</p>
+                <div class="mt-3">
+                  <span class="badge bg-primary">Optimal: 6 drivers</span>
+                  <span class="badge bg-secondary ms-2">TP Max at 7</span>
                 </div>
               </div>
             </div>
@@ -346,53 +322,53 @@
       <div class="tab-pane fade" id="pills-implications" role="tabpanel">
         <div class="content-container implication-panel">
           <h3><i class="bi bi-lightbulb"></i> Managerial Implications</h3>
-          <p class="text-muted">Business applications of consumer choice theory</p>
+          <p class="text-muted">Practical applications of production theory in business decisions</p>
           
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-tags"></i> Pricing Strategy</h5>
-                <p>The shape of indifference curves determines how consumers respond to price changes:</p>
+                <h5><i class="bi bi-people"></i> Optimal Hiring</h5>
+                <p>Understanding production stages helps determine the ideal workforce size:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Convex curves: Small price changes have moderate effects</li>
-                  <li class="list-group-item">Linear curves: Consumers switch completely at price thresholds</li>
-                  <li class="list-group-item">L-shaped curves: Price changes don't affect consumption ratios</li>
+                  <li class="list-group-item"><strong>Stage I:</strong> Keep hiring - each worker adds more than the last</li>
+                  <li class="list-group-item"><strong>Stage II:</strong> Ideal range - add workers cautiously</li>
+                  <li class="list-group-item"><strong>Stage III:</strong> Reduce workforce - overcrowding reduces output</li>
                 </ul>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-box-seam"></i> Product Bundling</h5>
-                <p>Bundle design should match consumer preferences:</p>
+                <h5><i class="bi bi-gear"></i> Capacity Planning</h5>
+                <p>Matching variable inputs to fixed capital:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Substitutes: Offer variety packs</li>
-                  <li class="list-group-item">Complements: Create fixed-ratio kits</li>
-                  <li class="list-group-item">Normal goods: Tiered bundles by quality</li>
+                  <li class="list-group-item">Calculate capital-to-labor ratios at different production stages</li>
+                  <li class="list-group-item">Identify inflection points where returns diminish</li>
+                  <li class="list-group-item">Plan expansions when approaching Stage III</li>
                 </ul>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-graph-up"></i> Market Segmentation</h5>
-                <p>Different consumer groups have different preference structures:</p>
+                <h5><i class="bi bi-graph-up"></i> Performance Metrics</h5>
+                <p>Key indicators to monitor:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Budget shoppers: Near-linear indifference curves</li>
-                  <li class="list-group-item">Quality-focused: Steep convex curves</li>
-                  <li class="list-group-item">Brand-loyal: Kinked indifference curves</li>
+                  <li class="list-group-item"><strong>AP (Average Product):</strong> Overall productivity per worker</li>
+                  <li class="list-group-item"><strong>MP (Marginal Product):</strong> Contribution of last worker hired</li>
+                  <li class="list-group-item"><strong>TP (Total Product):</strong> Absolute output level</li>
                 </ul>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-megaphone"></i> Promotional Design</h5>
-                <p>Promotions should consider MRS at different consumption points:</p>
+                <h5><i class="bi bi-cash-stack"></i> Cost Control</h5>
+                <p>Aligning production with cost structures:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">"Buy X get Y free" works best when MRS ≈ 1</li>
-                  <li class="list-group-item">Percentage discounts better for steep MRS</li>
-                  <li class="list-group-item">Bundle discounts for complementary goods</li>
+                  <li class="list-group-item">Stage II typically offers lowest average costs</li>
+                  <li class="list-group-item">Stage III leads to wasted wages and inefficiency</li>
+                  <li class="list-group-item">Balance labor costs with capital utilization</li>
                 </ul>
               </div>
             </div>
@@ -405,7 +381,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // Password Protection
-    const CORRECT_PASSWORD = "economics123";
+    const CORRECT_PASSWORD = "production123";
     
     function checkPassword() {
       const enteredPassword = document.getElementById('passwordInput').value;
@@ -420,20 +396,25 @@
       }
     }
     
-    // Initialize chart
-    let consumptionChart;
-    let currentMaxX = 60;
-    let currentMaxY = 60;
+    // Game variables
+    let productionChart;
+    let currentRound = 1;
+    let totalRounds = 5;
+    let playerScore = 0;
+    let targetLabor = 0;
+    let currentMaxX = 20;
+    let currentMaxY = 200;
     
+    // Initialize chart
     function initChart() {
-      const ctx = document.getElementById('consumptionChart').getContext('2d');
+      const ctx = document.getElementById('productionChart').getContext('2d');
       
-      consumptionChart = new Chart(ctx, {
+      productionChart = new Chart(ctx, {
         type: 'scatter',
         data: {
           datasets: [
             {
-              label: 'Indifference Curve',
+              label: 'Total Product (TP)',
               data: [],
               borderColor: 'rgba(52, 152, 219, 1)',
               backgroundColor: 'rgba(52, 152, 219, 0.1)',
@@ -443,7 +424,18 @@
               borderWidth: 2
             },
             {
-              label: 'Budget Constraint',
+              label: 'Average Product (AP)',
+              data: [],
+              borderColor: 'rgba(155, 89, 182, 1)',
+              backgroundColor: 'rgba(155, 89, 182, 0.1)',
+              showLine: true,
+              fill: false,
+              pointRadius: 0,
+              borderWidth: 2,
+              borderDash: [5, 3]
+            },
+            {
+              label: 'Marginal Product (MP)',
               data: [],
               borderColor: 'rgba(231, 76, 60, 1)',
               backgroundColor: 'rgba(231, 76, 60, 0.1)',
@@ -451,25 +443,14 @@
               fill: false,
               pointRadius: 0,
               borderWidth: 2,
-              borderDash: [5, 5]
+              borderDash: [3, 3]
             },
             {
-              label: 'Optimal Bundle',
+              label: 'Current Input',
               data: [],
               backgroundColor: 'rgba(46, 204, 113, 1)',
               pointRadius: 8,
               pointHoverRadius: 10
-            },
-            {
-              label: 'Tangent Line',
-              data: [],
-              borderColor: 'rgba(155, 89, 182, 1)',
-              backgroundColor: 'rgba(155, 89, 182, 0.1)',
-              showLine: true,
-              fill: false,
-              pointRadius: 0,
-              borderWidth: 1.5,
-              borderDash: [3, 3]
             }
           ]
         },
@@ -480,7 +461,7 @@
             y: {
               title: {
                 display: true,
-                text: 'Quantity of Good Y',
+                text: 'Output',
                 font: {
                   weight: 'bold'
                 }
@@ -492,7 +473,7 @@
             x: {
               title: {
                 display: true,
-                text: 'Quantity of Good X',
+                text: 'Labor Input (Workers)',
                 font: {
                   weight: 'bold'
                 }
@@ -506,7 +487,7 @@
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  return `${context.dataset.label}: (${context.parsed.x.toFixed(1)}, ${context.parsed.y.toFixed(1)})`;
+                  return `${context.dataset.label}: ${context.parsed.y.toFixed(1)} units`;
                 }
               }
             },
@@ -524,223 +505,180 @@
         }
       });
       
-      updateSimulation();
+      resetGame();
     }
     
-    // Update simulation based on controls
-    function updateSimulation() {
-      // Update displayed values
-      document.getElementById('goodXValue').textContent = 
-        document.getElementById('goodXPreference').value;
-      document.getElementById('incomeValue').textContent = 
-        '₹' + document.getElementById('incomeLevel').value;
-      document.getElementById('priceXValue').textContent = 
-        '₹' + document.getElementById('priceX').value;
-      document.getElementById('priceYValue').textContent = 
-        '₹' + document.getElementById('priceY').value;
+    // Production functions
+    function cubicProduction(L, K) {
+      // TP = aL^3 + bL^2 + cL (typical S-curve)
+      return -0.2*Math.pow(L,3) + 3*Math.pow(L,2) + 10*L;
+    }
+    
+    function quadraticProduction(L, K) {
+      // TP = aL^2 + bL (simpler curve)
+      return -0.5*Math.pow(L,2) + 10*L;
+    }
+    
+    function logisticProduction(L, K) {
+      // TP = K*(1/(1+e^(-L))) (S-curve with capacity limit)
+      return K*100*(1/(1+Math.exp(-L/3)));
+    }
+    
+    // Calculate derivatives (MP and AP)
+    function calculateMP(L, K, type) {
+      const h = 0.1; // Small change for derivative calculation
+      if (L === 0) return calculateTP(0.1, K, type)/0.1;
+      return (calculateTP(L+h, K, type) - calculateTP(L, K, type))/h;
+    }
+    
+    function calculateAP(L, K, type) {
+      if (L === 0) return 0;
+      return calculateTP(L, K, type)/L;
+    }
+    
+    function calculateTP(L, K, type) {
+      switch(type) {
+        case 'cubic': return cubicProduction(L, K);
+        case 'quadratic': return quadraticProduction(L, K);
+        case 'logistic': return logisticProduction(L, K);
+        default: return cubicProduction(L, K);
+      }
+    }
+    
+    // Determine production stage
+    function getProductionStage(L, K, type) {
+      const mp = calculateMP(L, K, type);
+      const ap = calculateAP(L, K, type);
       
-      // Get current parameters
-      const utilityType = document.getElementById('utilityType').value;
-      const alpha = parseFloat(document.getElementById('goodXPreference').value);
-      const income = parseFloat(document.getElementById('incomeLevel').value);
-      const priceX = parseFloat(document.getElementById('priceX').value);
-      const priceY = parseFloat(document.getElementById('priceY').value);
+      if (L === 0) return { stage: "Increasing", badge: "Stage I" };
       
-      // Calculate optimal bundle
-      let optimalX, optimalY, utilityAtOptimum, mrs;
+      if (mp > ap) return { stage: "Increasing Returns", badge: "Stage I" };
+      if (mp > 0 && mp < ap) return { stage: "Diminishing Returns", badge: "Stage II" };
+      if (mp < 0) return { stage: "Negative Returns", badge: "Stage III" };
       
-      switch(utilityType) {
-        case 'cobbDouglas':
-          optimalX = (alpha * income) / priceX;
-          optimalY = ((1 - alpha) * income) / priceY;
-          utilityAtOptimum = Math.pow(optimalX, alpha) * Math.pow(optimalY, 1 - alpha);
-          mrs = (alpha * optimalY) / ((1 - alpha) * optimalX);
-          break;
-          
-        case 'perfectSubstitutes':
-          if (alpha/priceX > 1/priceY) {
-            optimalX = income / priceX;
-            optimalY = 0;
-          } else {
-            optimalX = 0;
-            optimalY = income / priceY;
-          }
-          utilityAtOptimum = alpha * optimalX + optimalY;
-          mrs = alpha;
-          break;
-          
-        case 'perfectComplements':
-          optimalX = income / (priceX + alpha * priceY);
-          optimalY = alpha * optimalX;
-          utilityAtOptimum = Math.min(alpha * optimalX, optimalY);
-          mrs = "∞ (undefined)";
-          break;
-          
-        case 'quasilinear':
-          optimalX = Math.pow((alpha * priceY) / (2 * priceX), 2);
-          optimalY = (income - priceX * optimalX) / priceY;
-          utilityAtOptimum = alpha * Math.sqrt(optimalX) + optimalY;
-          mrs = alpha / (2 * Math.sqrt(optimalX));
-          break;
+      return { stage: "Transition Point", badge: "Stage II" };
+    }
+    
+    // Reset game state
+    function resetGame() {
+      currentRound = 1;
+      playerScore = 0;
+      updateScoreDisplay();
+      generateNewRound();
+    }
+    
+    // Generate new round
+    function generateNewRound() {
+      const productionType = document.getElementById('productionType').value;
+      const K = parseInt(document.getElementById('capitalInput').value);
+      document.getElementById('capitalValue').textContent = K;
+      
+      // Generate random target based on production type
+      if (productionType === 'cubic') {
+        targetLabor = Math.floor(Math.random() * 12) + 4; // Between 4-15
+      } else if (productionType === 'quadratic') {
+        targetLabor = Math.floor(Math.random() * 8) + 3; // Between 3-10
+      } else {
+        targetLabor = Math.floor(Math.random() * 10) + 5; // Between 5-14
       }
       
-      // Generate indifference curve data
-      const curvePoints = [];
-      const budgetPoints = [
-        {x: 0, y: income/priceY},
-        {x: income/priceX, y: 0}
-      ];
+      // Update UI
+      document.getElementById('laborInput').value = 0;
+      document.getElementById('laborValue').textContent = 0;
       
-      // Different curve generation for each utility type
-      switch(utilityType) {
-        case 'cobbDouglas':
-          for (let x = 0.1; x <= income/priceX * 2; x += income/priceX/10) {
-            const y = Math.pow(utilityAtOptimum / Math.pow(x, alpha), 1/(1 - alpha));
-            if (y >= 0) curvePoints.push({x, y});
-          }
-          break;
-          
-        case 'perfectSubstitutes':
-          for (let x = 0; x <= income/priceX * 1.2; x += income/priceX/5) {
-            const y = (utilityAtOptimum - alpha * x);
-            if (y >= 0) curvePoints.push({x, y});
-          }
-          break;
-          
-        case 'perfectComplements':
-          // Vertical part
-          for (let y = 0; y <= alpha * income/priceX; y += income/priceY/10) {
-            curvePoints.push({x: y/alpha, y});
-          }
-          // Horizontal part
-          for (let x = optimalX; x <= income/priceX * 1.2; x += income/priceX/10) {
-            curvePoints.push({x, y: alpha * optimalX});
-          }
-          break;
-          
-        case 'quasilinear':
-          for (let x = 0.1; x <= income/priceX * 2; x += income/priceX/10) {
-            const y = utilityAtOptimum - alpha * Math.sqrt(x);
-            if (y >= 0) curvePoints.push({x, y});
-          }
-          break;
-      }
+      // Update chart
+      updateProduction();
       
-      // Generate tangent line (showing MRS = price ratio)
-      const tangentPoints = [];
-      if (utilityType !== 'perfectSubstitutes' && utilityType !== 'perfectComplements') {
-        const slope = -priceX/priceY;
-        const tangentLength = Math.min(income/priceX, income/priceY) / 3;
+      // Set round display
+      document.getElementById('currentRound').textContent = `${currentRound}/${totalRounds}`;
+    }
+    
+    // Update production chart
+    function updateProduction() {
+      const L = parseInt(document.getElementById('laborInput').value);
+      const K = parseInt(document.getElementById('capitalInput').value);
+      const productionType = document.getElementById('productionType').value;
+      
+      document.getElementById('laborValue').textContent = L;
+      
+      // Generate data points
+      const tpPoints = [];
+      const apPoints = [];
+      const mpPoints = [];
+      
+      for (let l = 0; l <= currentMaxX; l += 0.5) {
+        const tp = calculateTP(l, K, productionType);
+        const ap = calculateAP(l, K, productionType);
+        const mp = calculateMP(l, K, productionType);
         
-        tangentPoints.push(
-          {x: optimalX - tangentLength, y: optimalY - slope * tangentLength},
-          {x: optimalX + tangentLength, y: optimalY + slope * tangentLength}
-        );
+        tpPoints.push({x: l, y: tp});
+        apPoints.push({x: l, y: ap});
+        mpPoints.push({x: l, y: mp});
       }
       
       // Update chart data
-      consumptionChart.data.datasets[0].data = curvePoints;
-      consumptionChart.data.datasets[1].data = budgetPoints;
-      consumptionChart.data.datasets[2].data = [{x: optimalX, y: optimalY}];
-      consumptionChart.data.datasets[3].data = tangentPoints;
+      productionChart.data.datasets[0].data = tpPoints;
+      productionChart.data.datasets[1].data = apPoints;
+      productionChart.data.datasets[2].data = mpPoints;
+      productionChart.data.datasets[3].data = [{x: L, y: calculateTP(L, K, productionType)}];
       
-      // Adjust axes
-      currentMaxX = Math.max(income/priceX * 1.2, optimalX * 1.5, 50);
-      currentMaxY = Math.max(income/priceY * 1.2, optimalY * 1.5, 50);
+      // Adjust y-axis max
+      const maxTP = calculateTP(currentMaxX, K, productionType);
+      currentMaxY = Math.max(maxTP, 100) * 1.2;
+      productionChart.options.scales.y.max = currentMaxY;
       
-      consumptionChart.options.scales.x.max = currentMaxX;
-      consumptionChart.options.scales.y.max = currentMaxY;
+      productionChart.update();
       
-      consumptionChart.update();
-      
-      // Update results display
-      document.getElementById('optimalX').textContent = optimalX.toFixed(1);
-      document.getElementById('optimalY').textContent = optimalY.toFixed(1);
-      document.getElementById('totalUtility').textContent = utilityAtOptimum.toFixed(2);
-      document.getElementById('mrsValue').textContent = typeof mrs === 'string' ? mrs : mrs.toFixed(2);
+      // Update stage indicator
+      const stage = getProductionStage(L, K, productionType);
+      document.getElementById('currentStage').textContent = stage.stage;
+      document.getElementById('stageBadge').textContent = stage.badge;
     }
     
-    // Load case studies
-    function loadCase(caseType) {
-      switch(caseType) {
-        case 'tech':
-          document.getElementById('utilityType').value = 'cobbDouglas';
-          document.getElementById('goodXPreference').value = 0.6;
-          document.getElementById('incomeLevel').value = 100000;
-          document.getElementById('priceX').value = 25000;
-          document.getElementById('priceY').value = 50000;
-          break;
-          
-        case 'coffee':
-          document.getElementById('utilityType').value = 'quasilinear';
-          document.getElementById('goodXPreference').value = 0.7;
-          document.getElementById('incomeLevel').value = 300;
-          document.getElementById('priceX').value = 50;
-          document.getElementById('priceY').value = 80;
-          break;
-          
-        case 'transport':
-          document.getElementById('utilityType').value = 'perfectSubstitutes';
-          document.getElementById('goodXPreference').value = 0.2;
-          document.getElementById('incomeLevel').value = 2000;
-          document.getElementById('priceX').value = 200;
-          document.getElementById('priceY').value = 40;
-          break;
-          
-        case 'grocery':
-          document.getElementById('utilityType').value = 'perfectComplements';
-          document.getElementById('goodXPreference').value = 0.5;
-          document.getElementById('incomeLevel').value = 500;
-          document.getElementById('priceX').value = 100;
-          document.getElementById('priceY').value = 50;
-          break;
-      }
+    // Submit answer and go to next round
+    function nextRound() {
+      const L = parseInt(document.getElementById('laborInput').value);
+      const K = parseInt(document.getElementById('capitalInput').value);
+      const productionType = document.getElementById('productionType').value;
       
-      updateSimulation();
+      // Calculate score based on how close to target stage
+      const targetStage = getProductionStage(targetLabor, K, productionType).badge;
+      const currentStage = getProductionStage(L, K, productionType).badge;
       
-      // Switch to simulation tab
-      const tab = new bootstrap.Tab(document.querySelector('#pills-simulation-tab'));
-      tab.show();
-    }
-    
-    // Reset simulation to defaults
-    function resetSimulation() {
-      document.getElementById('utilityType').value = 'cobbDouglas';
-      document.getElementById('goodXPreference').value = 0.5;
-      document.getElementById('incomeLevel').value = 500;
-      document.getElementById('priceX').value = 10;
-      document.getElementById('priceY').value = 10;
-      
-      updateSimulation();
-    }
-    
-    // View controls
-    function zoomIn() {
-      currentMaxX *= 0.8;
-      currentMaxY *= 0.8;
-      consumptionChart.options.scales.x.max = currentMaxX;
-      consumptionChart.options.scales.y.max = currentMaxY;
-      consumptionChart.update();
-    }
-    
-    function zoomOut() {
-      currentMaxX *= 1.2;
-      currentMaxY *= 1.2;
-      consumptionChart.options.scales.x.max = currentMaxX;
-      consumptionChart.options.scales.y.max = currentMaxY;
-      consumptionChart.update();
-    }
-    
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-          console.error(`Error attempting to enable fullscreen: ${err.message}`);
-        });
+      let roundScore = 0;
+      if (currentStage === targetStage) {
+        roundScore = 100;
+      } else if (
+        (targetStage === "Stage I" && currentStage === "Stage II") ||
+        (targetStage === "Stage III" && currentStage === "Stage II")
+      ) {
+        roundScore = 50;
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
+        roundScore = 0;
       }
+      
+      // Add to total score
+      playerScore += roundScore;
+      updateScoreDisplay();
+      
+      // Show feedback
+      alert(`Target was ${targetStage} (${targetLabor} workers)\nYour choice: ${currentStage} (${L} workers)\nRound score: ${roundScore}/100`);
+      
+      // Move to next round or end game
+      if (currentRound < totalRounds) {
+        currentRound++;
+        generateNewRound();
+      } else {
+        alert(`Game completed! Final score: ${playerScore}/${totalRounds*100}`);
+        resetGame();
+      }
+    }
+    
+    // Update score display
+    function updateScoreDisplay() {
+      document.getElementById('playerScore').textContent = playerScore;
+      const progress = (playerScore/(totalRounds*100)) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
     }
     
     // Initialize password input focus
