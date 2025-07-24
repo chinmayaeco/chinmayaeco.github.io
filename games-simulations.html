@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Short-Run Production Function Simulator</title>
+  <title>Long-Run Production Function Simulator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -124,9 +124,16 @@
       background-color: var(--primary-color);
     }
     
-    .stage-badge {
+    .returns-badge {
       font-size: 0.8rem;
       margin-right: 0.5rem;
+    }
+    
+    .isoquant {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
     }
     
     @media (max-width: 768px) {
@@ -154,8 +161,8 @@
   <!-- Main Content -->
   <div class="main-container" id="mainContent">
     <div class="container-header">
-      <h2><i class="bi bi-graph-up"></i> Law of Variable Proportions</h2>
-      <p class="mb-0">Explore short-run production functions through simulation, case studies, and managerial insights</p>
+      <h2><i class="bi bi-graph-up"></i> Long-Run Production Function</h2>
+      <p class="mb-0">Explore isoquants, returns to scale, and optimal input combinations</p>
     </div>
     
     <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
@@ -180,53 +187,64 @@
       <!-- Simulation Container -->
       <div class="tab-pane fade show active" id="pills-simulation" role="tabpanel">
         <div class="content-container simulation-panel">
-          <h3><i class="bi bi-sliders"></i> Production Function Simulation</h3>
-          <p class="text-muted">Adjust labor input to explore the three stages of production and maximize efficiency</p>
+          <h3><i class="bi bi-sliders"></i> Production Optimization Challenge</h3>
+          <p class="text-muted">Adjust capital and labor inputs to achieve target output at lowest cost</p>
           
           <div class="row mt-4">
             <div class="col-lg-5">
               <div class="control-panel">
                 <div class="mb-3">
-                  <label for="productionType" class="form-label">Production Function Type</label>
+                  <label for="productionType" class="form-label">Production Function</label>
                   <select class="form-select" id="productionType" onchange="resetGame()">
-                    <option value="cubic">Cubic (Typical S-Curve)</option>
-                    <option value="quadratic">Quadratic</option>
-                    <option value="logistic">Logistic</option>
+                    <option value="cobbDouglas">Cobb-Douglas</option>
+                    <option value="ces">CES</option>
+                    <option value="leontief">Leontief</option>
                   </select>
                 </div>
                 
                 <div class="mb-3">
-                  <label for="laborInput" class="form-label">Labor Input (Workers)</label>
-                  <input type="range" class="form-range" id="laborInput" min="0" max="20" step="1" value="0" oninput="updateProduction()">
+                  <label for="laborInput" class="form-label">Labor Input (L)</label>
+                  <input type="range" class="form-range" id="laborInput" min="1" max="20" step="1" value="10" oninput="updateProduction()">
                   <div class="d-flex justify-content-between">
-                    <small>0</small>
-                    <span class="fw-bold" id="laborValue">0</span>
+                    <small>1</small>
+                    <span class="fw-bold" id="laborValue">10</span>
                     <small>20</small>
                   </div>
                 </div>
                 
                 <div class="mb-3">
-                  <label for="capitalInput" class="form-label">Fixed Capital (Units)</label>
-                  <input type="range" class="form-range" id="capitalInput" min="1" max="10" step="1" value="5" oninput="resetGame()">
+                  <label for="capitalInput" class="form-label">Capital Input (K)</label>
+                  <input type="range" class="form-range" id="capitalInput" min="1" max="20" step="1" value="10" oninput="updateProduction()">
                   <div class="d-flex justify-content-between">
                     <small>1</small>
-                    <span class="fw-bold" id="capitalValue">5</span>
-                    <small>10</small>
+                    <span class="fw-bold" id="capitalValue">10</span>
+                    <small>20</small>
+                  </div>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="wageRate" class="form-label">Wage Rate (₹)</label>
+                    <input type="number" class="form-control" id="wageRate" min="5" max="50" value="15" oninput="updateProduction()">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="rentalRate" class="form-label">Rental Rate (₹)</label>
+                    <input type="number" class="form-control" id="rentalRate" min="5" max="50" value="20" oninput="updateProduction()">
                   </div>
                 </div>
                 
                 <div class="d-grid gap-2">
-                  <button class="btn btn-primary" onclick="nextRound()">
-                    <i class="bi bi-arrow-right-circle"></i> Submit Answer
+                  <button class="btn btn-primary" onclick="submitAnswer()">
+                    <i class="bi bi-check-circle"></i> Submit Combination
                   </button>
                   <button class="btn btn-outline-secondary" onclick="resetGame()">
-                    <i class="bi bi-arrow-counterclockwise"></i> New Game
+                    <i class="bi bi-arrow-counterclockwise"></i> New Challenge
                   </button>
                 </div>
               </div>
               
               <div class="score-panel mt-3">
-                <h5><i class="bi bi-trophy"></i> Game Progress</h5>
+                <h5><i class="bi bi-trophy"></i> Optimization Challenge</h5>
                 <div class="row">
                   <div class="col-6">
                     <div class="mb-2">
@@ -246,17 +264,24 @@
                     </div>
                   </div>
                 </div>
+                <div class="mt-2">
+                  <div class="alert alert-info py-2">
+                    <small><strong>Target Output:</strong> <span id="targetOutput">100</span> units</small>
+                  </div>
+                </div>
               </div>
             </div>
             
             <div class="col-lg-7">
               <div class="graph-container">
                 <canvas id="productionChart"></canvas>
+                <div class="isoquant" id="isoquantCanvas"></div>
               </div>
               <div class="mt-3">
-                <div class="alert alert-info" id="stageIndicator">
-                  <strong>Current Stage:</strong> <span id="currentStage">Increasing Returns</span>
-                  <span class="badge bg-primary stage-badge" id="stageBadge">Stage I</span>
+                <div class="alert alert-info py-2">
+                  <strong>Current Output:</strong> <span id="currentOutput">0</span> units | 
+                  <strong>Cost:</strong> ₹<span id="currentCost">0</span> | 
+                  <strong>Returns:</strong> <span id="returnsType" class="badge bg-primary returns-badge">Constant</span>
                 </div>
               </div>
             </div>
@@ -267,50 +292,50 @@
       <!-- Case Studies Container -->
       <div class="tab-pane fade" id="pills-cases" role="tabpanel">
         <div class="content-container case-panel">
-          <h3><i class="bi bi-journal-text"></i> Production Case Studies</h3>
-          <p class="text-muted">Real-world applications of the law of variable proportions</p>
+          <h3><i class="bi bi-journal-text"></i> Long-Run Production Cases</h3>
+          <p class="text-muted">Real-world applications of production optimization</p>
           
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="case-card">
                 <h5><i class="bi bi-cpu"></i> Tech Manufacturing</h5>
-                <p>A smartphone factory with fixed machinery (10 assembly robots) varies its workforce size. Output peaks at 12 workers, then declines.</p>
+                <p>A smartphone factory can substitute robots for workers, but only to a point. The optimal combination depends on relative costs and desired output flexibility.</p>
                 <div class="mt-3">
-                  <span class="badge bg-primary">Optimal Workforce: 8-10</span>
-                  <span class="badge bg-secondary ms-2">MP Peaks at 6</span>
+                  <span class="badge bg-primary">Cobb-Douglas</span>
+                  <span class="badge bg-secondary ms-2">α=0.7, β=0.3</span>
                 </div>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="case-card">
-                <h5><i class="bi bi-basket"></i> Agricultural Production</h5>
-                <p>A 10-acre farm varies labor input. Output increases rapidly up to 5 workers, then slows, peaking at 8 workers per acre.</p>
+                <h5><i class="bi bi-bricks"></i> Construction</h5>
+                <p>Home builders face fixed proportions (Leontief) - each house needs 1 foundation, 4 walls, and 1 roof regardless of scale.</p>
                 <div class="mt-3">
-                  <span class="badge bg-primary">Stage II: 5-7 workers</span>
-                  <span class="badge bg-secondary ms-2">Stage III after 8</span>
+                  <span class="badge bg-primary">Leontief</span>
+                  <span class="badge bg-secondary ms-2">K/L = 2:1</span>
                 </div>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="case-card">
-                <h5><i class="bi bi-cup-hot"></i> Coffee Shop</h5>
-                <p>A café with 3 espresso machines varies baristas. Service capacity peaks at 4 barists (1.33 per machine), then congestion occurs.</p>
+                <h5><i class="bi bi-egg-fried"></i> Food Processing</h5>
+                <p>A bakery can substitute between automated mixers and skilled bakers, but with diminishing marginal rates of technical substitution.</p>
                 <div class="mt-3">
-                  <span class="badge bg-primary">AP Max at 3</span>
-                  <span class="badge bg-secondary ms-2">MP Negative after 5</span>
+                  <span class="badge bg-primary">CES</span>
+                  <span class="badge bg-secondary ms-2">ρ=0.5</span>
                 </div>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="case-card">
-                <h5><i class="bi bi-truck"></i> Delivery Service</h5>
-                <p>A delivery service with 5 trucks varies drivers. Deliveries peak at 7 drivers (1.4 per truck), then decline due to coordination issues.</p>
+                <h5><i class="bi bi-truck"></i> Logistics</h5>
+                <p>Delivery services balance between drivers and vehicles, with nearly constant returns to scale when expanding operations.</p>
                 <div class="mt-3">
-                  <span class="badge bg-primary">Optimal: 6 drivers</span>
-                  <span class="badge bg-secondary ms-2">TP Max at 7</span>
+                  <span class="badge bg-primary">Cobb-Douglas</span>
+                  <span class="badge bg-secondary ms-2">α=0.5, β=0.5</span>
                 </div>
               </div>
             </div>
@@ -321,54 +346,54 @@
       <!-- Managerial Implications Container -->
       <div class="tab-pane fade" id="pills-implications" role="tabpanel">
         <div class="content-container implication-panel">
-          <h3><i class="bi bi-lightbulb"></i> Managerial Implications</h3>
-          <p class="text-muted">Practical applications of production theory in business decisions</p>
+          <h3><i class="bi bi-lightbulb"></i> Strategic Production Decisions</h3>
+          <p class="text-muted">Business applications of long-run production theory</p>
           
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-people"></i> Optimal Hiring</h5>
-                <p>Understanding production stages helps determine the ideal workforce size:</p>
+                <h5><i class="bi bi-currency-exchange"></i> Input Substitution</h5>
+                <p>Key considerations when changing input ratios:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item"><strong>Stage I:</strong> Keep hiring - each worker adds more than the last</li>
-                  <li class="list-group-item"><strong>Stage II:</strong> Ideal range - add workers cautiously</li>
-                  <li class="list-group-item"><strong>Stage III:</strong> Reduce workforce - overcrowding reduces output</li>
+                  <li class="list-group-item">Monitor Marginal Rate of Technical Substitution (MRTS)</li>
+                  <li class="list-group-item">Adjust gradually to maintain quality</li>
+                  <li class="list-group-item">Consider training costs for new technologies</li>
                 </ul>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-gear"></i> Capacity Planning</h5>
-                <p>Matching variable inputs to fixed capital:</p>
+                <h5><i class="bi bi-graph-up-arrow"></i> Expansion Planning</h5>
+                <p>How returns to scale affect growth:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Calculate capital-to-labor ratios at different production stages</li>
-                  <li class="list-group-item">Identify inflection points where returns diminish</li>
-                  <li class="list-group-item">Plan expansions when approaching Stage III</li>
+                  <li class="list-group-item"><strong>Increasing:</strong> Favorable for rapid expansion</li>
+                  <li class="list-group-item"><strong>Constant:</strong> Linear scaling works</li>
+                  <li class="list-group-item"><strong>Decreasing:</strong> Consider decentralization</li>
                 </ul>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-graph-up"></i> Performance Metrics</h5>
-                <p>Key indicators to monitor:</p>
+                <h5><i class="bi bi-cash-stack"></i> Cost Minimization</h5>
+                <p>Strategies for optimal input combinations:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item"><strong>AP (Average Product):</strong> Overall productivity per worker</li>
-                  <li class="list-group-item"><strong>MP (Marginal Product):</strong> Contribution of last worker hired</li>
-                  <li class="list-group-item"><strong>TP (Total Product):</strong> Absolute output level</li>
+                  <li class="list-group-item">Regularly reevaluate input prices</li>
+                  <li class="list-group-item">Automate when wage/rental ratio increases</li>
+                  <li class="list-group-item">Maintain flexibility in production processes</li>
                 </ul>
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="implication-card">
-                <h5><i class="bi bi-cash-stack"></i> Cost Control</h5>
-                <p>Aligning production with cost structures:</p>
+                <h5><i class="bi bi-shield-check"></i> Risk Management</h5>
+                <p>Diversifying production approaches:</p>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Stage II typically offers lowest average costs</li>
-                  <li class="list-group-item">Stage III leads to wasted wages and inefficiency</li>
-                  <li class="list-group-item">Balance labor costs with capital utilization</li>
+                  <li class="list-group-item">Maintain multiple input source options</li>
+                  <li class="list-group-item">Balance capital and labor intensity</li>
+                  <li class="list-group-item">Monitor technological changes that affect MRTS</li>
                 </ul>
               </div>
             </div>
@@ -381,7 +406,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // Password Protection
-    const CORRECT_PASSWORD = "production123";
+    const CORRECT_PASSWORD = "longrun123";
     
     function checkPassword() {
       const enteredPassword = document.getElementById('passwordInput').value;
@@ -401,9 +426,11 @@
     let currentRound = 1;
     let totalRounds = 5;
     let playerScore = 0;
-    let targetLabor = 0;
+    let targetOutput = 0;
+    let optimalK = 0;
+    let optimalL = 0;
     let currentMaxX = 20;
-    let currentMaxY = 200;
+    let currentMaxY = 20;
     
     // Initialize chart
     function initChart() {
@@ -414,7 +441,22 @@
         data: {
           datasets: [
             {
-              label: 'Total Product (TP)',
+              label: 'Your Combination',
+              data: [{x: 10, y: 10}],
+              backgroundColor: 'rgba(231, 76, 60, 1)',
+              pointRadius: 10,
+              pointHoverRadius: 12
+            },
+            {
+              label: 'Optimal Combination',
+              data: [],
+              backgroundColor: 'rgba(46, 204, 113, 1)',
+              pointRadius: 10,
+              pointHoverRadius: 12,
+              pointStyle: 'rectRot'
+            },
+            {
+              label: 'Isoquant Curve',
               data: [],
               borderColor: 'rgba(52, 152, 219, 1)',
               backgroundColor: 'rgba(52, 152, 219, 0.1)',
@@ -424,7 +466,7 @@
               borderWidth: 2
             },
             {
-              label: 'Average Product (AP)',
+              label: 'Isocost Line',
               data: [],
               borderColor: 'rgba(155, 89, 182, 1)',
               backgroundColor: 'rgba(155, 89, 182, 0.1)',
@@ -432,25 +474,7 @@
               fill: false,
               pointRadius: 0,
               borderWidth: 2,
-              borderDash: [5, 3]
-            },
-            {
-              label: 'Marginal Product (MP)',
-              data: [],
-              borderColor: 'rgba(231, 76, 60, 1)',
-              backgroundColor: 'rgba(231, 76, 60, 0.1)',
-              showLine: true,
-              fill: false,
-              pointRadius: 0,
-              borderWidth: 2,
-              borderDash: [3, 3]
-            },
-            {
-              label: 'Current Input',
-              data: [],
-              backgroundColor: 'rgba(46, 204, 113, 1)',
-              pointRadius: 8,
-              pointHoverRadius: 10
+              borderDash: [5, 5]
             }
           ]
         },
@@ -461,7 +485,7 @@
             y: {
               title: {
                 display: true,
-                text: 'Output',
+                text: 'Capital (K)',
                 font: {
                   weight: 'bold'
                 }
@@ -473,7 +497,7 @@
             x: {
               title: {
                 display: true,
-                text: 'Labor Input (Workers)',
+                text: 'Labor (L)',
                 font: {
                   weight: 'bold'
                 }
@@ -487,7 +511,7 @@
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  return `${context.dataset.label}: ${context.parsed.y.toFixed(1)} units`;
+                  return `${context.dataset.label}: (${context.parsed.x}, ${context.parsed.y})`;
                 }
               }
             },
@@ -509,54 +533,111 @@
     }
     
     // Production functions
-    function cubicProduction(L, K) {
-      // TP = aL^3 + bL^2 + cL (typical S-curve)
-      return -0.2*Math.pow(L,3) + 3*Math.pow(L,2) + 10*L;
+    function cobbDouglas(L, K, alpha = 0.5, beta = 0.5) {
+      // Q = A*L^α*K^β
+      return 10 * Math.pow(L, alpha) * Math.pow(K, beta);
     }
     
-    function quadraticProduction(L, K) {
-      // TP = aL^2 + bL (simpler curve)
-      return -0.5*Math.pow(L,2) + 10*L;
+    function ces(L, K, rho = 0.5) {
+      // Q = [αL^ρ + βK^ρ]^(1/ρ)
+      return Math.pow(0.6 * Math.pow(L, rho) + 0.4 * Math.pow(K, rho), 1/rho);
     }
     
-    function logisticProduction(L, K) {
-      // TP = K*(1/(1+e^(-L))) (S-curve with capacity limit)
-      return K*100*(1/(1+Math.exp(-L/3)));
+    function leontief(L, K) {
+      // Q = min(aL, bK)
+      return Math.min(2*L, 3*K);
     }
     
-    // Calculate derivatives (MP and AP)
-    function calculateMP(L, K, type) {
-      const h = 0.1; // Small change for derivative calculation
-      if (L === 0) return calculateTP(0.1, K, type)/0.1;
-      return (calculateTP(L+h, K, type) - calculateTP(L, K, type))/h;
-    }
-    
-    function calculateAP(L, K, type) {
-      if (L === 0) return 0;
-      return calculateTP(L, K, type)/L;
-    }
-    
-    function calculateTP(L, K, type) {
+    // Calculate returns to scale
+    function getReturnsToScale(type, L, K) {
+      const scale = 2;
+      let originalQ, scaledQ;
+      
       switch(type) {
-        case 'cubic': return cubicProduction(L, K);
-        case 'quadratic': return quadraticProduction(L, K);
-        case 'logistic': return logisticProduction(L, K);
-        default: return cubicProduction(L, K);
+        case 'cobbDouglas':
+          originalQ = cobbDouglas(L, K);
+          scaledQ = cobbDouglas(scale*L, scale*K);
+          break;
+        case 'ces':
+          originalQ = ces(L, K);
+          scaledQ = ces(scale*L, scale*K);
+          break;
+        case 'leontief':
+          originalQ = leontief(L, K);
+          scaledQ = leontief(scale*L, scale*K);
+          break;
       }
+      
+      const ratio = scaledQ / originalQ;
+      
+      if (ratio > scale) return { type: "Increasing", badge: "bg-success" };
+      if (ratio < scale) return { type: "Decreasing", badge: "bg-warning" };
+      return { type: "Constant", badge: "bg-primary" };
     }
     
-    // Determine production stage
-    function getProductionStage(L, K, type) {
-      const mp = calculateMP(L, K, type);
-      const ap = calculateAP(L, K, type);
+    // Calculate optimal combination (cost minimization)
+    function calculateOptimalCombination(targetQ, w, r, type) {
+      let optimalL, optimalK;
       
-      if (L === 0) return { stage: "Increasing", badge: "Stage I" };
+      switch(type) {
+        case 'cobbDouglas':
+          // For Cobb-Douglas: K/L = (β/α)*(w/r)
+          optimalL = Math.pow(targetQ/10, 1/(0.5+0.5)) * Math.pow(0.5/0.5 * r/w, 0.5/(0.5+0.5));
+          optimalK = (0.5/0.5) * (w/r) * optimalL;
+          break;
+          
+        case 'ces':
+          // For CES: K/L = [(α/β)*(r/w)]^(1/(1-ρ))
+          optimalL = targetQ / Math.pow(0.6 + 0.4 * Math.pow(0.4/0.6 * w/r, 0.5/(1-0.5)), 1/0.5);
+          optimalK = Math.pow(0.6/0.4 * r/w, 1/(1-0.5)) * optimalL;
+          break;
+          
+        case 'leontief':
+          // For Leontief: fixed proportions
+          optimalL = targetQ / 2;
+          optimalK = targetQ / 3;
+          break;
+      }
       
-      if (mp > ap) return { stage: "Increasing Returns", badge: "Stage I" };
-      if (mp > 0 && mp < ap) return { stage: "Diminishing Returns", badge: "Stage II" };
-      if (mp < 0) return { stage: "Negative Returns", badge: "Stage III" };
+      return { L: optimalL, K: optimalK };
+    }
+    
+    // Generate isoquant points
+    function generateIsoquant(targetQ, type) {
+      const points = [];
+      const maxInput = 20;
       
-      return { stage: "Transition Point", badge: "Stage II" };
+      switch(type) {
+        case 'cobbDouglas':
+          for (let L = 1; L <= maxInput; L += 0.5) {
+            const K = Math.pow(targetQ/(10 * Math.pow(L, 0.5)), 1/0.5);
+            if (K <= maxInput) points.push({x: L, y: K});
+          }
+          break;
+          
+        case 'ces':
+          for (let L = 1; L <= maxInput; L += 0.5) {
+            const K = Math.pow(Math.pow(targetQ, 0.5) - 0.6 * Math.pow(L, 0.5), 2) / 0.4;
+            if (K > 0 && K <= maxInput) points.push({x: L, y: K});
+          }
+          break;
+          
+        case 'leontief':
+          points.push({x: targetQ/2, y: targetQ/3});
+          points.push({x: targetQ/2, y: maxInput});
+          points.push({x: maxInput, y: targetQ/3});
+          break;
+      }
+      
+      return points;
+    }
+    
+    // Generate isocost line
+    function generateIsocost(w, r, C) {
+      return [
+        {x: 0, y: C/r},
+        {x: C/w, y: 0}
+      ];
     }
     
     // Reset game state
@@ -564,119 +645,152 @@
       currentRound = 1;
       playerScore = 0;
       updateScoreDisplay();
-      generateNewRound();
+      generateNewChallenge();
     }
     
-    // Generate new round
-    function generateNewRound() {
+    // Generate new challenge
+    function generateNewChallenge() {
       const productionType = document.getElementById('productionType').value;
-      const K = parseInt(document.getElementById('capitalInput').value);
-      document.getElementById('capitalValue').textContent = K;
       
-      // Generate random target based on production type
-      if (productionType === 'cubic') {
-        targetLabor = Math.floor(Math.random() * 12) + 4; // Between 4-15
-      } else if (productionType === 'quadratic') {
-        targetLabor = Math.floor(Math.random() * 8) + 3; // Between 3-10
+      // Generate random target output based on production type
+      if (productionType === 'cobbDouglas') {
+        targetOutput = Math.floor(Math.random() * 150) + 50; // 50-200
+      } else if (productionType === 'ces') {
+        targetOutput = Math.floor(Math.random() * 100) + 30; // 30-130
       } else {
-        targetLabor = Math.floor(Math.random() * 10) + 5; // Between 5-14
+        targetOutput = Math.floor(Math.random() * 10) + 5; // 5-15 (Leontief)
       }
       
-      // Update UI
-      document.getElementById('laborInput').value = 0;
-      document.getElementById('laborValue').textContent = 0;
+      // Set random input prices
+      const w = Math.floor(Math.random() * 15) + 10; // 10-25
+      const r = Math.floor(Math.random() * 20) + 10; // 10-30
       
-      // Update chart
-      updateProduction();
+      document.getElementById('wageRate').value = w;
+      document.getElementById('rentalRate').value = r;
+      
+      // Calculate optimal combination
+      const optimal = calculateOptimalCombination(targetOutput, w, r, productionType);
+      optimalL = optimal.L;
+      optimalK = optimal.K;
+      
+      // Update UI
+      document.getElementById('targetOutput').textContent = targetOutput;
+      document.getElementById('laborInput').value = Math.round(optimalL * 1.5);
+      document.getElementById('capitalInput').value = Math.round(optimalK * 1.5);
+      document.getElementById('laborValue').textContent = Math.round(optimalL * 1.5);
+      document.getElementById('capitalValue').textContent = Math.round(optimalK * 1.5);
       
       // Set round display
       document.getElementById('currentRound').textContent = `${currentRound}/${totalRounds}`;
+      
+      // Update chart
+      updateProduction();
     }
     
     // Update production chart
     function updateProduction() {
       const L = parseInt(document.getElementById('laborInput').value);
       const K = parseInt(document.getElementById('capitalInput').value);
+      const w = parseInt(document.getElementById('wageRate').value);
+      const r = parseInt(document.getElementById('rentalRate').value);
       const productionType = document.getElementById('productionType').value;
       
       document.getElementById('laborValue').textContent = L;
+      document.getElementById('capitalValue').textContent = K;
       
-      // Generate data points
-      const tpPoints = [];
-      const apPoints = [];
-      const mpPoints = [];
-      
-      for (let l = 0; l <= currentMaxX; l += 0.5) {
-        const tp = calculateTP(l, K, productionType);
-        const ap = calculateAP(l, K, productionType);
-        const mp = calculateMP(l, K, productionType);
-        
-        tpPoints.push({x: l, y: tp});
-        apPoints.push({x: l, y: ap});
-        mpPoints.push({x: l, y: mp});
+      // Calculate current output
+      let currentQ;
+      switch(productionType) {
+        case 'cobbDouglas': currentQ = cobbDouglas(L, K); break;
+        case 'ces': currentQ = ces(L, K); break;
+        case 'leontief': currentQ = leontief(L, K); break;
       }
       
-      // Update chart data
-      productionChart.data.datasets[0].data = tpPoints;
-      productionChart.data.datasets[1].data = apPoints;
-      productionChart.data.datasets[2].data = mpPoints;
-      productionChart.data.datasets[3].data = [{x: L, y: calculateTP(L, K, productionType)}];
+      // Calculate current cost
+      const currentCost = w*L + r*K;
       
-      // Adjust y-axis max
-      const maxTP = calculateTP(currentMaxX, K, productionType);
-      currentMaxY = Math.max(maxTP, 100) * 1.2;
+      // Update current output display
+      document.getElementById('currentOutput').textContent = currentQ.toFixed(1);
+      document.getElementById('currentCost').textContent = currentCost.toFixed(0);
+      
+      // Update returns to scale display
+      const returns = getReturnsToScale(productionType, L, K);
+      document.getElementById('returnsType').textContent = returns.type;
+      document.getElementById('returnsType').className = `badge ${returns.badge} returns-badge`;
+      
+      // Generate isoquant points
+      const isoquantPoints = generateIsoquant(targetOutput, productionType);
+      
+      // Generate isocost line
+      const isocostPoints = generateIsocost(w, r, currentCost);
+      
+      // Update chart data
+      productionChart.data.datasets[0].data = [{x: L, y: K}];
+      productionChart.data.datasets[1].data = [{x: optimalL, y: optimalK}];
+      productionChart.data.datasets[2].data = isoquantPoints;
+      productionChart.data.datasets[3].data = isocostPoints;
+      
+      // Adjust axes
+      currentMaxX = Math.max(L, optimalL, 20) * 1.2;
+      currentMaxY = Math.max(K, optimalK, 20) * 1.2;
+      
+      productionChart.options.scales.x.max = currentMaxX;
       productionChart.options.scales.y.max = currentMaxY;
       
       productionChart.update();
-      
-      // Update stage indicator
-      const stage = getProductionStage(L, K, productionType);
-      document.getElementById('currentStage').textContent = stage.stage;
-      document.getElementById('stageBadge').textContent = stage.badge;
     }
     
-    // Submit answer and go to next round
-    function nextRound() {
+    // Submit answer and calculate score
+    function submitAnswer() {
       const L = parseInt(document.getElementById('laborInput').value);
       const K = parseInt(document.getElementById('capitalInput').value);
+      const w = parseInt(document.getElementById('wageRate').value);
+      const r = parseInt(document.getElementById('rentalRate').value);
       const productionType = document.getElementById('productionType').value;
       
-      // Calculate score based on how close to target stage
-      const targetStage = getProductionStage(targetLabor, K, productionType).badge;
-      const currentStage = getProductionStage(L, K, productionType).badge;
-      
-      let roundScore = 0;
-      if (currentStage === targetStage) {
-        roundScore = 100;
-      } else if (
-        (targetStage === "Stage I" && currentStage === "Stage II") ||
-        (targetStage === "Stage III" && currentStage === "Stage II")
-      ) {
-        roundScore = 50;
-      } else {
-        roundScore = 0;
+      // Calculate current output and cost
+      let currentQ;
+      switch(productionType) {
+        case 'cobbDouglas': currentQ = cobbDouglas(L, K); break;
+        case 'ces': currentQ = ces(L, K); break;
+        case 'leontief': currentQ = leontief(L, K); break;
       }
+      const currentCost = w*L + r*K;
+      
+      // Calculate optimal cost
+      const optimalCost = w*optimalL + r*optimalK;
+      
+      // Calculate how close they got to target output
+      const outputDiff = Math.abs(currentQ - targetOutput);
+      const outputScore = Math.max(0, 100 - (outputDiff/targetOutput * 100));
+      
+      // Calculate how close they got to optimal cost
+      const costDiff = Math.abs(currentCost - optimalCost);
+      const costScore = (optimalCost > 0) ? Math.max(0, 100 - (costDiff/optimalCost * 100)) : 100;
+      
+      // Combined score (weighted average) - impossible to get 100%
+      const roundScore = Math.min(95, (outputScore * 0.6 + costScore * 0.4) * 0.95);
       
       // Add to total score
       playerScore += roundScore;
       updateScoreDisplay();
       
       // Show feedback
-      alert(`Target was ${targetStage} (${targetLabor} workers)\nYour choice: ${currentStage} (${L} workers)\nRound score: ${roundScore}/100`);
+      alert(`Target Output: ${targetOutput}\nYour Output: ${currentQ.toFixed(1)}\n\nOptimal Cost: ₹${optimalCost.toFixed(0)}\nYour Cost: ₹${currentCost.toFixed(0)}\n\nRound score: ${roundScore.toFixed(1)}/100`);
       
       // Move to next round or end game
       if (currentRound < totalRounds) {
         currentRound++;
-        generateNewRound();
+        generateNewChallenge();
       } else {
-        alert(`Game completed! Final score: ${playerScore}/${totalRounds*100}`);
+        alert(`Game completed! Final score: ${playerScore.toFixed(1)}/${totalRounds*100}`);
         resetGame();
       }
     }
     
     // Update score display
     function updateScoreDisplay() {
-      document.getElementById('playerScore').textContent = playerScore;
+      document.getElementById('playerScore').textContent = playerScore.toFixed(1);
       const progress = (playerScore/(totalRounds*100)) * 100;
       document.getElementById('progressBar').style.width = `${progress}%`;
     }
