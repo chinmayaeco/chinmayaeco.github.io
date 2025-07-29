@@ -1,809 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Long-Run Production Function Simulator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --primary-color: #3498db;
-      --secondary-color: #2ecc71;
-      --accent-color: #e74c3c;
-      --dark-color: #2c3e50;
-      --light-color: #ecf0f1;
-      --card-bg: #ffffff;
-      --border-radius: 10px;
-      --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-    }
-    
-    .password-container {
-      max-width: 500px;
-      margin: 5rem auto;
-      padding: 2rem;
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      text-align: center;
-    }
-    
-    .main-container {
-      max-width: 1400px;
-      margin: 2rem auto;
-      padding: 2rem;
-      display: none; /* Initially hidden */
-    }
-    
-    .container-header {
-      background: var(--dark-color);
-      color: white;
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-    
-    .content-container {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border-top: 4px solid var(--primary-color);
-    }
-    
-    .simulation-panel {
-      border-top-color: var(--primary-color);
-    }
-    
-    .case-panel {
-      border-top-color: var(--secondary-color);
-    }
-    
-    .implication-panel {
-      border-top-color: var(--accent-color);
-    }
-    
-    .control-panel {
-      background: rgba(52, 152, 219, 0.05);
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-    }
-    
-    .graph-container {
-      height: 450px;
-      position: relative;
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 1rem;
-    }
-    
-    .score-panel {
-      background: rgba(46, 204, 113, 0.05);
-      border-left: 4px solid var(--secondary-color);
-      padding: 1rem;
-      border-radius: var(--border-radius);
-    }
-    
-    .case-card {
-      background: rgba(52, 152, 219, 0.05);
-      border-left: 4px solid var(--primary-color);
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-      margin-bottom: 1.5rem;
-      transition: transform 0.3s;
-    }
-    
-    .case-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .implication-card {
-      background: rgba(231, 76, 60, 0.05);
-      border-left: 4px solid var(--accent-color);
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-      margin-bottom: 1.5rem;
-      transition: transform 0.3s;
-    }
-    
-    .implication-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .nav-pills .nav-link.active {
-      background-color: var(--primary-color);
-    }
-    
-    .returns-badge {
-      font-size: 0.8rem;
-      margin-right: 0.5rem;
-    }
-    
-    .isoquant {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-    
-    @media (max-width: 768px) {
-      .graph-container {
-        height: 350px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Cost Simulation Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .simulation-panel {
+            border-top: 5px solid #3498db;
+        }
+        
+        .case-studies {
+            border-top: 5px solid #e74c3c;
+        }
+        
+        .managerial-implications {
+            border-top: 5px solid #2ecc71;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+        }
+        
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .password-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .password-box input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 200px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .cost-definition {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 4px solid #6c757d;
+        }
+        
+        .cost-type {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
 </head>
 <body>
-  <!-- Password Protection -->
-  <div id="passwordSection" class="password-container">
-    <h2><i class="bi bi-lock"></i> Access Production Simulator</h2>
-    <div class="mb-3">
-      <input type="password" id="passwordInput" class="form-control" placeholder="Enter password">
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <h2>Business Cost Simulation Game</h2>
+            <p>Enter the password to access the game:</p>
+            <input type="password" id="passwordInput">
+            <button onclick="checkPassword()">Enter</button>
+            <p id="passwordError" style="color: red; display: none;">Incorrect password. Try again.</p>
+        </div>
     </div>
-    <button class="btn btn-primary w-100" onclick="checkPassword()">
-      <i class="bi bi-unlock"></i> Unlock
-    </button>
-    <div id="passwordError" class="text-danger mt-2" style="display: none;">
-      Incorrect password. Please try again.
-    </div>
-  </div>
 
-  <!-- Main Content -->
-  <div class="main-container" id="mainContent">
-    <div class="container-header">
-      <h2><i class="bi bi-graph-up"></i> Long-Run Production Function</h2>
-      <p class="mb-0">Explore isoquants, returns to scale, and optimal input combinations</p>
+    <div class="container" id="gameContent" style="display: none;">
+        <h1>Business Cost Simulation Game</h1>
+        <p>Test your understanding of different cost types in business decision-making.</p>
+        
+        <div class="score-display">
+            Your Score: <span id="score">0</span>%
+        </div>
+        
+        <div class="game-container">
+            <div class="panel simulation-panel">
+                <h2>Simulation Panel</h2>
+                <p>Make decisions in this simulated business environment.</p>
+                
+                <div class="cost-definition">
+                    <span class="cost-type">Fixed Costs:</span> Costs that do not change with the level of production (e.g., rent, salaries).
+                </div>
+                
+                <div class="cost-definition">
+                    <span class="cost-type">Variable Costs:</span> Costs that vary directly with production volume (e.g., raw materials).
+                </div>
+                
+                <div class="cost-definition">
+                    <span class="cost-type">Sunk Costs:</span> Costs that have already been incurred and cannot be recovered.
+                </div>
+                
+                <div class="cost-definition">
+                    <span class="cost-type">Economic Costs:</span> The total opportunity costs of production, including both explicit and implicit costs.
+                </div>
+                
+                <div class="cost-definition">
+                    <span class="cost-type">Accounting Costs:</span> The actual out-of-pocket expenses recorded in financial statements.
+                </div>
+                
+                <div id="simulationQuestions">
+                    <div class="question">
+                        <p>1. Your company pays $5,000 monthly rent for factory space. This is an example of:</p>
+                        <div class="options">
+                            <button onclick="answerQuestion(1, 'fixed', this)">Fixed Cost</button>
+                            <button onclick="answerQuestion(1, 'variable', this)">Variable Cost</button>
+                            <button onclick="answerQuestion(1, 'sunk', this)">Sunk Cost</button>
+                        </div>
+                        <div id="feedback1" class="feedback"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <p>2. You spent $10,000 on market research for a product you've now decided not to launch. This is an example of:</p>
+                        <div class="options">
+                            <button onclick="answerQuestion(2, 'fixed', this)">Fixed Cost</button>
+                            <button onclick="answerQuestion(2, 'sunk', this)">Sunk Cost</button>
+                            <button onclick="answerQuestion(2, 'economic', this)">Economic Cost</button>
+                        </div>
+                        <div id="feedback2" class="feedback"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <p>3. Raw materials that cost $2 per unit of product are an example of:</p>
+                        <div class="options">
+                            <button onclick="answerQuestion(3, 'variable', this)">Variable Cost</button>
+                            <button onclick="answerQuestion(3, 'fixed', this)">Fixed Cost</button>
+                            <button onclick="answerQuestion(3, 'accounting', this)">Accounting Cost</button>
+                        </div>
+                        <div id="feedback3" class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel case-studies">
+                <h2>Case Studies</h2>
+                <p>Analyze these real-world scenarios and answer the questions.</p>
+                
+                <div class="question">
+                    <p><strong>Case 1:</strong> A restaurant owner is deciding whether to stay open during a slow season. She considers the $8,000 monthly rent she pays regardless of being open or closed.</p>
+                    <p>What type of cost is the rent in this decision-making process?</p>
+                    <div class="options">
+                        <button onclick="answerQuestion(4, 'fixed', this)">Fixed Cost</button>
+                        <button onclick="answerQuestion(4, 'sunk', this)">Sunk Cost</button>
+                        <button onclick="answerQuestion(4, 'irrelevant', this)">Irrelevant Cost</button>
+                    </div>
+                    <div id="feedback4" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>Case 2:</strong> A software company spent $50,000 developing a feature that users didn't want. The CEO is deciding whether to spend an additional $20,000 to fix it or abandon it.</p>
+                    <p>The $50,000 already spent is an example of what?</p>
+                    <div class="options">
+                        <button onclick="answerQuestion(5, 'sunk', this)">Sunk Cost</button>
+                        <button onclick="answerQuestion(5, 'variable', this)">Variable Cost</button>
+                        <button onclick="answerQuestion(5, 'opportunity', this)">Opportunity Cost</button>
+                    </div>
+                    <div id="feedback5" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>Case 3:</strong> An entrepreneur left a $100,000/year job to start a business that earns $80,000 in accounting profit.</p>
+                    <p>From an economic perspective, what is the entrepreneur's profit?</p>
+                    <div class="options">
+                        <button onclick="answerQuestion(6, 'loss', this)">-$20,000 (Loss)</button>
+                        <button onclick="answerQuestion(6, 'profit', this)">$80,000 (Profit)</button>
+                        <button onclick="answerQuestion(6, 'zero', this)">$0 (Break-even)</button>
+                    </div>
+                    <div id="feedback6" class="feedback"></div>
+                </div>
+            </div>
+            
+            <div class="panel managerial-implications">
+                <h2>Managerial Implications</h2>
+                <p>Understand how cost concepts affect business decisions.</p>
+                
+                <div class="question">
+                    <p>When making short-term pricing decisions, which costs are most relevant?</p>
+                    <div class="options">
+                        <button onclick="answerQuestion(7, 'variable', this)">Variable Costs</button>
+                        <button onclick="answerQuestion(7, 'fixed', this)">Fixed Costs</button>
+                        <button onclick="answerQuestion(7, 'sunk', this)">Sunk Costs</button>
+                    </div>
+                    <div id="feedback7" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>Which cost concept explains why successful businesses sometimes discontinue profitable products?</p>
+                    <div class="options">
+                        <button onclick="answerQuestion(8, 'opportunity', this)">Opportunity Cost</button>
+                        <button onclick="answerQuestion(8, 'sunk', this)">Sunk Cost</button>
+                        <button onclick="answerQuestion(8, 'fixed', this)">Fixed Cost</button>
+                    </div>
+                    <div id="feedback8" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>Why might a business continue operating at a loss in the short run?</p>
+                    <div class="options">
+                        <button onclick="answerQuestion(9, 'cover', this)">To cover variable costs and some fixed costs</button>
+                        <button onclick="answerQuestion(9, 'sunk', this)">Because of sunk cost fallacy</button>
+                        <button onclick="answerQuestion(9, 'accounting', this)">Accounting rules require it</button>
+                    </div>
+                    <div id="feedback9" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>What's the key difference between economic and accounting costs?</p>
+                    <div class="options">
+                        <button onclick="answerQuestion(10, 'implicit', this)">Economic costs include implicit opportunity costs</button>
+                        <button onclick="answerQuestion(10, 'tax', this)">Accounting costs consider tax implications</button>
+                        <button onclick="answerQuestion(10, 'timing', this)">The timing of when costs are recognized</button>
+                    </div>
+                    <div id="feedback10" class="feedback"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="pills-simulation-tab" data-bs-toggle="pill" data-bs-target="#pills-simulation" type="button" role="tab">
-          <i class="bi bi-sliders"></i> Simulation
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-cases-tab" data-bs-toggle="pill" data-bs-target="#pills-cases" type="button" role="tab">
-          <i class="bi bi-journal-text"></i> Case Studies
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-implications-tab" data-bs-toggle="pill" data-bs-target="#pills-implications" type="button" role="tab">
-          <i class="bi bi-lightbulb"></i> Managerial Insights
-        </button>
-      </li>
-    </ul>
-    
-    <div class="tab-content" id="pills-tabContent">
-      <!-- Simulation Container -->
-      <div class="tab-pane fade show active" id="pills-simulation" role="tabpanel">
-        <div class="content-container simulation-panel">
-          <h3><i class="bi bi-sliders"></i> Production Optimization Challenge</h3>
-          <p class="text-muted">Adjust capital and labor inputs to achieve target output at lowest cost</p>
-          
-          <div class="row mt-4">
-            <div class="col-lg-5">
-              <div class="control-panel">
-                <div class="mb-3">
-                  <label for="productionType" class="form-label">Production Function</label>
-                  <select class="form-select" id="productionType" onchange="resetGame()">
-                    <option value="cobbDouglas">Cobb-Douglas</option>
-                    <option value="ces">CES</option>
-                    <option value="leontief">Leontief</option>
-                  </select>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="laborInput" class="form-label">Labor Input (L)</label>
-                  <input type="range" class="form-range" id="laborInput" min="1" max="20" step="1" value="10" oninput="updateProduction()">
-                  <div class="d-flex justify-content-between">
-                    <small>1</small>
-                    <span class="fw-bold" id="laborValue">10</span>
-                    <small>20</small>
-                  </div>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="capitalInput" class="form-label">Capital Input (K)</label>
-                  <input type="range" class="form-range" id="capitalInput" min="1" max="20" step="1" value="10" oninput="updateProduction()">
-                  <div class="d-flex justify-content-between">
-                    <small>1</small>
-                    <span class="fw-bold" id="capitalValue">10</span>
-                    <small>20</small>
-                  </div>
-                </div>
-                
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label for="wageRate" class="form-label">Wage Rate (₹)</label>
-                    <input type="number" class="form-control" id="wageRate" min="5" max="50" value="15" oninput="updateProduction()">
-                  </div>
-                  <div class="col-md-6">
-                    <label for="rentalRate" class="form-label">Rental Rate (₹)</label>
-                    <input type="number" class="form-control" id="rentalRate" min="5" max="50" value="20" oninput="updateProduction()">
-                  </div>
-                </div>
-                
-                <div class="d-grid gap-2">
-                  <button class="btn btn-primary" onclick="submitAnswer()">
-                    <i class="bi bi-check-circle"></i> Submit Combination
-                  </button>
-                  <button class="btn btn-outline-secondary" onclick="resetGame()">
-                    <i class="bi bi-arrow-counterclockwise"></i> New Challenge
-                  </button>
-                </div>
-              </div>
-              
-              <div class="score-panel mt-3">
-                <h5><i class="bi bi-trophy"></i> Optimization Challenge</h5>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="mb-2">
-                      <span class="badge bg-primary">Round</span>
-                      <span id="currentRound" class="fw-bold ms-2">1/5</span>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="mb-2">
-                      <span class="badge bg-primary">Score</span>
-                      <span id="playerScore" class="fw-bold ms-2">0</span>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <div class="progress mt-2" style="height: 10px;">
-                      <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="mt-2">
-                  <div class="alert alert-info py-2">
-                    <small><strong>Target Output:</strong> <span id="targetOutput">100</span> units</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-lg-7">
-              <div class="graph-container">
-                <canvas id="productionChart"></canvas>
-                <div class="isoquant" id="isoquantCanvas"></div>
-              </div>
-              <div class="mt-3">
-                <div class="alert alert-info py-2">
-                  <strong>Current Output:</strong> <span id="currentOutput">0</span> units | 
-                  <strong>Cost:</strong> ₹<span id="currentCost">0</span> | 
-                  <strong>Returns:</strong> <span id="returnsType" class="badge bg-primary returns-badge">Constant</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Case Studies Container -->
-      <div class="tab-pane fade" id="pills-cases" role="tabpanel">
-        <div class="content-container case-panel">
-          <h3><i class="bi bi-journal-text"></i> Long-Run Production Cases</h3>
-          <p class="text-muted">Real-world applications of production optimization</p>
-          
-          <div class="row mt-4">
-            <div class="col-md-6">
-              <div class="case-card">
-                <h5><i class="bi bi-cpu"></i> Tech Manufacturing</h5>
-                <p>A smartphone factory can substitute robots for workers, but only to a point. The optimal combination depends on relative costs and desired output flexibility.</p>
-                <div class="mt-3">
-                  <span class="badge bg-primary">Cobb-Douglas</span>
-                  <span class="badge bg-secondary ms-2">α=0.7, β=0.3</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="case-card">
-                <h5><i class="bi bi-bricks"></i> Construction</h5>
-                <p>Home builders face fixed proportions (Leontief) - each house needs 1 foundation, 4 walls, and 1 roof regardless of scale.</p>
-                <div class="mt-3">
-                  <span class="badge bg-primary">Leontief</span>
-                  <span class="badge bg-secondary ms-2">K/L = 2:1</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="case-card">
-                <h5><i class="bi bi-egg-fried"></i> Food Processing</h5>
-                <p>A bakery can substitute between automated mixers and skilled bakers, but with diminishing marginal rates of technical substitution.</p>
-                <div class="mt-3">
-                  <span class="badge bg-primary">CES</span>
-                  <span class="badge bg-secondary ms-2">ρ=0.5</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="case-card">
-                <h5><i class="bi bi-truck"></i> Logistics</h5>
-                <p>Delivery services balance between drivers and vehicles, with nearly constant returns to scale when expanding operations.</p>
-                <div class="mt-3">
-                  <span class="badge bg-primary">Cobb-Douglas</span>
-                  <span class="badge bg-secondary ms-2">α=0.5, β=0.5</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Managerial Implications Container -->
-      <div class="tab-pane fade" id="pills-implications" role="tabpanel">
-        <div class="content-container implication-panel">
-          <h3><i class="bi bi-lightbulb"></i> Strategic Production Decisions</h3>
-          <p class="text-muted">Business applications of long-run production theory</p>
-          
-          <div class="row mt-4">
-            <div class="col-md-6">
-              <div class="implication-card">
-                <h5><i class="bi bi-currency-exchange"></i> Input Substitution</h5>
-                <p>Key considerations when changing input ratios:</p>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Monitor Marginal Rate of Technical Substitution (MRTS)</li>
-                  <li class="list-group-item">Adjust gradually to maintain quality</li>
-                  <li class="list-group-item">Consider training costs for new technologies</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="implication-card">
-                <h5><i class="bi bi-graph-up-arrow"></i> Expansion Planning</h5>
-                <p>How returns to scale affect growth:</p>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item"><strong>Increasing:</strong> Favorable for rapid expansion</li>
-                  <li class="list-group-item"><strong>Constant:</strong> Linear scaling works</li>
-                  <li class="list-group-item"><strong>Decreasing:</strong> Consider decentralization</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="implication-card">
-                <h5><i class="bi bi-cash-stack"></i> Cost Minimization</h5>
-                <p>Strategies for optimal input combinations:</p>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Regularly reevaluate input prices</li>
-                  <li class="list-group-item">Automate when wage/rental ratio increases</li>
-                  <li class="list-group-item">Maintain flexibility in production processes</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="implication-card">
-                <h5><i class="bi bi-shield-check"></i> Risk Management</h5>
-                <p>Diversifying production approaches:</p>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Maintain multiple input source options</li>
-                  <li class="list-group-item">Balance capital and labor intensity</li>
-                  <li class="list-group-item">Monitor technological changes that affect MRTS</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Password Protection
-    const CORRECT_PASSWORD = "longrun123";
-    
-    function checkPassword() {
-      const enteredPassword = document.getElementById('passwordInput').value;
-      if (enteredPassword === CORRECT_PASSWORD) {
-        document.getElementById('passwordSection').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-        initChart();
-      } else {
-        document.getElementById('passwordError').style.display = 'block';
-        document.getElementById('passwordInput').value = '';
-        document.getElementById('passwordInput').focus();
-      }
-    }
-    
-    // Game variables
-    let productionChart;
-    let currentRound = 1;
-    let totalRounds = 5;
-    let playerScore = 0;
-    let targetOutput = 0;
-    let optimalK = 0;
-    let optimalL = 0;
-    let currentMaxX = 20;
-    let currentMaxY = 20;
-    
-    // Initialize chart
-    function initChart() {
-      const ctx = document.getElementById('productionChart').getContext('2d');
-      
-      productionChart = new Chart(ctx, {
-        type: 'scatter',
-        data: {
-          datasets: [
-            {
-              label: 'Your Combination',
-              data: [{x: 10, y: 10}],
-              backgroundColor: 'rgba(231, 76, 60, 1)',
-              pointRadius: 10,
-              pointHoverRadius: 12
+    <script>
+        // Password protection
+        const correctPassword = "BizCost2023";
+        let score = 0;
+        const maxPossibleScore = 95; // Ensures no one can score 100%
+        const questionValues = {
+            1: 8, 2: 8, 3: 8, 4: 10, 5: 10,
+            6: 12, 7: 10, 8: 10, 9: 10, 10: 9
+        };
+        const correctAnswers = {
+            1: "fixed",
+            2: "sunk",
+            3: "variable",
+            4: "fixed",
+            5: "sunk",
+            6: "loss",
+            7: "variable",
+            8: "opportunity",
+            9: "cover",
+            10: "implicit"
+        };
+        const feedbackMessages = {
+            1: {
+                correct: "Correct! Rent is a fixed cost because it doesn't change with production volume.",
+                incorrect: "Incorrect. Rent is a fixed cost because the amount doesn't vary with production levels."
             },
-            {
-              label: 'Optimal Combination',
-              data: [],
-              backgroundColor: 'rgba(46, 204, 113, 1)',
-              pointRadius: 10,
-              pointHoverRadius: 12,
-              pointStyle: 'rectRot'
+            2: {
+                correct: "Right! The market research cost is sunk because it can't be recovered.",
+                incorrect: "No, this is a sunk cost because the money has been spent and can't be recovered."
             },
-            {
-              label: 'Isoquant Curve',
-              data: [],
-              borderColor: 'rgba(52, 152, 219, 1)',
-              backgroundColor: 'rgba(52, 152, 219, 0.1)',
-              showLine: true,
-              fill: false,
-              pointRadius: 0,
-              borderWidth: 2
+            3: {
+                correct: "Yes! Raw materials are variable costs because they change with production quantity.",
+                incorrect: "Actually, raw materials are variable costs since they vary directly with production."
             },
-            {
-              label: 'Isocost Line',
-              data: [],
-              borderColor: 'rgba(155, 89, 182, 1)',
-              backgroundColor: 'rgba(155, 89, 182, 0.1)',
-              showLine: true,
-              fill: false,
-              pointRadius: 0,
-              borderWidth: 2,
-              borderDash: [5, 5]
+            4: {
+                correct: "Correct! The rent is a fixed cost in this decision.",
+                incorrect: "Not quite. While the rent is fixed, it's not irrelevant to the decision."
+            },
+            5: {
+                correct: "Exactly! The $50,000 is a sunk cost in this decision.",
+                incorrect: "No, this is a classic example of a sunk cost - already incurred and irrecoverable."
+            },
+            6: {
+                correct: "Right! Economically, this is a $20,000 loss when considering the opportunity cost.",
+                incorrect: "From an accounting perspective it's $80k profit, but economically it's a $20k loss."
+            },
+            7: {
+                correct: "Correct! Variable costs are most relevant for short-term pricing decisions.",
+                incorrect: "Actually, variable costs are most relevant for short-term pricing decisions."
+            },
+            8: {
+                correct: "Yes! Opportunity cost explains that resources might be better used elsewhere.",
+                incorrect: "While sunk costs might influence some decisions, opportunity cost is the key concept here."
+            },
+            9: {
+                correct: "Right! Businesses may operate at a loss if they can cover variable costs and contribute to fixed costs.",
+                incorrect: "While the sunk cost fallacy might influence some, the economic reason is covering variable costs."
+            },
+            10: {
+                correct: "Exactly! Economic costs include implicit opportunity costs that accounting ignores.",
+                incorrect: "The key difference is that economic costs include implicit opportunity costs."
             }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: 'Capital (K)',
-                font: {
-                  weight: 'bold'
-                }
-              },
-              beginAtZero: true,
-              min: 0,
-              max: currentMaxY
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Labor (L)',
-                font: {
-                  weight: 'bold'
-                }
-              },
-              beginAtZero: true,
-              min: 0,
-              max: currentMaxX
+        };
+        
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === correctPassword) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('gameContent').style.display = 'block';
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
             }
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.dataset.label}: (${context.parsed.x}, ${context.parsed.y})`;
-                }
-              }
-            },
-            legend: {
-              position: 'top',
-              labels: {
-                boxWidth: 12,
-                padding: 20,
-                font: {
-                  size: 12
-                }
-              }
-            }
-          }
         }
-      });
-      
-      resetGame();
-    }
-    
-    // Production functions
-    function cobbDouglas(L, K, alpha = 0.5, beta = 0.5) {
-      // Q = A*L^α*K^β
-      return 10 * Math.pow(L, alpha) * Math.pow(K, beta);
-    }
-    
-    function ces(L, K, rho = 0.5) {
-      // Q = [αL^ρ + βK^ρ]^(1/ρ)
-      return Math.pow(0.6 * Math.pow(L, rho) + 0.4 * Math.pow(K, rho), 1/rho);
-    }
-    
-    function leontief(L, K) {
-      // Q = min(aL, bK)
-      return Math.min(2*L, 3*K);
-    }
-    
-    // Calculate returns to scale
-    function getReturnsToScale(type, L, K) {
-      const scale = 2;
-      let originalQ, scaledQ;
-      
-      switch(type) {
-        case 'cobbDouglas':
-          originalQ = cobbDouglas(L, K);
-          scaledQ = cobbDouglas(scale*L, scale*K);
-          break;
-        case 'ces':
-          originalQ = ces(L, K);
-          scaledQ = ces(scale*L, scale*K);
-          break;
-        case 'leontief':
-          originalQ = leontief(L, K);
-          scaledQ = leontief(scale*L, scale*K);
-          break;
-      }
-      
-      const ratio = scaledQ / originalQ;
-      
-      if (ratio > scale) return { type: "Increasing", badge: "bg-success" };
-      if (ratio < scale) return { type: "Decreasing", badge: "bg-warning" };
-      return { type: "Constant", badge: "bg-primary" };
-    }
-    
-    // Calculate optimal combination (cost minimization)
-    function calculateOptimalCombination(targetQ, w, r, type) {
-      let optimalL, optimalK;
-      
-      switch(type) {
-        case 'cobbDouglas':
-          // For Cobb-Douglas: K/L = (β/α)*(w/r)
-          optimalL = Math.pow(targetQ/10, 1/(0.5+0.5)) * Math.pow(0.5/0.5 * r/w, 0.5/(0.5+0.5));
-          optimalK = (0.5/0.5) * (w/r) * optimalL;
-          break;
-          
-        case 'ces':
-          // For CES: K/L = [(α/β)*(r/w)]^(1/(1-ρ))
-          optimalL = targetQ / Math.pow(0.6 + 0.4 * Math.pow(0.4/0.6 * w/r, 0.5/(1-0.5)), 1/0.5);
-          optimalK = Math.pow(0.6/0.4 * r/w, 1/(1-0.5)) * optimalL;
-          break;
-          
-        case 'leontief':
-          // For Leontief: fixed proportions
-          optimalL = targetQ / 2;
-          optimalK = targetQ / 3;
-          break;
-      }
-      
-      return { L: optimalL, K: optimalK };
-    }
-    
-    // Generate isoquant points
-    function generateIsoquant(targetQ, type) {
-      const points = [];
-      const maxInput = 20;
-      
-      switch(type) {
-        case 'cobbDouglas':
-          for (let L = 1; L <= maxInput; L += 0.5) {
-            const K = Math.pow(targetQ/(10 * Math.pow(L, 0.5)), 1/0.5);
-            if (K <= maxInput) points.push({x: L, y: K});
-          }
-          break;
-          
-        case 'ces':
-          for (let L = 1; L <= maxInput; L += 0.5) {
-            const K = Math.pow(Math.pow(targetQ, 0.5) - 0.6 * Math.pow(L, 0.5), 2) / 0.4;
-            if (K > 0 && K <= maxInput) points.push({x: L, y: K});
-          }
-          break;
-          
-        case 'leontief':
-          points.push({x: targetQ/2, y: targetQ/3});
-          points.push({x: targetQ/2, y: maxInput});
-          points.push({x: maxInput, y: targetQ/3});
-          break;
-      }
-      
-      return points;
-    }
-    
-    // Generate isocost line
-    function generateIsocost(w, r, C) {
-      return [
-        {x: 0, y: C/r},
-        {x: C/w, y: 0}
-      ];
-    }
-    
-    // Reset game state
-    function resetGame() {
-      currentRound = 1;
-      playerScore = 0;
-      updateScoreDisplay();
-      generateNewChallenge();
-    }
-    
-    // Generate new challenge
-    function generateNewChallenge() {
-      const productionType = document.getElementById('productionType').value;
-      
-      // Generate random target output based on production type
-      if (productionType === 'cobbDouglas') {
-        targetOutput = Math.floor(Math.random() * 150) + 50; // 50-200
-      } else if (productionType === 'ces') {
-        targetOutput = Math.floor(Math.random() * 100) + 30; // 30-130
-      } else {
-        targetOutput = Math.floor(Math.random() * 10) + 5; // 5-15 (Leontief)
-      }
-      
-      // Set random input prices
-      const w = Math.floor(Math.random() * 15) + 10; // 10-25
-      const r = Math.floor(Math.random() * 20) + 10; // 10-30
-      
-      document.getElementById('wageRate').value = w;
-      document.getElementById('rentalRate').value = r;
-      
-      // Calculate optimal combination
-      const optimal = calculateOptimalCombination(targetOutput, w, r, productionType);
-      optimalL = optimal.L;
-      optimalK = optimal.K;
-      
-      // Update UI
-      document.getElementById('targetOutput').textContent = targetOutput;
-      document.getElementById('laborInput').value = Math.round(optimalL * 1.5);
-      document.getElementById('capitalInput').value = Math.round(optimalK * 1.5);
-      document.getElementById('laborValue').textContent = Math.round(optimalL * 1.5);
-      document.getElementById('capitalValue').textContent = Math.round(optimalK * 1.5);
-      
-      // Set round display
-      document.getElementById('currentRound').textContent = `${currentRound}/${totalRounds}`;
-      
-      // Update chart
-      updateProduction();
-    }
-    
-    // Update production chart
-    function updateProduction() {
-      const L = parseInt(document.getElementById('laborInput').value);
-      const K = parseInt(document.getElementById('capitalInput').value);
-      const w = parseInt(document.getElementById('wageRate').value);
-      const r = parseInt(document.getElementById('rentalRate').value);
-      const productionType = document.getElementById('productionType').value;
-      
-      document.getElementById('laborValue').textContent = L;
-      document.getElementById('capitalValue').textContent = K;
-      
-      // Calculate current output
-      let currentQ;
-      switch(productionType) {
-        case 'cobbDouglas': currentQ = cobbDouglas(L, K); break;
-        case 'ces': currentQ = ces(L, K); break;
-        case 'leontief': currentQ = leontief(L, K); break;
-      }
-      
-      // Calculate current cost
-      const currentCost = w*L + r*K;
-      
-      // Update current output display
-      document.getElementById('currentOutput').textContent = currentQ.toFixed(1);
-      document.getElementById('currentCost').textContent = currentCost.toFixed(0);
-      
-      // Update returns to scale display
-      const returns = getReturnsToScale(productionType, L, K);
-      document.getElementById('returnsType').textContent = returns.type;
-      document.getElementById('returnsType').className = `badge ${returns.badge} returns-badge`;
-      
-      // Generate isoquant points
-      const isoquantPoints = generateIsoquant(targetOutput, productionType);
-      
-      // Generate isocost line
-      const isocostPoints = generateIsocost(w, r, currentCost);
-      
-      // Update chart data
-      productionChart.data.datasets[0].data = [{x: L, y: K}];
-      productionChart.data.datasets[1].data = [{x: optimalL, y: optimalK}];
-      productionChart.data.datasets[2].data = isoquantPoints;
-      productionChart.data.datasets[3].data = isocostPoints;
-      
-      // Adjust axes
-      currentMaxX = Math.max(L, optimalL, 20) * 1.2;
-      currentMaxY = Math.max(K, optimalK, 20) * 1.2;
-      
-      productionChart.options.scales.x.max = currentMaxX;
-      productionChart.options.scales.y.max = currentMaxY;
-      
-      productionChart.update();
-    }
-    
-    // Submit answer and calculate score
-    function submitAnswer() {
-      const L = parseInt(document.getElementById('laborInput').value);
-      const K = parseInt(document.getElementById('capitalInput').value);
-      const w = parseInt(document.getElementById('wageRate').value);
-      const r = parseInt(document.getElementById('rentalRate').value);
-      const productionType = document.getElementById('productionType').value;
-      
-      // Calculate current output and cost
-      let currentQ;
-      switch(productionType) {
-        case 'cobbDouglas': currentQ = cobbDouglas(L, K); break;
-        case 'ces': currentQ = ces(L, K); break;
-        case 'leontief': currentQ = leontief(L, K); break;
-      }
-      const currentCost = w*L + r*K;
-      
-      // Calculate optimal cost
-      const optimalCost = w*optimalL + r*optimalK;
-      
-      // Calculate how close they got to target output
-      const outputDiff = Math.abs(currentQ - targetOutput);
-      const outputScore = Math.max(0, 100 - (outputDiff/targetOutput * 100));
-      
-      // Calculate how close they got to optimal cost
-      const costDiff = Math.abs(currentCost - optimalCost);
-      const costScore = (optimalCost > 0) ? Math.max(0, 100 - (costDiff/optimalCost * 100)) : 100;
-      
-      // Combined score (weighted average) - impossible to get 100%
-      const roundScore = Math.min(95, (outputScore * 0.6 + costScore * 0.4) * 0.95);
-      
-      // Add to total score
-      playerScore += roundScore;
-      updateScoreDisplay();
-      
-      // Show feedback
-      alert(`Target Output: ${targetOutput}\nYour Output: ${currentQ.toFixed(1)}\n\nOptimal Cost: ₹${optimalCost.toFixed(0)}\nYour Cost: ₹${currentCost.toFixed(0)}\n\nRound score: ${roundScore.toFixed(1)}/100`);
-      
-      // Move to next round or end game
-      if (currentRound < totalRounds) {
-        currentRound++;
-        generateNewChallenge();
-      } else {
-        alert(`Game completed! Final score: ${playerScore.toFixed(1)}/${totalRounds*100}`);
-        resetGame();
-      }
-    }
-    
-    // Update score display
-    function updateScoreDisplay() {
-      document.getElementById('playerScore').textContent = playerScore.toFixed(1);
-      const progress = (playerScore/(totalRounds*100)) * 100;
-      document.getElementById('progressBar').style.width = `${progress}%`;
-    }
-    
-    // Initialize password input focus
-    document.getElementById('passwordInput').focus();
-    
-    // Allow Enter key for password submission
-    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        checkPassword();
-      }
-    });
-  </script>
+        
+        function answerQuestion(questionNum, answer, button) {
+            const feedbackElement = document.getElementById(`feedback${questionNum}`);
+            
+            // If already answered, don't allow answering again
+            if (feedbackElement.innerHTML !== '') return;
+            
+            if (answer === correctAnswers[questionNum]) {
+                // Correct answer
+                feedbackElement.innerHTML = feedbackMessages[questionNum].correct;
+                feedbackElement.className = 'feedback correct';
+                score += questionValues[questionNum];
+            } else {
+                // Incorrect answer
+                feedbackElement.innerHTML = feedbackMessages[questionNum].incorrect;
+                feedbackElement.className = 'feedback incorrect';
+            }
+            
+            // Update score display (capped at maxPossibleScore)
+            const displayScore = Math.min(score, maxPossibleScore);
+            document.getElementById('score').textContent = displayScore;
+            
+            // Disable all buttons for this question
+            const buttons = button.parentElement.getElementsByTagName('button');
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+        }
+    </script>
 </body>
 </html>
