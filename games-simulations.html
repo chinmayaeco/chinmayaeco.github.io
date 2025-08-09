@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Cost Simulation Game</title>
+    <title>Perfect Competition Market Simulation</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -132,7 +132,7 @@
             color: #721c24;
         }
         
-        .cost-definition {
+        .concept-definition {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 4px;
@@ -140,16 +140,42 @@
             border-left: 4px solid #6c757d;
         }
         
-        .cost-type {
+        .concept-type {
             font-weight: bold;
             color: #2c3e50;
+        }
+        
+        .graph-container {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            margin: 15px 0;
+            position: relative;
+            border: 1px solid #ddd;
+        }
+        
+        .graph-line {
+            position: absolute;
+            height: 2px;
+            background-color: #333;
+        }
+        
+        .graph-curve {
+            position: absolute;
+            height: 2px;
+            background-color: #e74c3c;
+        }
+        
+        .graph-label {
+            position: absolute;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>Business Cost Simulation Game</h2>
+            <h2>Perfect Competition Market Simulation</h2>
             <p>Enter the password to access the game:</p>
             <input type="password" id="passwordInput">
             <button onclick="checkPassword()">Enter</button>
@@ -158,8 +184,8 @@
     </div>
 
     <div class="container" id="gameContent" style="display: none;">
-        <h1>Business Cost Simulation Game</h1>
-        <p>Test your understanding of different cost types in business decision-making.</p>
+        <h1>Perfect Competition Market Simulation</h1>
+        <p>Test your understanding of perfect competition market structures and decision-making.</p>
         
         <div class="score-display">
             Your Score: <span id="score">0</span>%
@@ -168,55 +194,50 @@
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Make decisions in this simulated business environment.</p>
+                <p>Experience perfect competition through these interactive scenarios.</p>
                 
-                <div class="cost-definition">
-                    <span class="cost-type">Fixed Costs:</span> Costs that do not change with the level of production (e.g., rent, salaries).
+                <div class="concept-definition">
+                    <span class="concept-type">Perfect Competition Characteristics:</span>
+                    <ul>
+                        <li>Many buyers and sellers</li>
+                        <li>Homogeneous products</li>
+                        <li>Free entry and exit</li>
+                        <li>Perfect information</li>
+                        <li>Price takers</li>
+                    </ul>
                 </div>
                 
-                <div class="cost-definition">
-                    <span class="cost-type">Variable Costs:</span> Costs that vary directly with production volume (e.g., raw materials).
-                </div>
-                
-                <div class="cost-definition">
-                    <span class="cost-type">Sunk Costs:</span> Costs that have already been incurred and cannot be recovered.
-                </div>
-                
-                <div class="cost-definition">
-                    <span class="cost-type">Economic Costs:</span> The total opportunity costs of production, including both explicit and implicit costs.
-                </div>
-                
-                <div class="cost-definition">
-                    <span class="cost-type">Accounting Costs:</span> The actual out-of-pocket expenses recorded in financial statements.
+                <div class="graph-container" id="marketGraph">
+                    <!-- Graph will be drawn by JavaScript -->
                 </div>
                 
                 <div id="simulationQuestions">
                     <div class="question">
-                        <p>1. Your company pays $5,000 monthly rent for factory space. This is an example of:</p>
+                        <p>1. In perfect competition, firms are price takers because:</p>
                         <div class="options">
-                            <button onclick="answerQuestion(1, 'fixed', this)">Fixed Cost</button>
-                            <button onclick="answerQuestion(1, 'variable', this)">Variable Cost</button>
-                            <button onclick="answerQuestion(1, 'sunk', this)">Sunk Cost</button>
+                            <button onclick="answerQuestion(1, 'many', this)">There are many firms producing identical products</button>
+                            <button onclick="answerQuestion(1, 'large', this)">They have large market shares</button>
+                            <button onclick="answerQuestion(1, 'advertise', this)">They advertise heavily</button>
                         </div>
                         <div id="feedback1" class="feedback"></div>
                     </div>
                     
                     <div class="question">
-                        <p>2. You spent $10,000 on market research for a product you've now decided not to launch. This is an example of:</p>
+                        <p>2. The demand curve for an individual perfectly competitive firm is:</p>
                         <div class="options">
-                            <button onclick="answerQuestion(2, 'fixed', this)">Fixed Cost</button>
-                            <button onclick="answerQuestion(2, 'sunk', this)">Sunk Cost</button>
-                            <button onclick="answerQuestion(2, 'economic', this)">Economic Cost</button>
+                            <button onclick="answerQuestion(2, 'horizontal', this)">Perfectly elastic (horizontal)</button>
+                            <button onclick="answerQuestion(2, 'downward', this)">Downward sloping</button>
+                            <button onclick="answerQuestion(2, 'vertical', this)">Perfectly inelastic (vertical)</button>
                         </div>
                         <div id="feedback2" class="feedback"></div>
                     </div>
                     
                     <div class="question">
-                        <p>3. Raw materials that cost $2 per unit of product are an example of:</p>
+                        <p>3. In the long run in perfect competition, economic profits are:</p>
                         <div class="options">
-                            <button onclick="answerQuestion(3, 'variable', this)">Variable Cost</button>
-                            <button onclick="answerQuestion(3, 'fixed', this)">Fixed Cost</button>
-                            <button onclick="answerQuestion(3, 'accounting', this)">Accounting Cost</button>
+                            <button onclick="answerQuestion(3, 'zero', this)">Zero</button>
+                            <button onclick="answerQuestion(3, 'positive', this)">Positive</button>
+                            <button onclick="answerQuestion(3, 'negative', this)">Negative</button>
                         </div>
                         <div id="feedback3" class="feedback"></div>
                     </div>
@@ -225,37 +246,36 @@
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Analyze these real-world scenarios and answer the questions.</p>
+                <p>Analyze these real-world scenarios that approximate perfect competition.</p>
                 
                 <div class="question">
-                    <p><strong>Case 1:</strong> A restaurant owner is deciding whether to stay open during a slow season. She considers the $8,000 monthly rent she pays regardless of being open or closed.</p>
-                    <p>What type of cost is the rent in this decision-making process?</p>
+                    <p><strong>Case 1:</strong> The agricultural market for wheat has thousands of farmers producing identical products. When one farmer tries to sell above market price, no one buys their wheat.</p>
+                    <p>This demonstrates which characteristic of perfect competition?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(4, 'fixed', this)">Fixed Cost</button>
-                        <button onclick="answerQuestion(4, 'sunk', this)">Sunk Cost</button>
-                        <button onclick="answerQuestion(4, 'irrelevant', this)">Irrelevant Cost</button>
+                        <button onclick="answerQuestion(4, 'homogeneous', this)">Homogeneous products</button>
+                        <button onclick="answerQuestion(4, 'entry', this)">Free entry and exit</button>
+                        <button onclick="answerQuestion(4, 'information', this)">Perfect information</button>
                     </div>
                     <div id="feedback4" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 2:</strong> A software company spent $50,000 developing a feature that users didn't want. The CEO is deciding whether to spend an additional $20,000 to fix it or abandon it.</p>
-                    <p>The $50,000 already spent is an example of what?</p>
+                    <p><strong>Case 2:</strong> A new technology reduces production costs for all firms in a perfectly competitive industry. What happens in the long run?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(5, 'sunk', this)">Sunk Cost</button>
-                        <button onclick="answerQuestion(5, 'variable', this)">Variable Cost</button>
-                        <button onclick="answerQuestion(5, 'opportunity', this)">Opportunity Cost</button>
+                        <button onclick="answerQuestion(5, 'price', this)">Market price falls, profits return to zero</button>
+                        <button onclick="answerQuestion(5, 'profits', this)">Firms maintain higher profits</button>
+                        <button onclick="answerQuestion(5, 'exit', this)">Firms exit until price rises</button>
                     </div>
                     <div id="feedback5" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 3:</strong> An entrepreneur left a $100,000/year job to start a business that earns $80,000 in accounting profit.</p>
-                    <p>From an economic perspective, what is the entrepreneur's profit?</p>
+                    <p><strong>Case 3:</strong> In the foreign exchange market, no single buyer or seller can influence currency prices, and all participants have access to the same information.</p>
+                    <p>Which perfect competition characteristic is most evident here?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(6, 'loss', this)">-$20,000 (Loss)</button>
-                        <button onclick="answerQuestion(6, 'profit', this)">$80,000 (Profit)</button>
-                        <button onclick="answerQuestion(6, 'zero', this)">$0 (Break-even)</button>
+                        <button onclick="answerQuestion(6, 'takers', this)">Price takers</button>
+                        <button onclick="answerQuestion(6, 'information', this)">Perfect information</button>
+                        <button onclick="answerQuestion(6, 'entry', this)">Free entry</button>
                     </div>
                     <div id="feedback6" class="feedback"></div>
                 </div>
@@ -263,44 +283,44 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how cost concepts affect business decisions.</p>
+                <p>Understand how perfect competition concepts affect business decisions.</p>
                 
                 <div class="question">
-                    <p>When making short-term pricing decisions, which costs are most relevant?</p>
+                    <p>1. In perfect competition, what is the profit-maximizing output level?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(7, 'variable', this)">Variable Costs</button>
-                        <button onclick="answerQuestion(7, 'fixed', this)">Fixed Costs</button>
-                        <button onclick="answerQuestion(7, 'sunk', this)">Sunk Costs</button>
+                        <button onclick="answerQuestion(7, 'mc=mr', this)">Where MC = MR</button>
+                        <button onclick="answerQuestion(7, 'atc', this)">Where ATC is minimized</button>
+                        <button onclick="answerQuestion(7, 'demand', this)">Where demand equals supply</button>
                     </div>
                     <div id="feedback7" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>Which cost concept explains why successful businesses sometimes discontinue profitable products?</p>
+                    <p>2. Why can't firms in perfect competition earn long-run economic profits?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(8, 'opportunity', this)">Opportunity Cost</button>
-                        <button onclick="answerQuestion(8, 'sunk', this)">Sunk Cost</button>
-                        <button onclick="answerQuestion(8, 'fixed', this)">Fixed Cost</button>
+                        <button onclick="answerQuestion(8, 'entry', this)">Free entry eliminates economic profits</button>
+                        <button onclick="answerQuestion(8, 'price', this)">Price is always equal to ATC</button>
+                        <button onclick="answerQuestion(8, 'demand', this)">Demand is perfectly elastic</button>
                     </div>
                     <div id="feedback8" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>Why might a business continue operating at a loss in the short run?</p>
+                    <p>3. What should a perfectly competitive firm do if price falls below AVC?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(9, 'cover', this)">To cover variable costs and some fixed costs</button>
-                        <button onclick="answerQuestion(9, 'sunk', this)">Because of sunk cost fallacy</button>
-                        <button onclick="answerQuestion(9, 'accounting', this)">Accounting rules require it</button>
+                        <button onclick="answerQuestion(9, 'shutdown', this)">Shut down in the short run</button>
+                        <button onclick="answerQuestion(9, 'produce', this)">Continue producing to cover fixed costs</button>
+                        <button onclick="answerQuestion(9, 'raise', this)">Raise its price</button>
                     </div>
                     <div id="feedback9" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>What's the key difference between economic and accounting costs?</p>
+                    <p>4. How does perfect competition benefit consumers?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(10, 'implicit', this)">Economic costs include implicit opportunity costs</button>
-                        <button onclick="answerQuestion(10, 'tax', this)">Accounting costs consider tax implications</button>
-                        <button onclick="answerQuestion(10, 'timing', this)">The timing of when costs are recognized</button>
+                        <button onclick="answerQuestion(10, 'p=min', this)">Prices equal minimum ATC in long run</button>
+                        <button onclick="answerQuestion(10, 'variety', this)">Greater product variety</button>
+                        <button onclick="answerQuestion(10, 'quality', this)">Higher quality products</button>
                     </div>
                     <div id="feedback10" class="feedback"></div>
                 </div>
@@ -310,7 +330,7 @@
 
     <script>
         // Password protection
-        const correctPassword = "BizCost2023";
+        const correctPassword = "PerfectComp2023";
         let score = 0;
         const maxPossibleScore = 95; // Ensures no one can score 100%
         const questionValues = {
@@ -318,57 +338,57 @@
             6: 12, 7: 10, 8: 10, 9: 10, 10: 9
         };
         const correctAnswers = {
-            1: "fixed",
-            2: "sunk",
-            3: "variable",
-            4: "fixed",
-            5: "sunk",
-            6: "loss",
-            7: "variable",
-            8: "opportunity",
-            9: "cover",
-            10: "implicit"
+            1: "many",
+            2: "horizontal",
+            3: "zero",
+            4: "homogeneous",
+            5: "price",
+            6: "takers",
+            7: "mc=mr",
+            8: "entry",
+            9: "shutdown",
+            10: "p=min"
         };
         const feedbackMessages = {
             1: {
-                correct: "Correct! Rent is a fixed cost because it doesn't change with production volume.",
-                incorrect: "Incorrect. Rent is a fixed cost because the amount doesn't vary with production levels."
+                correct: "Correct! In perfect competition, no single firm can influence price because there are many firms producing identical products.",
+                incorrect: "Incorrect. Firms are price takers because there are many competitors producing identical products, not because of market share or advertising."
             },
             2: {
-                correct: "Right! The market research cost is sunk because it can't be recovered.",
-                incorrect: "No, this is a sunk cost because the money has been spent and can't be recovered."
+                correct: "Right! The firm's demand curve is perfectly elastic (horizontal) because it can sell any quantity at the market price.",
+                incorrect: "No, the firm's demand curve is horizontal because it's a price taker in a perfectly competitive market."
             },
             3: {
-                correct: "Yes! Raw materials are variable costs because they change with production quantity.",
-                incorrect: "Actually, raw materials are variable costs since they vary directly with production."
+                correct: "Yes! In the long run, free entry and exit drive economic profits to zero in perfect competition.",
+                incorrect: "Actually, in perfect competition, long-run economic profits are always zero due to free entry and exit."
             },
             4: {
-                correct: "Correct! The rent is a fixed cost in this decision.",
-                incorrect: "Not quite. While the rent is fixed, it's not irrelevant to the decision."
+                correct: "Correct! The inability to charge above market price demonstrates homogeneous products.",
+                incorrect: "While other characteristics are present, the inability to differentiate price is about product homogeneity."
             },
             5: {
-                correct: "Exactly! The $50,000 is a sunk cost in this decision.",
-                incorrect: "No, this is a classic example of a sunk cost - already incurred and irrecoverable."
+                correct: "Exactly! In the long run, the cost savings get passed to consumers through lower prices, returning profits to zero.",
+                incorrect: "No, in perfect competition, any cost advantages are competed away in the long run through price reductions."
             },
             6: {
-                correct: "Right! Economically, this is a $20,000 loss when considering the opportunity cost.",
-                incorrect: "From an accounting perspective it's $80k profit, but economically it's a $20k loss."
+                correct: "Right! The inability to influence prices makes participants price takers.",
+                incorrect: "While information is perfect here, the key characteristic is that no one can influence prices."
             },
             7: {
-                correct: "Correct! Variable costs are most relevant for short-term pricing decisions.",
-                incorrect: "Actually, variable costs are most relevant for short-term pricing decisions."
+                correct: "Correct! Profit maximization always occurs where marginal cost equals marginal revenue.",
+                incorrect: "While ATC minimization is important, profit maximization occurs where MC = MR."
             },
             8: {
-                correct: "Yes! Opportunity cost explains that resources might be better used elsewhere.",
-                incorrect: "While sunk costs might influence some decisions, opportunity cost is the key concept here."
+                correct: "Yes! New firms enter when profits exist, increasing supply and driving prices down until profits are zero.",
+                incorrect: "The key reason is free entry of competitors when economic profits exist."
             },
             9: {
-                correct: "Right! Businesses may operate at a loss if they can cover variable costs and contribute to fixed costs.",
-                incorrect: "While the sunk cost fallacy might influence some, the economic reason is covering variable costs."
+                correct: "Right! When price < AVC, the firm can't cover variable costs and should shut down.",
+                incorrect: "Actually, when price falls below AVC, the firm minimizes losses by shutting down."
             },
             10: {
-                correct: "Exactly! Economic costs include implicit opportunity costs that accounting ignores.",
-                incorrect: "The key difference is that economic costs include implicit opportunity costs."
+                correct: "Exactly! Perfect competition ensures production at minimum efficient scale in the long run.",
+                incorrect: "The primary consumer benefit is production at the lowest possible cost (minimum ATC)."
             }
         };
         
@@ -377,9 +397,71 @@
             if (input === correctPassword) {
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('gameContent').style.display = 'block';
+                drawGraph();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
+        }
+        
+        function drawGraph() {
+            const graph = document.getElementById('marketGraph');
+            const width = graph.offsetWidth;
+            const height = graph.offsetHeight;
+            
+            // Draw axes
+            const xAxis = document.createElement('div');
+            xAxis.className = 'graph-line';
+            xAxis.style.width = width + 'px';
+            xAxis.style.bottom = '20px';
+            xAxis.style.left = '0';
+            graph.appendChild(xAxis);
+            
+            const yAxis = document.createElement('div');
+            yAxis.className = 'graph-line';
+            yAxis.style.height = height - 40 + 'px';
+            yAxis.style.left = '40px';
+            yAxis.style.bottom = '20px';
+            graph.appendChild(yAxis);
+            
+            // Draw demand curve (horizontal line for perfect competition)
+            const demandCurve = document.createElement('div');
+            demandCurve.className = 'graph-line';
+            demandCurve.style.width = (width - 60) + 'px';
+            demandCurve.style.left = '40px';
+            demandCurve.style.top = '80px';
+            graph.appendChild(demandCurve);
+            
+            // Draw MC curve (U-shaped)
+            const mcCurve = document.createElement('div');
+            mcCurve.className = 'graph-curve';
+            mcCurve.style.width = '2px';
+            mcCurve.style.height = '2px';
+            mcCurve.style.left = '40px';
+            mcCurve.style.bottom = '20px';
+            // This would normally be a proper curve, simplified for demo
+            graph.appendChild(mcCurve);
+            
+            // Add labels
+            const priceLabel = document.createElement('div');
+            priceLabel.className = 'graph-label';
+            priceLabel.textContent = 'Price (P)';
+            priceLabel.style.left = '50px';
+            priceLabel.style.top = '70px';
+            graph.appendChild(priceLabel);
+            
+            const qLabel = document.createElement('div');
+            qLabel.className = 'graph-label';
+            qLabel.textContent = 'Quantity (Q)';
+            qLabel.style.right = '10px';
+            qLabel.style.bottom = '10px';
+            graph.appendChild(qLabel);
+            
+            const dLabel = document.createElement('div');
+            dLabel.className = 'graph-label';
+            dLabel.textContent = 'D = MR';
+            dLabel.style.right = '20px';
+            dLabel.style.top = '80px';
+            graph.appendChild(dLabel);
         }
         
         function answerQuestion(questionNum, answer, button) {
