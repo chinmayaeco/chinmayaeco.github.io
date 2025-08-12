@@ -3,54 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect Competition Market Simulation</title>
+    <title>Monopoly Market Simulation</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 20px;
             background-color: #f5f5f5;
-            color: #333;
         }
-        
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        
         h1, h2, h3 {
             color: #2c3e50;
         }
-        
-        .game-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
         .panel {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
             padding: 20px;
-            flex: 1;
-            min-width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
-        
         .simulation-panel {
-            border-top: 5px solid #3498db;
+            background-color: #e8f4f8;
         }
-        
         .case-studies {
-            border-top: 5px solid #e74c3c;
+            background-color: #f0f8e8;
         }
-        
         .managerial-implications {
-            border-top: 5px solid #2ecc71;
+            background-color: #f8e8f0;
         }
-        
         button {
             background-color: #3498db;
             color: white;
@@ -58,355 +46,357 @@
             padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
-            margin: 5px 0;
-            transition: background-color 0.3s;
+            margin: 5px;
         }
-        
         button:hover {
             background-color: #2980b9;
         }
-        
-        .question {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-left: 4px solid #3498db;
-        }
-        
-        .options {
-            margin-left: 20px;
-        }
-        
-        .score-display {
-            text-align: center;
-            font-size: 1.2em;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #e8f4fc;
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
             border-radius: 4px;
         }
-        
-        .password-screen {
+        .score-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 15px 0;
+        }
+        .password-protection {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0,0,0,0.7);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-        
         .password-box {
             background-color: white;
             padding: 30px;
             border-radius: 8px;
             text-align: center;
         }
-        
-        .password-box input {
-            padding: 10px;
-            margin: 10px 0;
-            width: 200px;
-        }
-        
         .hidden {
             display: none;
         }
-        
+        .market-data {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .market-data div {
+            flex: 1;
+            min-width: 200px;
+        }
+        .decision-form {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
         .feedback {
-            margin-top: 10px;
+            margin-top: 15px;
             padding: 10px;
             border-radius: 4px;
         }
-        
-        .correct {
+        .positive {
             background-color: #d4edda;
             color: #155724;
         }
-        
-        .incorrect {
+        .negative {
             background-color: #f8d7da;
             color: #721c24;
         }
-        
-        .concept-definition {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border-left: 4px solid #6c757d;
-        }
-        
-        .concept-type {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
         .graph-container {
             width: 100%;
-            height: 200px;
-            background-color: #f0f0f0;
+            height: 300px;
+            background-color: white;
+            border: 1px solid #ddd;
             margin: 15px 0;
             position: relative;
-            border: 1px solid #ddd;
         }
-        
         .graph-line {
             position: absolute;
             height: 2px;
             background-color: #333;
         }
-        
-        .graph-curve {
-            position: absolute;
-            height: 2px;
+        .demand-curve {
             background-color: #e74c3c;
         }
-        
-        .graph-label {
-            position: absolute;
-            font-size: 12px;
+        .mr-curve {
+            background-color: #3498db;
+        }
+        .mc-curve {
+            background-color: #2ecc71;
+        }
+        .atc-curve {
+            background-color: #f39c12;
         }
     </style>
 </head>
 <body>
-    <div class="password-screen" id="passwordScreen">
+    <!-- Password Protection Screen -->
+    <div id="passwordScreen" class="password-protection">
         <div class="password-box">
-            <h2>Perfect Competition Market Simulation</h2>
-            <p>Enter the password to access the game:</p>
-            <input type="password" id="passwordInput">
-            <button onclick="checkPassword()">Enter</button>
-            <p id="passwordError" style="color: red; display: none;">Incorrect password. Try again.</p>
+            <h2>Monopoly Simulation Access</h2>
+            <p>Please enter the password to access the simulation:</p>
+            <input type="password" id="passwordInput" placeholder="Enter password">
+            <button onclick="checkPassword()">Submit</button>
+            <p id="passwordError" style="color: red; display: none;">Incorrect password. Please try again.</p>
         </div>
     </div>
 
-    <div class="container" id="gameContent" style="display: none;">
-        <h1>Perfect Competition Market Simulation</h1>
-        <p>Test your understanding of perfect competition market structures and decision-making.</p>
+    <!-- Main Simulation Content (hidden initially) -->
+    <div id="mainContent" class="container hidden">
+        <h1>Monopoly Market Simulation</h1>
         
-        <div class="score-display">
-            Your Score: <span id="score">0</span>%
+        <!-- Player Info and Score Display -->
+        <div class="panel">
+            <h2>Monopolist Dashboard</h2>
+            <div class="score-display">
+                Current Score: <span id="currentScore">0</span>/95
+            </div>
+            <p>Welcome to the monopoly market simulation. As the sole provider in this market, your goal is to make optimal pricing and production decisions to maximize profits while considering market demand.</p>
         </div>
         
-        <div class="game-container">
-            <div class="panel simulation-panel">
-                <h2>Simulation Panel</h2>
-                <p>Experience perfect competition through these interactive scenarios.</p>
-                
-                <div class="concept-definition">
-                    <span class="concept-type">Perfect Competition Characteristics:</span>
-                    <ul>
-                        <li>Many buyers and sellers</li>
-                        <li>Homogeneous products</li>
-                        <li>Free entry and exit</li>
-                        <li>Perfect information</li>
-                        <li>Price takers</li>
-                    </ul>
+        <!-- Simulation Panel -->
+        <div class="panel simulation-panel">
+            <h2>Monopoly Simulation</h2>
+            <div class="market-data">
+                <div>
+                    <h3>Market Conditions</h3>
+                    <p>Demand Function: P = <span id="demandFunction">100 - 0.5Q</span></p>
+                    <p>Marginal Revenue: MR = <span id="mrFunction">100 - Q</span></p>
+                    <p>Market Share: <span id="marketShare">100</span>%</p>
                 </div>
-                
-                <div class="graph-container" id="marketGraph">
-                    <!-- Graph will be drawn by JavaScript -->
-                </div>
-                
-                <div id="simulationQuestions">
-                    <div class="question">
-                        <p>1. In perfect competition, firms are price takers because:</p>
-                        <div class="options">
-                            <button onclick="answerQuestion(1, 'many', this)">There are many firms producing identical products</button>
-                            <button onclick="answerQuestion(1, 'large', this)">They have large market shares</button>
-                            <button onclick="answerQuestion(1, 'advertise', this)">They advertise heavily</button>
-                        </div>
-                        <div id="feedback1" class="feedback"></div>
-                    </div>
-                    
-                    <div class="question">
-                        <p>2. The demand curve for an individual perfectly competitive firm is:</p>
-                        <div class="options">
-                            <button onclick="answerQuestion(2, 'horizontal', this)">Perfectly elastic (horizontal)</button>
-                            <button onclick="answerQuestion(2, 'downward', this)">Downward sloping</button>
-                            <button onclick="answerQuestion(2, 'vertical', this)">Perfectly inelastic (vertical)</button>
-                        </div>
-                        <div id="feedback2" class="feedback"></div>
-                    </div>
-                    
-                    <div class="question">
-                        <p>3. In the long run in perfect competition, economic profits are:</p>
-                        <div class="options">
-                            <button onclick="answerQuestion(3, 'zero', this)">Zero</button>
-                            <button onclick="answerQuestion(3, 'positive', this)">Positive</button>
-                            <button onclick="answerQuestion(3, 'negative', this)">Negative</button>
-                        </div>
-                        <div id="feedback3" class="feedback"></div>
-                    </div>
+                <div>
+                    <h3>Your Monopoly</h3>
+                    <p>Price: $<span id="currentPrice">0</span></p>
+                    <p>Quantity Sold: <span id="quantitySold">0</span> units</p>
+                    <p>Total Cost: $<span id="totalCost">0</span></p>
+                    <p>Total Revenue: $<span id="totalRevenue">0</span></p>
+                    <p>Profit: $<span id="profit">0</span></p>
                 </div>
             </div>
             
-            <div class="panel case-studies">
-                <h2>Case Studies</h2>
-                <p>Analyze these real-world scenarios that approximate perfect competition.</p>
-                
-                <div class="question">
-                    <p><strong>Case 1:</strong> The agricultural market for wheat has thousands of farmers producing identical products. When one farmer tries to sell above market price, no one buys their wheat.</p>
-                    <p>This demonstrates which characteristic of perfect competition?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(4, 'homogeneous', this)">Homogeneous products</button>
-                        <button onclick="answerQuestion(4, 'entry', this)">Free entry and exit</button>
-                        <button onclick="answerQuestion(4, 'information', this)">Perfect information</button>
-                    </div>
-                    <div id="feedback4" class="feedback"></div>
-                </div>
-                
-                <div class="question">
-                    <p><strong>Case 2:</strong> A new technology reduces production costs for all firms in a perfectly competitive industry. What happens in the long run?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(5, 'price', this)">Market price falls, profits return to zero</button>
-                        <button onclick="answerQuestion(5, 'profits', this)">Firms maintain higher profits</button>
-                        <button onclick="answerQuestion(5, 'exit', this)">Firms exit until price rises</button>
-                    </div>
-                    <div id="feedback5" class="feedback"></div>
-                </div>
-                
-                <div class="question">
-                    <p><strong>Case 3:</strong> In the foreign exchange market, no single buyer or seller can influence currency prices, and all participants have access to the same information.</p>
-                    <p>Which perfect competition characteristic is most evident here?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(6, 'takers', this)">Price takers</button>
-                        <button onclick="answerQuestion(6, 'information', this)">Perfect information</button>
-                        <button onclick="answerQuestion(6, 'entry', this)">Free entry</button>
-                    </div>
-                    <div id="feedback6" class="feedback"></div>
-                </div>
+            <div class="graph-container" id="monopolyGraph">
+                <!-- Graph will be drawn here -->
             </div>
             
-            <div class="panel managerial-implications">
-                <h2>Managerial Implications</h2>
-                <p>Understand how perfect competition concepts affect business decisions.</p>
+            <div class="decision-form">
+                <h3>Make Your Monopoly Decision</h3>
+                <label for="priceLevel">Set Price ($):</label>
+                <input type="number" id="priceLevel" min="0" max="100" value="0">
+                <span> or </span>
+                <label for="quantityLevel">Set Quantity (units):</label>
+                <input type="number" id="quantityLevel" min="0" max="200" value="0">
+                <button onclick="submitMonopolyDecision()">Submit Decision</button>
+                <button onclick="advanceYear()">Advance to Next Year</button>
                 
-                <div class="question">
-                    <p>1. In perfect competition, what is the profit-maximizing output level?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(7, 'mc=mr', this)">Where MC = MR</button>
-                        <button onclick="answerQuestion(7, 'atc', this)">Where ATC is minimized</button>
-                        <button onclick="answerQuestion(7, 'demand', this)">Where demand equals supply</button>
-                    </div>
-                    <div id="feedback7" class="feedback"></div>
+                <div id="decisionFeedback" class="feedback hidden"></div>
+            </div>
+        </div>
+        
+        <!-- Case Studies -->
+        <div class="panel case-studies">
+            <h2>Monopoly Case Studies</h2>
+            <div>
+                <h3>Case Study 1: Natural Monopoly</h3>
+                <p>Examine the characteristics of natural monopolies where average costs decline over the relevant range of output. Should these be regulated?</p>
+                <button onclick="revealCaseStudyAnswer(1)">Reveal Analysis</button>
+                <div id="caseStudy1Answer" class="hidden">
+                    <p>Natural monopolies (like utilities) often face high fixed costs and declining average costs. Regulation may be needed to prevent abuse of monopoly power while ensuring the firm can cover costs.</p>
                 </div>
-                
-                <div class="question">
-                    <p>2. Why can't firms in perfect competition earn long-run economic profits?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(8, 'entry', this)">Free entry eliminates economic profits</button>
-                        <button onclick="answerQuestion(8, 'price', this)">Price is always equal to ATC</button>
-                        <button onclick="answerQuestion(8, 'demand', this)">Demand is perfectly elastic</button>
-                    </div>
-                    <div id="feedback8" class="feedback"></div>
+            </div>
+            <div>
+                <h3>Case Study 2: Price Discrimination</h3>
+                <p>Analyze how monopolies can increase profits through price discrimination. What are the different degrees and implications?</p>
+                <button onclick="revealCaseStudyAnswer(2)">Reveal Analysis</button>
+                <div id="caseStudy2Answer" class="hidden">
+                    <p>First-degree (perfect) discrimination captures all consumer surplus. Second-degree uses quantity discounts. Third-degree segments markets. While increasing profits, it may improve efficiency by serving more customers.</p>
                 </div>
-                
-                <div class="question">
-                    <p>3. What should a perfectly competitive firm do if price falls below AVC?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(9, 'shutdown', this)">Shut down in the short run</button>
-                        <button onclick="answerQuestion(9, 'produce', this)">Continue producing to cover fixed costs</button>
-                        <button onclick="answerQuestion(9, 'raise', this)">Raise its price</button>
-                    </div>
-                    <div id="feedback9" class="feedback"></div>
+            </div>
+        </div>
+        
+        <!-- Managerial Implications -->
+        <div class="panel managerial-implications">
+            <h2>Managerial Implications</h2>
+            <div>
+                <h3>Profit Maximization</h3>
+                <p>How should a monopolist determine the profit-maximizing price and quantity? What's different from perfect competition?</p>
+                <button onclick="revealImplicationAnswer(1)">Show Implications</button>
+                <div id="implication1Answer" class="hidden">
+                    <p>A monopolist maximizes profit where MR = MC, then sets price on the demand curve. Unlike perfect competition, P > MR due to downward-sloping demand, allowing economic profits in long run.</p>
                 </div>
-                
-                <div class="question">
-                    <p>4. How does perfect competition benefit consumers?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(10, 'p=min', this)">Prices equal minimum ATC in long run</button>
-                        <button onclick="answerQuestion(10, 'variety', this)">Greater product variety</button>
-                        <button onclick="answerQuestion(10, 'quality', this)">Higher quality products</button>
-                    </div>
-                    <div id="feedback10" class="feedback"></div>
+            </div>
+            <div>
+                <h3>Barriers to Entry</h3>
+                <p>What strategies can maintain monopoly power? How do barriers to entry affect long-term strategy?</p>
+                <button onclick="revealImplicationAnswer(2)">Show Implications</button>
+                <div id="implication2Answer" class="hidden">
+                    <p>Monopolies sustain power through legal barriers (patents), control of resources, economies of scale, or strategic pricing. Managers must balance profit maximization with maintaining these barriers.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Password protection
-        const correctPassword = "PerfectComp2023";
-        let score = 0;
-        const maxPossibleScore = 95; // Ensures no one can score 100%
-        const questionValues = {
-            1: 8, 2: 8, 3: 8, 4: 10, 5: 10,
-            6: 12, 7: 10, 8: 10, 9: 10, 10: 9
-        };
-        const correctAnswers = {
-            1: "many",
-            2: "horizontal",
-            3: "zero",
-            4: "homogeneous",
-            5: "price",
-            6: "takers",
-            7: "mc=mr",
-            8: "entry",
-            9: "shutdown",
-            10: "p=min"
-        };
-        const feedbackMessages = {
-            1: {
-                correct: "Correct! In perfect competition, no single firm can influence price because there are many firms producing identical products.",
-                incorrect: "Incorrect. Firms are price takers because there are many competitors producing identical products, not because of market share or advertising."
-            },
-            2: {
-                correct: "Right! The firm's demand curve is perfectly elastic (horizontal) because it can sell any quantity at the market price.",
-                incorrect: "No, the firm's demand curve is horizontal because it's a price taker in a perfectly competitive market."
-            },
-            3: {
-                correct: "Yes! In the long run, free entry and exit drive economic profits to zero in perfect competition.",
-                incorrect: "Actually, in perfect competition, long-run economic profits are always zero due to free entry and exit."
-            },
-            4: {
-                correct: "Correct! The inability to charge above market price demonstrates homogeneous products.",
-                incorrect: "While other characteristics are present, the inability to differentiate price is about product homogeneity."
-            },
-            5: {
-                correct: "Exactly! In the long run, the cost savings get passed to consumers through lower prices, returning profits to zero.",
-                incorrect: "No, in perfect competition, any cost advantages are competed away in the long run through price reductions."
-            },
-            6: {
-                correct: "Right! The inability to influence prices makes participants price takers.",
-                incorrect: "While information is perfect here, the key characteristic is that no one can influence prices."
-            },
-            7: {
-                correct: "Correct! Profit maximization always occurs where marginal cost equals marginal revenue.",
-                incorrect: "While ATC minimization is important, profit maximization occurs where MC = MR."
-            },
-            8: {
-                correct: "Yes! New firms enter when profits exist, increasing supply and driving prices down until profits are zero.",
-                incorrect: "The key reason is free entry of competitors when economic profits exist."
-            },
-            9: {
-                correct: "Right! When price < AVC, the firm can't cover variable costs and should shut down.",
-                incorrect: "Actually, when price falls below AVC, the firm minimizes losses by shutting down."
-            },
-            10: {
-                correct: "Exactly! Perfect competition ensures production at minimum efficient scale in the long run.",
-                incorrect: "The primary consumer benefit is production at the lowest possible cost (minimum ATC)."
-            }
-        };
+        // Password Protection
+        const correctPassword = "Monopoly2023";
         
         function checkPassword() {
-            const input = document.getElementById('passwordInput').value;
-            if (input === correctPassword) {
+            const enteredPassword = document.getElementById('passwordInput').value;
+            if (enteredPassword === correctPassword) {
                 document.getElementById('passwordScreen').style.display = 'none';
-                document.getElementById('gameContent').style.display = 'block';
-                drawGraph();
+                document.getElementById('mainContent').classList.remove('hidden');
+                initializeSimulation();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
         }
         
+        // Simulation Variables
+        let score = 0;
+        let year = 1;
+        let demandFunction = { intercept: 100, slope: -0.5 };
+        let costStructure = {
+            fixedCost: 1000,
+            initialMC: 20,
+            mcIncrement: 0.1,
+            atcOffset: 30
+        };
+        let currentPrice = 0;
+        let currentQuantity = 0;
+        
+        function initializeSimulation() {
+            updateMarketDisplay();
+            updateScore();
+            drawGraph();
+        }
+        
+        function calculateDemand(price) {
+            return (price - demandFunction.intercept) / demandFunction.slope;
+        }
+        
+        function calculatePrice(quantity) {
+            return demandFunction.intercept + demandFunction.slope * quantity;
+        }
+        
+        function calculateMR(quantity) {
+            return demandFunction.intercept + 2 * demandFunction.slope * quantity;
+        }
+        
+        function calculateMC(quantity) {
+            return costStructure.initialMC + costStructure.mcIncrement * quantity;
+        }
+        
+        function calculateATC(quantity) {
+            return costStructure.atcOffset + (costStructure.fixedCost / quantity) + 
+                   (costStructure.initialMC * 0.5) + (0.5 * costStructure.mcIncrement * quantity);
+        }
+        
+        function calculateTotalCost(quantity) {
+            return costStructure.fixedCost + 
+                   (costStructure.initialMC * quantity) + 
+                   (0.5 * costStructure.mcIncrement * quantity * quantity);
+        }
+        
+        function updateMarketDisplay() {
+            document.getElementById('currentPrice').textContent = currentPrice.toFixed(2);
+            document.getElementById('quantitySold').textContent = currentQuantity.toFixed(0);
+            document.getElementById('totalCost').textContent = calculateTotalCost(currentQuantity).toFixed(2);
+            document.getElementById('totalRevenue').textContent = (currentPrice * currentQuantity).toFixed(2);
+            document.getElementById('profit').textContent = (currentPrice * currentQuantity - calculateTotalCost(currentQuantity)).toFixed(2);
+        }
+        
+        function submitMonopolyDecision() {
+            const priceInput = document.getElementById('priceLevel');
+            const quantityInput = document.getElementById('quantityLevel');
+            
+            let newPrice = parseFloat(priceInput.value);
+            let newQuantity = parseFloat(quantityInput.value);
+            
+            // If both entered, prefer quantity (more economically accurate for monopoly)
+            if (!isNaN(newQuantity) && newQuantity >= 0) {
+                currentQuantity = newQuantity;
+                currentPrice = calculatePrice(currentQuantity);
+            } else if (!isNaN(newPrice) && newPrice >= 0) {
+                currentPrice = newPrice;
+                currentQuantity = calculateDemand(currentPrice);
+            } else {
+                alert("Please enter valid price or quantity");
+                return;
+            }
+            
+            updateMarketDisplay();
+            drawGraph();
+            
+            // Provide feedback and score
+            const feedback = document.getElementById('decisionFeedback');
+            feedback.classList.remove('hidden');
+            
+            // Calculate profit-maximizing quantity (MR = MC)
+            const optimalQuantity = (demandFunction.intercept - costStructure.initialMC) / 
+                                  (2 * -demandFunction.slope + costStructure.mcIncrement);
+            const optimalPrice = calculatePrice(optimalQuantity);
+            
+            const profitDifference = Math.abs((currentPrice * currentQuantity - calculateTotalCost(currentQuantity)) - 
+                                           (optimalPrice * optimalQuantity - calculateTotalCost(optimalQuantity)));
+            
+            if (profitDifference < 50) {
+                feedback.textContent = "Excellent decision! You're very close to the profit-maximizing point where MR = MC.";
+                feedback.className = "feedback positive";
+                addToScore(5);
+            } else if (profitDifference < 150) {
+                feedback.textContent = "Good decision, but not optimal. Remember to produce where MR = MC, then set price on the demand curve.";
+                feedback.className = "feedback positive";
+                addToScore(3);
+            } else {
+                feedback.textContent = "Consider adjusting your decision. As a monopolist, you should produce where MR = MC, then charge the highest price the market will bear.";
+                feedback.className = "feedback negative";
+                addToScore(1);
+            }
+        }
+        
+        function advanceYear() {
+            year++;
+            
+            // Random market fluctuations
+            const demandChange = Math.floor(Math.random() * 21) - 10; // -10 to +10
+            demandFunction.intercept = Math.max(60, demandFunction.intercept + demandChange);
+            
+            // Cost changes over time
+            costStructure.initialMC += (Math.random() * 4 - 2); // -2 to +2
+            
+            // Reset decision feedback
+            document.getElementById('decisionFeedback').classList.add('hidden');
+            
+            // Update display
+            document.getElementById('demandFunction').textContent = 
+                `${demandFunction.intercept.toFixed(0)} ${demandFunction.slope > 0 ? '+' : ''}${demandFunction.slope.toFixed(1)}Q`;
+            document.getElementById('mrFunction').textContent = 
+                `${demandFunction.intercept.toFixed(0)} ${2*demandFunction.slope > 0 ? '+' : ''}${(2*demandFunction.slope).toFixed(1)}Q`;
+            
+            drawGraph();
+            
+            // Add time-based points
+            addToScore(2);
+        }
+        
         function drawGraph() {
-            const graph = document.getElementById('marketGraph');
+            const graph = document.getElementById('monopolyGraph');
+            graph.innerHTML = '';
+            
             const width = graph.offsetWidth;
             const height = graph.offsetHeight;
+            const maxQ = 200;
+            const maxP = demandFunction.intercept * 1.2;
             
             // Draw axes
             const xAxis = document.createElement('div');
@@ -418,78 +408,94 @@
             
             const yAxis = document.createElement('div');
             yAxis.className = 'graph-line';
-            yAxis.style.height = height - 40 + 'px';
-            yAxis.style.left = '40px';
-            yAxis.style.bottom = '20px';
+            yAxis.style.height = height + 'px';
+            yAxis.style.left = '20px';
+            yAxis.style.top = '0';
             graph.appendChild(yAxis);
             
-            // Draw demand curve (horizontal line for perfect competition)
-            const demandCurve = document.createElement('div');
-            demandCurve.className = 'graph-line';
-            demandCurve.style.width = (width - 60) + 'px';
-            demandCurve.style.left = '40px';
-            demandCurve.style.top = '80px';
-            graph.appendChild(demandCurve);
+            // Draw demand curve (P = a + bQ)
+            for (let q = 0; q < maxQ; q += 5) {
+                const p = calculatePrice(q);
+                const demandPoint = document.createElement('div');
+                demandPoint.className = 'graph-line demand-curve';
+                demandPoint.style.width = '2px';
+                demandPoint.style.height = '2px';
+                demandPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
+                demandPoint.style.bottom = (20 + (p/maxP * (height-40))) + 'px';
+                graph.appendChild(demandPoint);
+            }
             
-            // Draw MC curve (U-shaped)
-            const mcCurve = document.createElement('div');
-            mcCurve.className = 'graph-curve';
-            mcCurve.style.width = '2px';
-            mcCurve.style.height = '2px';
-            mcCurve.style.left = '40px';
-            mcCurve.style.bottom = '20px';
-            // This would normally be a proper curve, simplified for demo
-            graph.appendChild(mcCurve);
+            // Draw MR curve (MR = a + 2bQ)
+            for (let q = 0; q < maxQ; q += 5) {
+                const mr = calculateMR(q);
+                if (mr > 0) {
+                    const mrPoint = document.createElement('div');
+                    mrPoint.className = 'graph-line mr-curve';
+                    mrPoint.style.width = '2px';
+                    mrPoint.style.height = '2px';
+                    mrPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
+                    mrPoint.style.bottom = (20 + (mr/maxP * (height-40))) + 'px';
+                    graph.appendChild(mrPoint);
+                }
+            }
             
-            // Add labels
-            const priceLabel = document.createElement('div');
-            priceLabel.className = 'graph-label';
-            priceLabel.textContent = 'Price (P)';
-            priceLabel.style.left = '50px';
-            priceLabel.style.top = '70px';
-            graph.appendChild(priceLabel);
+            // Draw MC curve
+            for (let q = 0; q < maxQ; q += 5) {
+                const mc = calculateMC(q);
+                const mcPoint = document.createElement('div');
+                mcPoint.className = 'graph-line mc-curve';
+                mcPoint.style.width = '2px';
+                mcPoint.style.height = '2px';
+                mcPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
+                mcPoint.style.bottom = (20 + (mc/maxP * (height-40))) + 'px';
+                graph.appendChild(mcPoint);
+            }
             
-            const qLabel = document.createElement('div');
-            qLabel.className = 'graph-label';
-            qLabel.textContent = 'Quantity (Q)';
-            qLabel.style.right = '10px';
-            qLabel.style.bottom = '10px';
-            graph.appendChild(qLabel);
+            // Draw ATC curve
+            for (let q = 10; q < maxQ; q += 5) {
+                const atc = calculateATC(q);
+                const atcPoint = document.createElement('div');
+                atcPoint.className = 'graph-line atc-curve';
+                atcPoint.style.width = '2px';
+                atcPoint.style.height = '2px';
+                atcPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
+                atcPoint.style.bottom = (20 + (atc/maxP * (height-40))) + 'px';
+                graph.appendChild(atcPoint);
+            }
             
-            const dLabel = document.createElement('div');
-            dLabel.className = 'graph-label';
-            dLabel.textContent = 'D = MR';
-            dLabel.style.right = '20px';
-            dLabel.style.top = '80px';
-            graph.appendChild(dLabel);
+            // Mark current decision if exists
+            if (currentQuantity > 0) {
+                const decisionPoint = document.createElement('div');
+                decisionPoint.style.position = 'absolute';
+                decisionPoint.style.width = '8px';
+                decisionPoint.style.height = '8px';
+                decisionPoint.style.backgroundColor = 'black';
+                decisionPoint.style.borderRadius = '50%';
+                decisionPoint.style.left = (20 + (currentQuantity/maxQ * (width-40)) - 4) + 'px';
+                decisionPoint.style.bottom = (20 + (currentPrice/maxP * (height-40)) - 4) + 'px';
+                graph.appendChild(decisionPoint);
+            }
         }
         
-        function answerQuestion(questionNum, answer, button) {
-            const feedbackElement = document.getElementById(`feedback${questionNum}`);
-            
-            // If already answered, don't allow answering again
-            if (feedbackElement.innerHTML !== '') return;
-            
-            if (answer === correctAnswers[questionNum]) {
-                // Correct answer
-                feedbackElement.innerHTML = feedbackMessages[questionNum].correct;
-                feedbackElement.className = 'feedback correct';
-                score += questionValues[questionNum];
-            } else {
-                // Incorrect answer
-                feedbackElement.innerHTML = feedbackMessages[questionNum].incorrect;
-                feedbackElement.className = 'feedback incorrect';
-            }
-            
-            // Update score display (capped at maxPossibleScore)
-            const displayScore = Math.min(score, maxPossibleScore);
-            document.getElementById('score').textContent = displayScore;
-            
-            // Disable all buttons for this question
-            const buttons = button.parentElement.getElementsByTagName('button');
-            for (let btn of buttons) {
-                btn.disabled = true;
-            }
+        function addToScore(points) {
+            // Ensure score never reaches 100%
+            const maxPossible = 95;
+            score = Math.min(score + points, maxPossible);
+            updateScore();
+        }
+        
+        function updateScore() {
+            document.getElementById('currentScore').textContent = score;
+        }
+        
+        function revealCaseStudyAnswer(studyNum) {
+            document.getElementById(`caseStudy${studyNum}Answer`).classList.remove('hidden');
+            addToScore(2);
+        }
+        
+        function revealImplicationAnswer(impNum) {
+            document.getElementById(`implication${impNum}Answer`).classList.remove('hidden');
+            addToScore(2);
         }
     </script>
 </body>
