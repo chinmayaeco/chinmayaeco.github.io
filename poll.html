@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monopoly Market Simulation</title>
+    <title>Price Discrimination Simulation</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -40,19 +40,19 @@
         }
         
         .simulation-panel {
-            border-top: 5px solid #9b59b6;
+            border-top: 5px solid #e67e22;
         }
         
         .case-studies {
-            border-top: 5px solid #e74c3c;
+            border-top: 5px solid #16a085;
         }
         
         .managerial-implications {
-            border-top: 5px solid #f39c12;
+            border-top: 5px solid #c0392b;
         }
         
         button {
-            background-color: #9b59b6;
+            background-color: #e67e22;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -63,14 +63,14 @@
         }
         
         button:hover {
-            background-color: #8e44ad;
+            background-color: #d35400;
         }
         
         .question {
             margin-bottom: 15px;
             padding: 10px;
             background-color: #f9f9f9;
-            border-left: 4px solid #9b59b6;
+            border-left: 4px solid #e67e22;
         }
         
         .options {
@@ -82,7 +82,7 @@
             font-size: 1.2em;
             margin: 20px 0;
             padding: 10px;
-            background-color: #f0e6f5;
+            background-color: #fdebd0;
             border-radius: 4px;
         }
         
@@ -137,12 +137,32 @@
             padding: 15px;
             border-radius: 4px;
             margin-bottom: 15px;
-            border-left: 4px solid #9b59b6;
+            border-left: 4px solid #e67e22;
         }
         
         .concept-type {
             font-weight: bold;
             color: #2c3e50;
+        }
+        
+        .discrimination-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .type-card {
+            background-color: #fdebd0;
+            padding: 10px;
+            border-radius: 4px;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .type-card h4 {
+            margin-top: 0;
+            color: #e67e22;
         }
         
         .graph-container {
@@ -171,28 +191,18 @@
             font-size: 12px;
         }
         
-        .monopoly-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .feature-card {
-            background-color: #f0e6f5;
+        .scenario {
+            background-color: #e8f8f5;
             padding: 10px;
             border-radius: 4px;
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-            font-size: 0.9em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>Monopoly Market Simulation</h2>
+            <h2>Price Discrimination Simulation</h2>
             <p>Enter the password to access the game:</p>
             <input type="password" id="passwordInput">
             <button onclick="checkPassword()">Enter</button>
@@ -201,8 +211,8 @@
     </div>
 
     <div class="container" id="gameContent" style="display: none;">
-        <h1>Monopoly Market Simulation</h1>
-        <p>Explore the characteristics and implications of monopoly market structures.</p>
+        <h1>Price Discrimination Simulation</h1>
+        <p>Explore the strategies and implications of different price discrimination techniques.</p>
         
         <div class="score-display">
             Your Score: <span id="score">0</span>%
@@ -211,50 +221,57 @@
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Experience monopoly market dynamics through these interactive scenarios.</p>
+                <p>Experience different price discrimination strategies through interactive scenarios.</p>
                 
                 <div class="concept-definition">
-                    <span class="concept-type">Monopoly Characteristics:</span>
-                    <div class="monopoly-features">
-                        <div class="feature-card">Single seller</div>
-                        <div class="feature-card">No close substitutes</div>
-                        <div class="feature-card">Price maker</div>
-                        <div class="feature-card">High barriers to entry</div>
-                        <div class="feature-card">Downward sloping demand</div>
+                    <span class="concept-type">Price Discrimination Types:</span>
+                    <div class="discrimination-types">
+                        <div class="type-card">
+                            <h4>First Degree</h4>
+                            <p>Charging each customer their maximum willingness to pay (perfect discrimination)</p>
+                        </div>
+                        <div class="type-card">
+                            <h4>Second Degree</h4>
+                            <p>Price varies by quantity or version (quantity discounts, premium versions)</p>
+                        </div>
+                        <div class="type-card">
+                            <h4>Third Degree</h4>
+                            <p>Different prices for identifiable groups (student discounts, senior rates)</p>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="graph-container" id="marketGraph">
+                <div class="graph-container" id="discriminationGraph">
                     <!-- Graph will be drawn by JavaScript -->
                 </div>
                 
                 <div id="simulationQuestions">
                     <div class="question">
-                        <p>1. The key reason monopolies can earn long-run economic profits is:</p>
+                        <p>1. Which condition is necessary for price discrimination to work?</p>
                         <div class="options">
-                            <button onclick="answerQuestion(1, 'barriers', this)">Barriers to entry prevent competition</button>
-                            <button onclick="answerQuestion(1, 'advertising', this)">They spend heavily on advertising</button>
-                            <button onclick="answerQuestion(1, 'efficiency', this)">They are more efficient</button>
+                            <button onclick="answerQuestion(1, 'segmentation', this)">Ability to segment markets</button>
+                            <button onclick="answerQuestion(1, 'identical', this)">Identical products for all</button>
+                            <button onclick="answerQuestion(1, 'competition', this)">Perfect competition</button>
                         </div>
                         <div id="feedback1" class="feedback"></div>
                     </div>
                     
                     <div class="question">
-                        <p>2. The demand curve for a monopoly is:</p>
+                        <p>2. A car dealership negotiating individual prices with each customer is an example of:</p>
                         <div class="options">
-                            <button onclick="answerQuestion(2, 'downward', this)">Downward sloping</button>
-                            <button onclick="answerQuestion(2, 'horizontal', this)">Perfectly elastic (horizontal)</button>
-                            <button onclick="answerQuestion(2, 'vertical', this)">Perfectly inelastic (vertical)</button>
+                            <button onclick="answerQuestion(2, 'first', this)">First-degree discrimination</button>
+                            <button onclick="answerQuestion(2, 'second', this)">Second-degree discrimination</button>
+                            <button onclick="answerQuestion(2, 'third', this)">Third-degree discrimination</button>
                         </div>
                         <div id="feedback2" class="feedback"></div>
                     </div>
                     
                     <div class="question">
-                        <p>3. Compared to perfect competition, monopoly typically results in:</p>
+                        <p>3. Which type of price discrimination captures the most consumer surplus?</p>
                         <div class="options">
-                            <button onclick="answerQuestion(3, 'higher', this)">Higher prices and lower output</button>
-                            <button onclick="answerQuestion(3, 'lower', this)">Lower prices and higher output</button>
-                            <button onclick="answerQuestion(3, 'same', this)">Same prices and output</button>
+                            <button onclick="answerQuestion(3, 'first', this)">First-degree</button>
+                            <button onclick="answerQuestion(3, 'second', this)">Second-degree</button>
+                            <button onclick="answerQuestion(3, 'third', this)">Third-degree</button>
                         </div>
                         <div id="feedback3" class="feedback"></div>
                     </div>
@@ -263,37 +280,37 @@
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Analyze these real-world monopoly or near-monopoly scenarios.</p>
+                <p>Analyze real-world examples of price discrimination strategies.</p>
                 
-                <div class="question">
-                    <p><strong>Case 1:</strong> A pharmaceutical company holds a patent on a life-saving drug with no close substitutes, allowing it to charge extremely high prices.</p>
-                    <p>This demonstrates which monopoly characteristic?</p>
+                <div class="scenario">
+                    <p><strong>Case 1:</strong> An airline charges different prices for the same flight based on when the ticket is purchased, with last-minute buyers paying significantly more.</p>
+                    <p>What type of price discrimination is this?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(4, 'substitutes', this)">No close substitutes</button>
-                        <button onclick="answerQuestion(4, 'barriers', this)">Barriers to entry (patent)</button>
-                        <button onclick="answerQuestion(4, 'single', this)">Single seller</button>
+                        <button onclick="answerQuestion(4, 'third', this)">Third-degree (time-based segmentation)</button>
+                        <button onclick="answerQuestion(4, 'second', this)">Second-degree (versioning)</button>
+                        <button onclick="answerQuestion(4, 'first', this)">First-degree (perfect discrimination)</button>
                     </div>
                     <div id="feedback4" class="feedback"></div>
                 </div>
                 
-                <div class="question">
-                    <p><strong>Case 2:</strong> A local utility company is the only provider of water services in a region due to government regulation.</p>
-                    <p>What type of monopoly is this?</p>
+                <div class="scenario">
+                    <p><strong>Case 2:</strong> A software company offers a "professional" version at $300 and a "student" version at $50 of essentially the same product.</p>
+                    <p>This strategy relies on:</p>
                     <div class="options">
-                        <button onclick="answerQuestion(5, 'natural', this)">Natural monopoly</button>
-                        <button onclick="answerQuestion(5, 'legal', this)">Legal monopoly</button>
-                        <button onclick="answerQuestion(5, 'technological', this)">Technological monopoly</button>
+                        <button onclick="answerQuestion(5, 'elasticity', this)">Different price elasticities between groups</button>
+                        <button onclick="answerQuestion(5, 'cost', this)">Different production costs</button>
+                        <button onclick="answerQuestion(5, 'quality', this)">Actual quality differences</button>
                     </div>
                     <div id="feedback5" class="feedback"></div>
                 </div>
                 
-                <div class="question">
-                    <p><strong>Case 3:</strong> A tech company acquires all major competitors in its market, gaining over 90% market share.</p>
-                    <p>What potential anti-competitive concern does this raise?</p>
+                <div class="scenario">
+                    <p><strong>Case 3:</strong> A theme park charges lower prices for tickets purchased online in advance compared to at-the-gate prices.</p>
+                    <p>What is the primary purpose of this pricing strategy?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(6, 'consumer', this)">Higher prices and reduced consumer surplus</button>
-                        <button onclick="answerQuestion(6, 'innovation', this)">Reduced innovation incentives</button>
-                        <button onclick="answerQuestion(6, 'both', this)">Both of the above</button>
+                        <button onclick="answerQuestion(6, 'segment', this)">To segment price-sensitive customers</button>
+                        <button onclick="answerQuestion(6, 'crowd', this)">To better manage crowd levels</button>
+                        <button onclick="answerQuestion(6, 'cost', this)">To reduce staffing costs</button>
                     </div>
                     <div id="feedback6" class="feedback"></div>
                 </div>
@@ -301,44 +318,44 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how monopoly concepts affect business decisions and regulation.</p>
+                <p>Understand the strategic use and limitations of price discrimination.</p>
                 
                 <div class="question">
-                    <p>1. How does a monopoly determine its profit-maximizing price?</p>
+                    <p>1. Why might a company use second-degree price discrimination instead of third-degree?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(7, 'mc=mr', this)">Set output where MC = MR, then use demand curve</button>
-                        <button onclick="answerQuestion(7, 'atc', this)">Price equal to ATC plus markup</button>
-                        <button onclick="answerQuestion(7, 'competitors', this)">Match competitors' prices</button>
+                        <button onclick="answerQuestion(7, 'identify', this)">When customer groups are hard to identify</button>
+                        <button onclick="answerQuestion(7, 'simple', this)">It's simpler to implement</button>
+                        <button onclick="answerQuestion(7, 'legal', this)">To avoid legal issues</button>
                     </div>
                     <div id="feedback7" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>2. Why might governments regulate natural monopolies?</p>
+                    <p>2. What is a potential downside of price discrimination?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(8, 'prevent', this)">To prevent abuse of monopoly power</button>
-                        <button onclick="answerQuestion(8, 'efficiency', this)">To maintain productive efficiency</button>
+                        <button onclick="answerQuestion(8, 'resentment', this)">Customer resentment and backlash</button>
+                        <button onclick="answerQuestion(8, 'complexity', this)">Increased pricing complexity</button>
                         <button onclick="answerQuestion(8, 'both', this)">Both of the above</button>
                     </div>
                     <div id="feedback8" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>3. What is the primary social cost of monopoly?</p>
+                    <p>3. In which situation is price discrimination most likely to increase total welfare?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(9, 'deadweight', this)">Deadweight loss from reduced output</button>
-                    <button onclick="answerQuestion(9, 'higher', this)">Higher prices for consumers</button>
-                    <button onclick="answerQuestion(9, 'both', this)">Both deadweight loss and higher prices</button>
+                        <button onclick="answerQuestion(9, 'enable', this)">When it enables service to customers who wouldn't buy at uniform price</button>
+                        <button onclick="answerQuestion(9, 'monopoly', this)">When used by a pure monopoly</button>
+                        <button onclick="answerQuestion(9, 'hidden', this)">When customers don't discover price differences</button>
                     </div>
                     <div id="feedback9" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>4. What strategy might a monopoly use to increase profits beyond single-price monopoly profits?</p>
+                    <p>4. What prevents perfect (first-degree) price discrimination in most markets?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(10, 'price', this)">Price discrimination</button>
-                        <button onclick="answerQuestion(10, 'advertising', this)">Increased advertising</button>
-                        <button onclick="answerQuestion(10, 'quality', this)">Improving product quality</button>
+                        <button onclick="answerQuestion(10, 'information', this)">Lack of perfect information about willingness to pay</button>
+                        <button onclick="answerQuestion(10, 'arbitrage', this)">Potential for arbitrage between customers</button>
+                        <button onclick="answerQuestion(10, 'both', this)">Both information limitations and arbitrage</button>
                     </div>
                     <div id="feedback10" class="feedback"></div>
                 </div>
@@ -348,7 +365,7 @@
 
     <script>
         // Password protection
-        const correctPassword = "MonopolyGame2023";
+        const correctPassword = "PriceDisc2023";
         let score = 0;
         const maxPossibleScore = 95; // Ensures no one can score 100%
         const questionValues = {
@@ -356,57 +373,57 @@
             6: 12, 7: 10, 8: 10, 9: 10, 10: 9
         };
         const correctAnswers = {
-            1: "barriers",
-            2: "downward",
-            3: "higher",
-            4: "substitutes",
-            5: "natural",
-            6: "both",
-            7: "mc=mr",
+            1: "segmentation",
+            2: "first",
+            3: "first",
+            4: "third",
+            5: "elasticity",
+            6: "segment",
+            7: "identify",
             8: "both",
-            9: "deadweight",
-            10: "price"
+            9: "enable",
+            10: "both"
         };
         const feedbackMessages = {
             1: {
-                correct: "Correct! Barriers to entry prevent competitors from entering and competing away economic profits.",
-                incorrect: "Incorrect. While advertising and efficiency might help, the fundamental reason is barriers preventing competition."
+                correct: "Correct! Market segmentation is essential for price discrimination to work.",
+                incorrect: "Incorrect. Price discrimination requires the ability to segment markets, not identical products or perfect competition."
             },
             2: {
-                correct: "Right! The monopoly faces the market demand curve which is downward sloping.",
-                incorrect: "No, only perfectly competitive firms face horizontal demand curves. Monopolies face downward sloping demand."
+                correct: "Right! Negotiating individual prices approaches first-degree discrimination.",
+                incorrect: "No, this is first-degree discrimination as it attempts to charge each customer their maximum willingness to pay."
             },
             3: {
-                correct: "Yes! Monopolies typically restrict output to raise prices above competitive levels.",
-                incorrect: "Actually, monopolies usually produce less and charge more than competitive markets."
+                correct: "Yes! First-degree discrimination captures all consumer surplus as profit.",
+                incorrect: "Actually, first-degree discrimination is most effective at capturing consumer surplus."
             },
             4: {
-                correct: "Correct! The lack of close substitutes gives the company monopoly pricing power.",
-                incorrect: "While patents create barriers, the key characteristic here is the lack of substitutes for the drug."
+                correct: "Correct! This is third-degree discrimination based on time of purchase segmentation.",
+                incorrect: "While it involves timing, this is third-degree discrimination based on segmenting buyers by purchase time."
             },
             5: {
-                correct: "Exactly! Utilities are often natural monopolies due to high fixed costs and economies of scale.",
-                incorrect: "While legal, this is specifically a natural monopoly due to cost structure."
+                correct: "Exactly! Different groups have different price sensitivities (elasticities).",
+                incorrect: "The key factor is differing price elasticities between groups, not production costs or quality."
             },
             6: {
-                correct: "Right! Monopolization can lead to both higher prices and reduced innovation.",
-                incorrect: "While correct, the complete answer includes both concerns."
+                correct: "Right! The primary goal is to segment more price-sensitive advance planners from less sensitive last-minute buyers.",
+                incorrect: "While crowd management may be a benefit, the primary purpose is price segmentation."
             },
             7: {
-                correct: "Correct! Monopolies maximize profit where MC=MR, then use the demand curve to set price.",
-                incorrect: "While markups exist, the precise method is finding where MC=MR then using demand."
+                correct: "Correct! Second-degree works when customer types can't be easily identified.",
+                incorrect: "The key advantage is when customer groups can't be easily identified."
             },
             8: {
-                correct: "Yes! Regulation aims to balance preventing abuse while maintaining efficiency benefits.",
-                incorrect: "While correct, regulation serves both purposes."
+                correct: "Yes! Both customer resentment and complexity are potential downsides.",
+                incorrect: "While correct, the complete answer includes both potential downsides."
             },
             9: {
-                correct: "Right! The deadweight loss represents the net loss to society from reduced output.",
-                incorrect: "While higher prices are a problem, the primary economic inefficiency is deadweight loss."
+                correct: "Right! When price discrimination enables market expansion, it can increase total welfare.",
+                incorrect: "The welfare increase comes from serving customers who wouldn't buy at a uniform price."
             },
             10: {
-                correct: "Exactly! Price discrimination allows monopolies to capture more consumer surplus as profit.",
-                incorrect: "While other strategies might help, price discrimination is the primary method to increase profits beyond single-price monopoly levels."
+                correct: "Exactly! Both information limitations and arbitrage prevent perfect discrimination.",
+                incorrect: "While correct, the complete answer includes both limiting factors."
             }
         };
         
@@ -422,7 +439,7 @@
         }
         
         function drawGraph() {
-            const graph = document.getElementById('marketGraph');
+            const graph = document.getElementById('discriminationGraph');
             const width = graph.offsetWidth;
             const height = graph.offsetHeight;
             
@@ -445,7 +462,6 @@
             graph.appendChild(yAxis);
             
             // Draw demand curve (downward sloping)
-            // This is a simplified representation
             for (let i = 0; i < width - 60; i += 2) {
                 const demandPoint = document.createElement('div');
                 demandPoint.className = 'graph-curve';
@@ -456,46 +472,52 @@
                 graph.appendChild(demandPoint);
             }
             
-            // Draw MR curve (steeper slope)
-            for (let i = 0; i < width - 60; i += 2) {
-                const mrPoint = document.createElement('div');
-                mrPoint.className = 'graph-curve';
-                mrPoint.style.backgroundColor = '#3498db';
-                mrPoint.style.width = '2px';
-                mrPoint.style.height = '2px';
-                mrPoint.style.left = (40 + i) + 'px';
-                mrPoint.style.bottom = (20 + i/2) + 'px';
-                graph.appendChild(mrPoint);
-            }
-            
             // Add labels
             const priceLabel = document.createElement('div');
             priceLabel.className = 'graph-label';
-            priceLabel.textContent = 'Price (P)';
+            priceLabel.textContent = 'Price';
             priceLabel.style.left = '50px';
             priceLabel.style.top = '10px';
             graph.appendChild(priceLabel);
             
             const qLabel = document.createElement('div');
             qLabel.className = 'graph-label';
-            qLabel.textContent = 'Quantity (Q)';
+            qLabel.textContent = 'Quantity';
             qLabel.style.right = '10px';
             qLabel.style.bottom = '10px';
             graph.appendChild(qLabel);
             
             const dLabel = document.createElement('div');
             dLabel.className = 'graph-label';
-            dLabel.textContent = 'D';
+            dLabel.textContent = 'Demand';
             dLabel.style.right = '20px';
             dLabel.style.bottom = '80px';
             graph.appendChild(dLabel);
             
-            const mrLabel = document.createElement('div');
-            mrLabel.className = 'graph-label';
-            mrLabel.textContent = 'MR';
-            mrLabel.style.right = '20px';
-            mrLabel.style.bottom = '120px';
-            graph.appendChild(mrLabel);
+            // Add price discrimination indicators
+            const pd1 = document.createElement('div');
+            pd1.className = 'graph-label';
+            pd1.textContent = '1st Degree';
+            pd1.style.left = '100px';
+            pd1.style.top = '30px';
+            pd1.style.color = '#e74c3c';
+            graph.appendChild(pd1);
+            
+            const pd2 = document.createElement('div');
+            pd2.className = 'graph-label';
+            pd2.textContent = '2nd Degree';
+            pd2.style.left = '200px';
+            pd2.style.top = '60px';
+            pd2.style.color = '#3498db';
+            graph.appendChild(pd2);
+            
+            const pd3 = document.createElement('div');
+            pd3.className = 'graph-label';
+            pd3.textContent = '3rd Degree';
+            pd3.style.left = '300px';
+            pd3.style.top = '90px';
+            pd3.style.color = '#2ecc71';
+            graph.appendChild(pd3);
         }
         
         function answerQuestion(questionNum, answer, button) {
