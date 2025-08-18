@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monopoly Market Simulation</title>
+    <title>Price Discrimination Strategies Simulation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -113,30 +113,39 @@
             background-color: #f8d7da;
             color: #721c24;
         }
-        .graph-container {
-            width: 100%;
-            height: 300px;
-            background-color: white;
+        .segment {
             border: 1px solid #ddd;
-            margin: 15px 0;
-            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: white;
         }
-        .graph-line {
-            position: absolute;
-            height: 2px;
-            background-color: #333;
+        .strategy-option {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .demand-curve {
-            background-color: #e74c3c;
+        .strategy-option:hover {
+            background-color: #f0f0f0;
         }
-        .mr-curve {
-            background-color: #3498db;
+        .selected {
+            background-color: #d4e6f1;
+            border-color: #3498db;
         }
-        .mc-curve {
-            background-color: #2ecc71;
+        .correct {
+            background-color: #d4edda;
+            border-color: #28a745;
         }
-        .atc-curve {
-            background-color: #f39c12;
+        .incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        .profit-display {
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -144,7 +153,7 @@
     <!-- Password Protection Screen -->
     <div id="passwordScreen" class="password-protection">
         <div class="password-box">
-            <h2>Monopoly Simulation Access</h2>
+            <h2>Price Discrimination Simulation Access</h2>
             <p>Please enter the password to access the simulation:</p>
             <input type="password" id="passwordInput" placeholder="Enter password">
             <button onclick="checkPassword()">Submit</button>
@@ -154,73 +163,140 @@
 
     <!-- Main Simulation Content (hidden initially) -->
     <div id="mainContent" class="container hidden">
-        <h1>Monopoly Market Simulation</h1>
+        <h1>Price Discrimination Strategies Simulation</h1>
         
         <!-- Player Info and Score Display -->
         <div class="panel">
-            <h2>Monopolist Dashboard</h2>
+            <h2>Pricing Manager Dashboard</h2>
             <div class="score-display">
                 Current Score: <span id="currentScore">0</span>/95
             </div>
-            <p>Welcome to the monopoly market simulation. As the sole provider in this market, your goal is to make optimal pricing and production decisions to maximize profits while considering market demand.</p>
+            <p>Welcome to the price discrimination simulation. Your goal is to implement effective price discrimination strategies across different market segments to maximize profits.</p>
         </div>
         
         <!-- Simulation Panel -->
         <div class="panel simulation-panel">
-            <h2>Monopoly Simulation</h2>
+            <h2>Market Segmentation & Pricing</h2>
             <div class="market-data">
                 <div>
-                    <h3>Market Conditions</h3>
-                    <p>Demand Function: P = <span id="demandFunction">100 - 0.5Q</span></p>
-                    <p>Marginal Revenue: MR = <span id="mrFunction">100 - Q</span></p>
-                    <p>Market Share: <span id="marketShare">100</span>%</p>
+                    <h3>Product Information</h3>
+                    <p>Product: Premium Software Suite</p>
+                    <p>Marginal Cost: $<span id="marginalCost">20</span> per unit</p>
+                    <p>Current Strategy: <span id="currentStrategy">None</span></p>
                 </div>
                 <div>
-                    <h3>Your Monopoly</h3>
-                    <p>Price: $<span id="currentPrice">0</span></p>
-                    <p>Quantity Sold: <span id="quantitySold">0</span> units</p>
-                    <p>Total Cost: $<span id="totalCost">0</span></p>
+                    <h3>Performance Metrics</h3>
                     <p>Total Revenue: $<span id="totalRevenue">0</span></p>
-                    <p>Profit: $<span id="profit">0</span></p>
+                    <p>Total Cost: $<span id="totalCost">0</span></p>
+                    <p>Total Profit: $<span id="totalProfit">0</span></p>
                 </div>
             </div>
             
-            <div class="graph-container" id="monopolyGraph">
-                <!-- Graph will be drawn here -->
+            <div id="marketSegments">
+                <div class="segment">
+                    <h3>Segment 1: Business Customers</h3>
+                    <p>Price Sensitivity: Low</p>
+                    <p>Demand at $100: 200 units</p>
+                    <p>Demand at $150: 180 units</p>
+                    <p>Demand at $200: 150 units</p>
+                    <div class="strategy-options">
+                        <h4>Select Pricing Strategy:</h4>
+                        <div class="strategy-option" onclick="selectStrategy(1, this, 'versioning')">
+                            <strong>Product Versioning:</strong> Create enterprise version with premium features
+                        </div>
+                        <div class="strategy-option" onclick="selectStrategy(1, this, 'bundling')">
+                            <strong>Bundling:</strong> Package with support services
+                        </div>
+                        <div class="strategy-option" onclick="selectStrategy(1, this, 'peak-pricing')">
+                            <strong>Peak Pricing:</strong> Charge more during business hours
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="segment">
+                    <h3>Segment 2: Educational Institutions</h3>
+                    <p>Price Sensitivity: High</p>
+                    <p>Demand at $50: 500 units</p>
+                    <p>Demand at $75: 300 units</p>
+                    <p>Demand at $100: 200 units</p>
+                    <div class="strategy-options">
+                        <h4>Select Pricing Strategy:</h4>
+                        <div class="strategy-option" onclick="selectStrategy(2, this, 'discounts')">
+                            <strong>Educational Discounts:</strong> Special pricing for schools
+                        </div>
+                        <div class="strategy-option" onclick="selectStrategy(2, this, 'subscription')">
+                            <strong>Subscription Model:</strong> Annual license per student
+                        </div>
+                        <div class="strategy-option" onclick="selectStrategy(2, this, 'freemium')">
+                            <strong>Freemium Model:</strong> Basic version free, premium features paid
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="segment">
+                    <h3>Segment 3: Individual Consumers</h3>
+                    <p>Price Sensitivity: Medium</p>
+                    <p>Demand at $75: 1000 units</p>
+                    <p>Demand at $100: 700 units</p>
+                    <p>Demand at $125: 400 units</p>
+                    <div class="strategy-options">
+                        <h4>Select Pricing Strategy:</h4>
+                        <div class="strategy-option" onclick="selectStrategy(3, this, 'tiered')">
+                            <strong>Tiered Pricing:</strong> Basic, Standard, Premium tiers
+                        </div>
+                        <div class="strategy-option" onclick="selectStrategy(3, this, 'temporal')">
+                            <strong>Temporal Discounting:</strong> Early adopter pricing
+                        </div>
+                        <div class="strategy-option" onclick="selectStrategy(3, this, 'geographic')">
+                            <strong>Geographic Pricing:</strong> Adjust prices by region
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="decision-form">
-                <h3>Make Your Monopoly Decision</h3>
-                <label for="priceLevel">Set Price ($):</label>
-                <input type="number" id="priceLevel" min="0" max="100" value="0">
-                <span> or </span>
-                <label for="quantityLevel">Set Quantity (units):</label>
-                <input type="number" id="quantityLevel" min="0" max="200" value="0">
-                <button onclick="submitMonopolyDecision()">Submit Decision</button>
-                <button onclick="advanceYear()">Advance to Next Year</button>
+                <button onclick="implementStrategies()">Implement Selected Strategies</button>
+                <button onclick="advanceQuarter()">Advance to Next Quarter</button>
                 
-                <div id="decisionFeedback" class="feedback hidden"></div>
+                <div id="strategyFeedback" class="feedback hidden"></div>
+                <div id="profitImpact" class="profit-display hidden"></div>
             </div>
         </div>
         
         <!-- Case Studies -->
         <div class="panel case-studies">
-            <h2>Monopoly Case Studies</h2>
+            <h2>Price Discrimination Case Studies</h2>
             <div>
-                <h3>Case Study 1: Natural Monopoly</h3>
-                <p>Examine the characteristics of natural monopolies where average costs decline over the relevant range of output. Should these be regulated?</p>
-                <button onclick="revealCaseStudyAnswer(1)">Reveal Analysis</button>
-                <div id="caseStudy1Answer" class="hidden">
-                    <p>Natural monopolies (like utilities) often face high fixed costs and declining average costs. Regulation may be needed to prevent abuse of monopoly power while ensuring the firm can cover costs.</p>
+                <h3>Case Study 1: Airline Pricing</h3>
+                <p>How do airlines implement multiple degrees of price discrimination simultaneously?</p>
+                <div class="strategy-options">
+                    <div class="strategy-option" onclick="checkCaseStudyAnswer(1, this, 'dynamic')">
+                        Dynamic pricing based on booking time and demand
+                    </div>
+                    <div class="strategy-option" onclick="checkCaseStudyAnswer(1, this, 'class')">
+                        Service class differentiation (economy, business, first)
+                    </div>
+                    <div class="strategy-option" onclick="checkCaseStudyAnswer(1, this, 'both')">
+                        Both of the above plus Saturday night stay requirements
+                    </div>
                 </div>
+                <div id="caseStudy1Answer" class="feedback hidden"></div>
             </div>
             <div>
-                <h3>Case Study 2: Price Discrimination</h3>
-                <p>Analyze how monopolies can increase profits through price discrimination. What are the different degrees and implications?</p>
-                <button onclick="revealCaseStudyAnswer(2)">Reveal Analysis</button>
-                <div id="caseStudy2Answer" class="hidden">
-                    <p>First-degree (perfect) discrimination captures all consumer surplus. Second-degree uses quantity discounts. Third-degree segments markets. While increasing profits, it may improve efficiency by serving more customers.</p>
+                <h3>Case Study 2: Pharmaceutical Pricing</h3>
+                <p>What ethical considerations arise from differential pricing of life-saving drugs?</p>
+                <div class="strategy-options">
+                    <div class="strategy-option" onclick="checkCaseStudyAnswer(2, this, 'cost')">
+                        Cost-based pricing in developing countries
+                    </div>
+                    <div class="strategy-option" onclick="checkCaseStudyAnswer(2, this, 'value')">
+                        Value-based pricing in developed markets
+                    </div>
+                    <div class="strategy-option" onclick="checkCaseStudyAnswer(2, this, 'hybrid')">
+                        Hybrid approach with tiered international pricing
+                    </div>
                 </div>
+                <div id="caseStudy2Answer" class="feedback hidden"></div>
             </div>
         </div>
         
@@ -228,27 +304,43 @@
         <div class="panel managerial-implications">
             <h2>Managerial Implications</h2>
             <div>
-                <h3>Profit Maximization</h3>
-                <p>How should a monopolist determine the profit-maximizing price and quantity? What's different from perfect competition?</p>
-                <button onclick="revealImplicationAnswer(1)">Show Implications</button>
-                <div id="implication1Answer" class="hidden">
-                    <p>A monopolist maximizes profit where MR = MC, then sets price on the demand curve. Unlike perfect competition, P > MR due to downward-sloping demand, allowing economic profits in long run.</p>
+                <h3>Implementing Price Discrimination</h3>
+                <p>What are the key challenges in implementing effective price discrimination?</p>
+                <div class="strategy-options">
+                    <div class="strategy-option" onclick="checkImplicationAnswer(1, this, 'arbitrage')">
+                        Preventing arbitrage between segments
+                    </div>
+                    <div class="strategy-option" onclick="checkImplicationAnswer(1, this, 'perception')">
+                        Managing customer perception and fairness
+                    </div>
+                    <div class="strategy-option" onclick="checkImplicationAnswer(1, this, 'both')">
+                        Both of the above plus regulatory compliance
+                    </div>
                 </div>
+                <div id="implication1Answer" class="feedback hidden"></div>
             </div>
             <div>
-                <h3>Barriers to Entry</h3>
-                <p>What strategies can maintain monopoly power? How do barriers to entry affect long-term strategy?</p>
-                <button onclick="revealImplicationAnswer(2)">Show Implications</button>
-                <div id="implication2Answer" class="hidden">
-                    <p>Monopolies sustain power through legal barriers (patents), control of resources, economies of scale, or strategic pricing. Managers must balance profit maximization with maintaining these barriers.</p>
+                <h3>Legal Considerations</h3>
+                <p>When does price discrimination become illegal or unethical?</p>
+                <div class="strategy-options">
+                    <div class="strategy-option" onclick="checkImplicationAnswer(2, this, 'discriminatory')">
+                        When based on discriminatory characteristics
+                    </div>
+                    <div class="strategy-option" onclick="checkImplicationAnswer(2, this, 'predatory')">
+                        When used for predatory pricing
+                    </div>
+                    <div class="strategy-option" onclick="checkImplicationAnswer(2, this, 'both')">
+                        Both of the above plus antitrust violations
+                    </div>
                 </div>
+                <div id="implication2Answer" class="feedback hidden"></div>
             </div>
         </div>
     </div>
 
     <script>
         // Password Protection
-        const correctPassword = "Monopoly2023";
+        const correctPassword = "PriceDisc2023";
         
         function checkPassword() {
             const enteredPassword = document.getElementById('passwordInput').value;
@@ -263,218 +355,259 @@
         
         // Simulation Variables
         let score = 0;
-        let year = 1;
-        let demandFunction = { intercept: 100, slope: -0.5 };
-        let costStructure = {
-            fixedCost: 1000,
-            initialMC: 20,
-            mcIncrement: 0.1,
-            atcOffset: 30
+        let quarter = 1;
+        let marginalCost = 20;
+        let selectedStrategies = {};
+        let optimalStrategies = {
+            1: "versioning",
+            2: "discounts",
+            3: "tiered"
         };
-        let currentPrice = 0;
-        let currentQuantity = 0;
+        let strategyEffects = {
+            // Segment 1 strategies
+            "versioning": { price: 200, demand: 150, cost: 10 },
+            "bundling": { price: 180, demand: 170, cost: 15 },
+            "peak-pricing": { price: 190, demand: 160, cost: 12 },
+            // Segment 2 strategies
+            "discounts": { price: 60, demand: 450, cost: 5 },
+            "subscription": { price: 50, demand: 500, cost: 8 },
+            "freemium": { price: 40, demand: 300, conversion: 0.3, cost: 6 },
+            // Segment 3 strategies
+            "tiered": { price: 90, demand: 800, cost: 7 },
+            "temporal": { price: 85, demand: 900, cost: 6 },
+            "geographic": { price: 95, demand: 750, cost: 8 }
+        };
         
         function initializeSimulation() {
-            updateMarketDisplay();
             updateScore();
-            drawGraph();
+            document.getElementById('currentStrategy').textContent = "None (Uniform Pricing)";
+            calculateUniformPricing();
         }
         
-        function calculateDemand(price) {
-            return (price - demandFunction.intercept) / demandFunction.slope;
-        }
-        
-        function calculatePrice(quantity) {
-            return demandFunction.intercept + demandFunction.slope * quantity;
-        }
-        
-        function calculateMR(quantity) {
-            return demandFunction.intercept + 2 * demandFunction.slope * quantity;
-        }
-        
-        function calculateMC(quantity) {
-            return costStructure.initialMC + costStructure.mcIncrement * quantity;
-        }
-        
-        function calculateATC(quantity) {
-            return costStructure.atcOffset + (costStructure.fixedCost / quantity) + 
-                   (costStructure.initialMC * 0.5) + (0.5 * costStructure.mcIncrement * quantity);
-        }
-        
-        function calculateTotalCost(quantity) {
-            return costStructure.fixedCost + 
-                   (costStructure.initialMC * quantity) + 
-                   (0.5 * costStructure.mcIncrement * quantity * quantity);
-        }
-        
-        function updateMarketDisplay() {
-            document.getElementById('currentPrice').textContent = currentPrice.toFixed(2);
-            document.getElementById('quantitySold').textContent = currentQuantity.toFixed(0);
-            document.getElementById('totalCost').textContent = calculateTotalCost(currentQuantity).toFixed(2);
-            document.getElementById('totalRevenue').textContent = (currentPrice * currentQuantity).toFixed(2);
-            document.getElementById('profit').textContent = (currentPrice * currentQuantity - calculateTotalCost(currentQuantity)).toFixed(2);
-        }
-        
-        function submitMonopolyDecision() {
-            const priceInput = document.getElementById('priceLevel');
-            const quantityInput = document.getElementById('quantityLevel');
+        function selectStrategy(segment, element, strategy) {
+            // Remove selected class from all options in this segment
+            const options = element.parentElement.querySelectorAll('.strategy-option');
+            options.forEach(opt => opt.classList.remove('selected'));
             
-            let newPrice = parseFloat(priceInput.value);
-            let newQuantity = parseFloat(quantityInput.value);
+            // Add selected class to clicked option
+            element.classList.add('selected');
             
-            // If both entered, prefer quantity (more economically accurate for monopoly)
-            if (!isNaN(newQuantity) && newQuantity >= 0) {
-                currentQuantity = newQuantity;
-                currentPrice = calculatePrice(currentQuantity);
-            } else if (!isNaN(newPrice) && newPrice >= 0) {
-                currentPrice = newPrice;
-                currentQuantity = calculateDemand(currentPrice);
-            } else {
-                alert("Please enter valid price or quantity");
+            // Store the selected strategy
+            selectedStrategies[segment] = strategy;
+        }
+        
+        function implementStrategies() {
+            if (Object.keys(selectedStrategies).length < 3) {
+                alert("Please select a strategy for each market segment");
                 return;
             }
             
-            updateMarketDisplay();
-            drawGraph();
+            let totalRevenue = 0;
+            let totalCost = 0;
+            let segmentDetails = [];
             
-            // Provide feedback and score
-            const feedback = document.getElementById('decisionFeedback');
-            feedback.classList.remove('hidden');
-            
-            // Calculate profit-maximizing quantity (MR = MC)
-            const optimalQuantity = (demandFunction.intercept - costStructure.initialMC) / 
-                                  (2 * -demandFunction.slope + costStructure.mcIncrement);
-            const optimalPrice = calculatePrice(optimalQuantity);
-            
-            const profitDifference = Math.abs((currentPrice * currentQuantity - calculateTotalCost(currentQuantity)) - 
-                                           (optimalPrice * optimalQuantity - calculateTotalCost(optimalQuantity)));
-            
-            if (profitDifference < 50) {
-                feedback.textContent = "Excellent decision! You're very close to the profit-maximizing point where MR = MC.";
-                feedback.className = "feedback positive";
-                addToScore(5);
-            } else if (profitDifference < 150) {
-                feedback.textContent = "Good decision, but not optimal. Remember to produce where MR = MC, then set price on the demand curve.";
-                feedback.className = "feedback positive";
-                addToScore(3);
-            } else {
-                feedback.textContent = "Consider adjusting your decision. As a monopolist, you should produce where MR = MC, then charge the highest price the market will bear.";
-                feedback.className = "feedback negative";
-                addToScore(1);
+            // Calculate results for each segment
+            for (const [segment, strategy] of Object.entries(selectedStrategies)) {
+                const effect = strategyEffects[strategy];
+                let revenue, cost, quantity;
+                
+                if (strategy === 'freemium') {
+                    quantity = effect.demand * effect.conversion;
+                    revenue = quantity * effect.price;
+                    cost = effect.demand * marginalCost + quantity * effect.cost;
+                } else {
+                    quantity = effect.demand;
+                    revenue = quantity * effect.price;
+                    cost = quantity * (marginalCost + effect.cost);
+                }
+                
+                totalRevenue += revenue;
+                totalCost += cost;
+                
+                segmentDetails.push(`Segment ${segment}: ${strategy.replace('-', ' ')} → $${revenue.toFixed(0)} revenue`);
             }
-        }
-        
-        function advanceYear() {
-            year++;
-            
-            // Random market fluctuations
-            const demandChange = Math.floor(Math.random() * 21) - 10; // -10 to +10
-            demandFunction.intercept = Math.max(60, demandFunction.intercept + demandChange);
-            
-            // Cost changes over time
-            costStructure.initialMC += (Math.random() * 4 - 2); // -2 to +2
-            
-            // Reset decision feedback
-            document.getElementById('decisionFeedback').classList.add('hidden');
             
             // Update display
-            document.getElementById('demandFunction').textContent = 
-                `${demandFunction.intercept.toFixed(0)} ${demandFunction.slope > 0 ? '+' : ''}${demandFunction.slope.toFixed(1)}Q`;
-            document.getElementById('mrFunction').textContent = 
-                `${demandFunction.intercept.toFixed(0)} ${2*demandFunction.slope > 0 ? '+' : ''}${(2*demandFunction.slope).toFixed(1)}Q`;
+            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(0);
+            document.getElementById('totalCost').textContent = totalCost.toFixed(0);
+            document.getElementById('totalProfit').textContent = (totalRevenue - totalCost).toFixed(0);
+            document.getElementById('currentStrategy').textContent = "Multi-segment Price Discrimination";
             
-            drawGraph();
+            // Provide feedback
+            const feedback = document.getElementById('strategyFeedback');
+            feedback.classList.remove('hidden');
+            
+            // Calculate score based on strategy effectiveness
+            let strategyScore = 0;
+            let correctCount = 0;
+            
+            for (const [segment, strategy] of Object.entries(selectedStrategies)) {
+                if (strategy === optimalStrategies[segment]) {
+                    correctCount++;
+                }
+            }
+            
+            if (correctCount === 3) {
+                feedback.textContent = "Excellent! You've selected the most effective strategies for each segment.";
+                feedback.className = "feedback positive";
+                strategyScore = 8;
+            } else if (correctCount >= 2) {
+                feedback.textContent = "Good job! Most of your strategies are effective, but some segments could be better targeted.";
+                feedback.className = "feedback positive";
+                strategyScore = 5;
+            } else if (correctCount >= 1) {
+                feedback.textContent = "Some strategies work, but reconsider your approach for better segment targeting.";
+                feedback.className = "feedback negative";
+                strategyScore = 3;
+            } else {
+                feedback.textContent = "Your strategies aren't effectively targeting the segments. Review the characteristics of each segment.";
+                feedback.className = "feedback negative";
+                strategyScore = 1;
+            }
+            
+            // Show profit impact
+            const profitImpact = document.getElementById('profitImpact');
+            profitImpact.classList.remove('hidden');
+            const uniformProfit = 150 * (100 - marginalCost) + 300 * (75 - marginalCost) + 700 * (100 - marginalCost);
+            const newProfit = totalRevenue - totalCost;
+            const improvement = ((newProfit - uniformProfit) / uniformProfit * 100).toFixed(0);
+            
+            if (newProfit > uniformProfit) {
+                profitImpact.innerHTML = `Profit increased by ${improvement}% compared to uniform pricing`;
+                profitImpact.className = "profit-display positive";
+                strategyScore += 2;
+            } else {
+                profitImpact.innerHTML = `Profit decreased by ${Math.abs(improvement)}% compared to uniform pricing`;
+                profitImpact.className = "profit-display negative";
+            }
+            
+            addToScore(strategyScore);
+        }
+        
+        function calculateUniformPricing() {
+            // Middle price point for each segment
+            const segment1 = { price: 150, demand: 180 };
+            const segment2 = { price: 75, demand: 300 };
+            const segment3 = { price: 100, demand: 700 };
+            
+            const totalRevenue = (segment1.demand * segment1.price) + 
+                               (segment2.demand * segment2.price) + 
+                               (segment3.demand * segment3.price);
+            const totalCost = (segment1.demand + segment2.demand + segment3.demand) * marginalCost;
+            
+            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(0);
+            document.getElementById('totalCost').textContent = totalCost.toFixed(0);
+            document.getElementById('totalProfit').textContent = (totalRevenue - totalCost).toFixed(0);
+        }
+        
+        function advanceQuarter() {
+            quarter++;
+            
+            // Random market fluctuations
+            marginalCost += Math.floor(Math.random() * 5) - 2; // -2 to +2
+            if (marginalCost < 15) marginalCost = 15;
+            if (marginalCost > 25) marginalCost = 25;
+            
+            document.getElementById('marginalCost').textContent = marginalCost;
+            
+            // Reset strategy selections
+            selectedStrategies = {};
+            const options = document.querySelectorAll('.strategy-option');
+            options.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
+            
+            // Reset feedback
+            document.getElementById('strategyFeedback').classList.add('hidden');
+            document.getElementById('profitImpact').classList.add('hidden');
+            document.getElementById('currentStrategy').textContent = "None (Uniform Pricing)";
+            
+            calculateUniformPricing();
             
             // Add time-based points
             addToScore(2);
         }
         
-        function drawGraph() {
-            const graph = document.getElementById('monopolyGraph');
-            graph.innerHTML = '';
+        function checkCaseStudyAnswer(studyNum, element, answer) {
+            const correctAnswers = {
+                1: "both",
+                2: "hybrid"
+            };
             
-            const width = graph.offsetWidth;
-            const height = graph.offsetHeight;
-            const maxQ = 200;
-            const maxP = demandFunction.intercept * 1.2;
-            
-            // Draw axes
-            const xAxis = document.createElement('div');
-            xAxis.className = 'graph-line';
-            xAxis.style.width = width + 'px';
-            xAxis.style.bottom = '20px';
-            xAxis.style.left = '0';
-            graph.appendChild(xAxis);
-            
-            const yAxis = document.createElement('div');
-            yAxis.className = 'graph-line';
-            yAxis.style.height = height + 'px';
-            yAxis.style.left = '20px';
-            yAxis.style.top = '0';
-            graph.appendChild(yAxis);
-            
-            // Draw demand curve (P = a + bQ)
-            for (let q = 0; q < maxQ; q += 5) {
-                const p = calculatePrice(q);
-                const demandPoint = document.createElement('div');
-                demandPoint.className = 'graph-line demand-curve';
-                demandPoint.style.width = '2px';
-                demandPoint.style.height = '2px';
-                demandPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
-                demandPoint.style.bottom = (20 + (p/maxP * (height-40))) + 'px';
-                graph.appendChild(demandPoint);
-            }
-            
-            // Draw MR curve (MR = a + 2bQ)
-            for (let q = 0; q < maxQ; q += 5) {
-                const mr = calculateMR(q);
-                if (mr > 0) {
-                    const mrPoint = document.createElement('div');
-                    mrPoint.className = 'graph-line mr-curve';
-                    mrPoint.style.width = '2px';
-                    mrPoint.style.height = '2px';
-                    mrPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
-                    mrPoint.style.bottom = (20 + (mr/maxP * (height-40))) + 'px';
-                    graph.appendChild(mrPoint);
+            const options = element.parentElement.querySelectorAll('.strategy-option');
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+                if (opt === element) {
+                    opt.classList.add(answer === correctAnswers[studyNum] ? 'correct' : 'incorrect');
                 }
-            }
+            });
             
-            // Draw MC curve
-            for (let q = 0; q < maxQ; q += 5) {
-                const mc = calculateMC(q);
-                const mcPoint = document.createElement('div');
-                mcPoint.className = 'graph-line mc-curve';
-                mcPoint.style.width = '2px';
-                mcPoint.style.height = '2px';
-                mcPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
-                mcPoint.style.bottom = (20 + (mc/maxP * (height-40))) + 'px';
-                graph.appendChild(mcPoint);
-            }
+            const feedback = document.getElementById(`caseStudy${studyNum}Answer`);
+            feedback.classList.remove('hidden');
             
-            // Draw ATC curve
-            for (let q = 10; q < maxQ; q += 5) {
-                const atc = calculateATC(q);
-                const atcPoint = document.createElement('div');
-                atcPoint.className = 'graph-line atc-curve';
-                atcPoint.style.width = '2px';
-                atcPoint.style.height = '2px';
-                atcPoint.style.left = (20 + (q/maxQ * (width-40))) + 'px';
-                atcPoint.style.bottom = (20 + (atc/maxP * (height-40))) + 'px';
-                graph.appendChild(atcPoint);
+            if (answer === correctAnswers[studyNum]) {
+                feedback.textContent = "Correct! " + getCaseStudyFeedback(studyNum, true);
+                feedback.className = "feedback positive";
+                addToScore(4);
+            } else {
+                feedback.textContent = "Not quite. " + getCaseStudyFeedback(studyNum, false);
+                feedback.className = "feedback negative";
+                addToScore(1);
             }
+        }
+        
+        function getCaseStudyFeedback(studyNum, isCorrect) {
+            const feedbacks = {
+                1: {
+                    correct: "Airlines use all these methods plus more (like loyalty programs) to maximize revenue from different customer segments.",
+                    incorrect: "Airlines actually combine all these approaches plus additional tactics like Saturday night stay requirements."
+                },
+                2: {
+                    correct: "The hybrid approach balances affordability with R&D recoupment while addressing ethical concerns.",
+                    incorrect: "The most effective approach is usually a hybrid model that considers both cost and value across markets."
+                }
+            };
+            return feedbacks[studyNum][isCorrect ? 'correct' : 'incorrect'];
+        }
+        
+        function checkImplicationAnswer(impNum, element, answer) {
+            const correctAnswers = {
+                1: "both",
+                2: "both"
+            };
             
-            // Mark current decision if exists
-            if (currentQuantity > 0) {
-                const decisionPoint = document.createElement('div');
-                decisionPoint.style.position = 'absolute';
-                decisionPoint.style.width = '8px';
-                decisionPoint.style.height = '8px';
-                decisionPoint.style.backgroundColor = 'black';
-                decisionPoint.style.borderRadius = '50%';
-                decisionPoint.style.left = (20 + (currentQuantity/maxQ * (width-40)) - 4) + 'px';
-                decisionPoint.style.bottom = (20 + (currentPrice/maxP * (height-40)) - 4) + 'px';
-                graph.appendChild(decisionPoint);
+            const options = element.parentElement.querySelectorAll('.strategy-option');
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+                if (opt === element) {
+                    opt.classList.add(answer === correctAnswers[impNum] ? 'correct' : 'incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById(`implication${impNum}Answer`);
+            feedback.classList.remove('hidden');
+            
+            if (answer === correctAnswers[impNum]) {
+                feedback.textContent = "Correct! " + getImplicationFeedback(impNum, true);
+                feedback.className = "feedback positive";
+                addToScore(4);
+            } else {
+                feedback.textContent = "Not quite. " + getImplicationFeedback(impNum, false);
+                feedback.className = "feedback negative";
+                addToScore(1);
             }
+        }
+        
+        function getImplicationFeedback(impNum, isCorrect) {
+            const feedbacks = {
+                1: {
+                    correct: "All these challenges must be addressed for successful price discrimination implementation.",
+                    incorrect: "Actually, all these factors plus more (like data requirements) present challenges."
+                },
+                2: {
+                    correct: "Price discrimination becomes problematic when it's discriminatory, predatory, or violates antitrust laws.",
+                    incorrect: "The complete answer includes all these scenarios where price discrimination can be illegal or unethical."
+                }
+            };
+            return feedbacks[impNum][isCorrect ? 'correct' : 'incorrect'];
         }
         
         function addToScore(points) {
@@ -486,16 +619,6 @@
         
         function updateScore() {
             document.getElementById('currentScore').textContent = score;
-        }
-        
-        function revealCaseStudyAnswer(studyNum) {
-            document.getElementById(`caseStudy${studyNum}Answer`).classList.remove('hidden');
-            addToScore(2);
-        }
-        
-        function revealImplicationAnswer(impNum) {
-            document.getElementById(`implication${impNum}Answer`).classList.remove('hidden');
-            addToScore(2);
         }
     </script>
 </body>
