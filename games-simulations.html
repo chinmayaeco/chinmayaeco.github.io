@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oligopoly Market Simulation</title>
+    <title>Game Theory Simulation</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -184,41 +184,38 @@
             color: #2c3e50;
         }
         
-        .graph-container {
+        .game-matrix {
             width: 100%;
-            height: 250px;
-            background-color: #f8f9fa;
             margin: 15px 0;
-            position: relative;
-            border: 1px solid #dee2e6;
+            border-collapse: collapse;
+            border: 2px solid #2c3e50;
             border-radius: 5px;
+            overflow: hidden;
         }
         
-        .graph-axis {
-            position: absolute;
-            background-color: #6c757d;
+        .game-matrix th, .game-matrix td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: center;
         }
         
-        .graph-line {
-            position: absolute;
-            background-color: #e74c3c;
-            height: 2px;
+        .game-matrix th {
+            background-color: #3498db;
+            color: white;
         }
         
-        .graph-label {
-            position: absolute;
-            font-size: 12px;
-            color: #6c757d;
+        .game-matrix tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
         
-        .oligopoly-features {
+        .strategy-table {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin: 15px 0;
         }
         
-        .feature-card {
+        .strategy-card {
             background-color: #e8f4fc;
             padding: 10px;
             border-radius: 5px;
@@ -227,6 +224,28 @@
             text-align: center;
             font-size: 0.9rem;
             border: 1px solid #3498db;
+        }
+        
+        .interactive-game {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .player-choice {
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
         
         @media (max-width: 768px) {
@@ -243,7 +262,7 @@
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>Oligopoly Market Simulation</h2>
+            <h2>Game Theory Simulation</h2>
             <p>Enter the password to access the simulation:</p>
             <input type="password" id="passwordInput" placeholder="Enter password">
             <button onclick="checkPassword()">Enter</button>
@@ -253,8 +272,8 @@
 
     <div class="container" id="gameContent" style="display: none;">
         <header>
-            <h1>Oligopoly Market Simulation</h1>
-            <p>Explore the kinked demand curve, price rigidity, and strategic behavior in oligopoly markets</p>
+            <h1>Game Theory Simulation</h1>
+            <p>Explore Prisoner's Dilemma, Dominant Strategies, and Product Choice Problems</p>
         </header>
         
         <div class="score-display">
@@ -264,49 +283,75 @@
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Interact with the kinked demand curve model and observe price rigidity in action.</p>
+                <p>Interact with game theory concepts and see how strategies play out.</p>
                 
                 <div class="concept-definition">
-                    <span class="concept-type">Oligopoly Characteristics:</span>
-                    <div class="oligopoly-features">
-                        <div class="feature-card">Few dominant firms</div>
-                        <div class="feature-card">Interdependence</div>
-                        <div class="feature-card">Barriers to entry</div>
-                        <div class="feature-card">Non-price competition</div>
+                    <span class="concept-type">Key Concepts:</span>
+                    <div class="strategy-table">
+                        <div class="strategy-card">Prisoner's Dilemma</div>
+                        <div class="strategy-card">Dominant Strategy</div>
+                        <div class="strategy-card">Nash Equilibrium</div>
+                        <div class="strategy-card">Product Choice</div>
                     </div>
                 </div>
                 
-                <div class="graph-container" id="kinkedDemandGraph">
-                    <!-- Graph will be drawn by JavaScript -->
+                <div class="interactive-game">
+                    <h3>Classic Prisoner's Dilemma</h3>
+                    <table class="game-matrix">
+                        <tr>
+                            <th></th>
+                            <th colspan="2">Player B</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Cooperate</th>
+                            <th>Defect</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2">Player A</th>
+                            <td>3, 3</td>
+                            <td>1, 4</td>
+                        </tr>
+                        <tr>
+                            <td>4, 1</td>
+                            <td>2, 2</td>
+                        </tr>
+                    </table>
+                    <p>What is the dominant strategy for each player?</p>
+                    <div class="game-controls">
+                        <button class="player-choice" onclick="simulateGame('cooperate')">Cooperate</button>
+                        <button class="player-choice" onclick="simulateGame('defect')">Defect</button>
+                    </div>
+                    <div id="gameResult" class="feedback"></div>
                 </div>
                 
                 <div id="simulationQuestions">
                     <div class="question">
-                        <p>1. In the kinked demand curve model, the kink occurs because:</p>
+                        <p>1. In the prisoner's dilemma, the dominant strategy leads to:</p>
                         <div class="options">
-                            <button onclick="answerQuestion(1, 'asymmetric', this)">Competitors follow price cuts but not price increases</button>
-                            <button onclick="answerQuestion(1, 'costs', this)">Production costs change at that output level</button>
-                            <button onclick="answerQuestion(1, 'government', this)">Government regulations fix prices at that point</button>
+                            <button onclick="answerQuestion(1, 'worse', this)">A worse outcome for both players</button>
+                            <button onclick="answerQuestion(1, 'better', this)">A better outcome for both players</button>
+                            <button onclick="answerQuestion(1, 'mixed', this)">A mixed outcome with one winner</button>
                         </div>
                         <div id="feedback1" class="feedback"></div>
                     </div>
                     
                     <div class="question">
-                        <p>2. Price rigidity in oligopoly markets refers to:</p>
+                        <p>2. A dominant strategy is one that:</p>
                         <div class="options">
-                            <button onclick="answerQuestion(2, 'sticky', this)">Prices tending to remain stable despite cost changes</button>
-                            <button onclick="answerQuestion(2, 'flexible', this)">Prices changing frequently with market conditions</button>
-                            <button onclick="answerQuestion(2, 'regulated', this)">Government control over prices</button>
+                            <button onclick="answerQuestion(2, 'best', this)">Yields the best outcome regardless of others' choices</button>
+                            <button onclick="answerQuestion(2, 'cooperate', this)">Always involves cooperation with others</button>
+                            <button onclick="answerQuestion(2, 'random', this)">Is chosen randomly without strategy</button>
                         </div>
                         <div id="feedback2" class="feedback"></div>
                     </div>
                     
                     <div class="question">
-                        <p>3. The kinked demand curve model explains why in oligopoly:</p>
+                        <p>3. In product choice games, companies often:</p>
                         <div class="options">
-                            <button onclick="answerQuestion(3, 'stable', this)">Prices tend to be stable even when costs change</button>
-                            <button onclick="answerQuestion(3, 'volatile', this)">Prices are more volatile than in other markets</button>
-                            <button onclick="answerQuestion(3, 'lower', this)">Prices are always lower than in monopoly</button>
+                            <button onclick="answerQuestion(3, 'differentiate', this)">Differentiate products to avoid direct competition</button>
+                            <button onclick="answerQuestion(3, 'identical', this)">Make identical products to minimize costs</button>
+                            <button onclick="answerQuestion(3, 'collude', this)">Collude to set high prices together</button>
                         </div>
                         <div id="feedback3" class="feedback"></div>
                     </div>
@@ -315,37 +360,37 @@
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Analyze real-world examples of oligopoly behavior and price rigidity.</p>
+                <p>Analyze real-world examples of game theory applications.</p>
                 
                 <div class="question">
-                    <p><strong>Case 1:</strong> The smartphone market is dominated by Apple and Samsung. When one introduces a new feature, the other quickly follows, but price changes are rare and typically occur only when production costs change significantly.</p>
-                    <p>This demonstrates which oligopoly behavior?</p>
+                    <p><strong>Case 1:</strong> Two competing tech companies are deciding whether to adopt a new technology standard. If both adopt it, they both benefit from network effects. If only one adopts, that company gains a temporary advantage but fragmentation hurts the industry.</p>
+                    <p>This scenario resembles:</p>
                     <div class="options">
-                        <button onclick="answerQuestion(4, 'nonprice', this)">Non-price competition</button>
-                        <button onclick="answerQuestion(4, 'collusion', this)">Tacit collusion</button>
-                        <button onclick="answerQuestion(4, 'leadership', this)">Price leadership</button>
+                        <button onclick="answerQuestion(4, 'dilemma', this)">A prisoner's dilemma</button>
+                        <button onclick="answerQuestion(4, 'chicken', this)">A game of chicken</button>
+                        <button onclick="answerQuestion(4, 'assurance', this)">An assurance game</button>
                     </div>
                     <div id="feedback4" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 2:</strong> In the airline industry, when one carrier lowers prices on a particular route, competitors quickly match the price cut. However, when one raises prices, others often don't follow, forcing the initiator to revert.</p>
-                    <p>This pattern supports which model?</p>
+                    <p><strong>Case 2:</strong> In the smartphone market, Apple and Samsung must decide whether to focus on camera quality or battery life in their next models. Market research shows consumers value both, but each company has limited R&D resources.</p>
+                    <p>This is an example of:</p>
                     <div class="options">
-                        <button onclick="answerQuestion(5, 'kinked', this)">Kinked demand curve model</button>
-                        <button onclick="answerQuestion(5, 'cartel', this)">Cartel model</button>
-                        <button onclick="answerQuestion(5, 'contestable', this)">Contestable market theory</button>
+                        <button onclick="answerQuestion(5, 'product', this)">A product choice problem</button>
+                        <button onclick="answerQuestion(5, 'dilemma', this)">A prisoner's dilemma</button>
+                        <button onclick="answerQuestion(5, 'bargaining', this)">A bargaining game</button>
                     </div>
                     <div id="feedback5" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 3:</strong> The market for soft drinks has been dominated by Coca-Cola and Pepsi for decades. Prices have remained relatively stable despite fluctuations in sugar prices and other input costs.</p>
-                    <p>What does this illustrate about oligopoly markets?</p>
+                    <p><strong>Case 3:</strong> Two gas stations located across from each other are deciding whether to lower prices. If neither lowers prices, they maintain good profits. If one lowers prices, it gains customers. If both lower prices, they both make less profit.</p>
+                    <p>What is the dominant strategy in this situation?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(6, 'rigidity', this)">Price rigidity</button>
-                        <button onclick="answerQuestion(6, 'barriers', this)">High barriers to entry</button>
-                        <button onclick="answerQuestion(6, 'interdependence', this)">Strategic interdependence</button>
+                        <button onclick="answerQuestion(6, 'lower', this)">Lower prices</button>
+                        <button onclick="answerQuestion(6, 'maintain', this)">Maintain prices</button>
+                        <button onclick="answerQuestion(6, 'random', this)">Randomly change prices</button>
                     </div>
                     <div id="feedback6" class="feedback"></div>
                 </div>
@@ -353,44 +398,44 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how oligopoly concepts affect business decisions and strategy.</p>
+                <p>Understand how game theory concepts affect business decisions and strategy.</p>
                 
                 <div class="question">
-                    <p>1. In an oligopoly market, why might a firm be hesitant to raise its prices?</p>
+                    <p>1. How can managers avoid the negative outcomes of prisoner's dilemmas?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(7, 'lose', this)">It may lose significant market share if competitors don't follow</button>
-                        <button onclick="answerQuestion(7, 'regulation', this)">Government regulations might penalize price increases</button>
-                        <button onclick="answerQuestion(7, 'costs', this)">Production costs might decrease offsetting the need</button>
+                        <button onclick="answerQuestion(7, 'repeated', this)">Through repeated interactions building trust</button>
+                        <button onclick="answerQuestion(7, 'contracts', this)">By signing binding contracts</button>
+                        <button onclick="answerQuestion(7, 'avoidance', this)">By avoiding competitors entirely</button>
                     </div>
                     <div id="feedback7" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>2. What is a common strategy for firms in oligopoly markets to compete without changing prices?</p>
+                    <p>2. In product differentiation games, what is often the optimal strategy?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(8, 'differentiation', this)">Product differentiation and advertising</button>
-                        <button onclick="answerQuestion(8, 'cost', this)">Cost reduction through efficiency gains</button>
-                        <button onclick="answerQuestion(8, 'lobbying', this)">Lobbying for favorable regulations</button>
+                        <button onclick="answerQuestion(8, 'complement', this)">Choose a product feature that complements rather than directly competes</button>
+                        <button onclick="answerQuestion(8, 'identical', this)">Make products identical to the competitor's</button>
+                        <button onclick="answerQuestion(8, 'random', this)">Randomly select product features</button>
                     </div>
                     <div id="feedback8" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>3. How can game theory help managers in oligopoly markets?</p>
+                    <p>3. How can game theory help in strategic decision-making?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(9, 'predict', this)">By predicting competitor responses to strategic moves</button>
-                        <button onclick="answerQuestion(9, 'minimize', this)">By minimizing production costs through optimization</button>
-                        <button onclick="answerQuestion(9, 'avoid', this)">By avoiding government antitrust scrutiny</button>
+                        <button onclick="answerQuestion(9, 'anticipate', this)">By anticipating competitor responses to your actions</button>
+                        <button onclick="answerQuestion(9, 'ignore', this)">By ignoring competitor actions entirely</button>
+                        <button onclick="answerQuestion(9, 'copy', this)">By always copying what competitors do</button>
                     </div>
                     <div id="feedback9" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>4. What is a major limitation of the kinked demand curve model?</p>
+                    <p>4. What is a limitation of the prisoner's dilemma model in real business contexts?</p>
                     <div class="options">
-                        <button onclick="answerQuestion(10, 'explain', this)">It doesn't explain how the initial price was determined</button>
-                        <button onclick="answerQuestion(10, 'predict', this)">It cannot predict when price changes might occur</button>
-                        <button onclick="answerQuestion(10, 'apply', this)">It doesn't apply to markets with more than two firms</button>
+                        <button onclick="answerQuestion(10, 'repeated', this)">Real business interactions are often repeated, not one-time</button>
+                        <button onclick="answerQuestion(10, 'communication', this)">Communication between businesses is often possible</button>
+                        <button onclick="answerQuestion(10, 'both', this)">Both of the above</button>
                     </div>
                     <div id="feedback10" class="feedback"></div>
                 </div>
@@ -400,7 +445,7 @@
 
     <script>
         // Password protection
-        const correctPassword = "Oligopoly2023";
+        const correctPassword = "GameTheory2023";
         let score = 0;
         const maxPossibleScore = 95; // Ensures no one can score 100%
         const questionValues = {
@@ -408,57 +453,57 @@
             6: 12, 7: 10, 8: 10, 9: 10, 10: 9
         };
         const correctAnswers = {
-            1: "asymmetric",
-            2: "sticky",
-            3: "stable",
-            4: "nonprice",
-            5: "kinked",
-            6: "rigidity",
-            7: "lose",
-            8: "differentiation",
-            9: "predict",
-            10: "explain"
+            1: "worse",
+            2: "best",
+            3: "differentiate",
+            4: "dilemma",
+            5: "product",
+            6: "lower",
+            7: "repeated",
+            8: "complement",
+            9: "anticipate",
+            10: "both"
         };
         const feedbackMessages = {
             1: {
-                correct: "Correct! The kink occurs because competitors typically follow price cuts to avoid losing market share, but don't follow price increases to gain market share.",
-                incorrect: "Incorrect. The kink results from asymmetric competitor responses, not cost changes or government regulation."
+                correct: "Correct! The dominant strategy in prisoner's dilemma leads to a worse outcome for both players than if they had cooperated.",
+                incorrect: "Incorrect. In prisoner's dilemma, the dominant strategy leads to a suboptimal outcome where both players are worse off than if they had cooperated."
             },
             2: {
-                correct: "Right! Price rigidity refers to prices being 'sticky' and resistant to change in oligopoly markets.",
-                incorrect: "No, price rigidity means prices tend to remain stable, not change frequently."
+                correct: "Right! A dominant strategy yields the best outcome for a player regardless of what others do.",
+                incorrect: "No, a dominant strategy is one that gives the best result no matter what other players choose."
             },
             3: {
-                correct: "Yes! The kinked demand curve explains price stability in oligopoly markets.",
-                incorrect: "Actually, oligopoly prices tend to be more stable than in competitive markets due to strategic interdependence."
+                correct: "Yes! Companies often differentiate products to avoid head-to-head competition and create their own market niches.",
+                incorrect: "Actually, companies typically differentiate products to reduce direct competition and capture different market segments."
             },
             4: {
-                correct: "Correct! Competing through features rather than price is a form of non-price competition common in oligopolies.",
-                incorrect: "While there may be elements of other behaviors, this is primarily non-price competition."
+                correct: "Correct! This is a classic prisoner's dilemma where individual rationality leads to collective suboptimal outcomes.",
+                incorrect: "While there are similarities to other games, this scenario most closely resembles a prisoner's dilemma."
             },
             5: {
-                correct: "Exactly! The asymmetric response to price changes supports the kinked demand curve model.",
-                incorrect: "This pattern is specifically explained by the kinked demand curve model."
+                correct: "Exactly! This is a product choice problem where companies decide which features to focus on.",
+                incorrect: "This is specifically a product choice problem, not a prisoner's dilemma or bargaining game."
             },
             6: {
-                correct: "Right! Stable prices despite cost changes illustrate price rigidity.",
-                incorrect: "While barriers and interdependence exist, the price stability specifically demonstrates rigidity."
+                correct: "Right! The dominant strategy is to lower prices, as it yields a better outcome regardless of what the competitor does.",
+                incorrect: "In this pricing game, the dominant strategy is to lower prices to avoid losing customers."
             },
             7: {
-                correct: "Correct! The fear of losing market share if competitors don't match price increases creates hesitation.",
-                incorrect: "The primary concern is competitor response, not regulation or cost changes."
+                correct: "Correct! Repeated interactions allow for the development of trust and cooperation, avoiding the prisoner's dilemma trap.",
+                incorrect: "While contracts might help in some cases, repeated interactions are the primary way to overcome prisoner's dilemmas."
             },
             8: {
-                correct: "Yes! Product differentiation and advertising are common non-price competition strategies.",
-                incorrect: "While cost reduction is important, non-price competition typically focuses on differentiation."
+                correct: "Yes! Choosing complementary features reduces direct competition and can expand the overall market.",
+                incorrect: "The optimal strategy is typically to differentiate and complement rather than imitate directly."
             },
             9: {
-                correct: "Right! Game theory helps predict how competitors might respond to strategic moves.",
-                incorrect: "The primary value of game theory in oligopoly is predicting competitor behavior."
+                correct: "Right! Game theory helps managers anticipate how competitors might respond to strategic moves.",
+                incorrect: "The primary value of game theory is in anticipating competitor responses, not ignoring or copying them."
             },
             10: {
-                correct: "Exactly! A major limitation is that it doesn't explain how the initial price was determined.",
-                incorrect: "The key limitation is that the model takes the initial price as given without explaining its determination."
+                correct: "Exactly! Both repeated interactions and communication possibilities differentiate real business from the classic prisoner's dilemma.",
+                incorrect: "While each is true individually, both factors distinguish real business from the theoretical model."
             }
         };
         
@@ -467,127 +512,39 @@
             if (input === correctPassword) {
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('gameContent').style.display = 'block';
-                drawGraph();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
         }
         
-        function drawGraph() {
-            const graph = document.getElementById('kinkedDemandGraph');
-            const width = graph.offsetWidth;
-            const height = graph.offsetHeight;
+        function simulateGame(choice) {
+            const resultElement = document.getElementById('gameResult');
+            const outcomes = {
+                'cooperate': {
+                    'cooperate': 'Both get 3 years (moderate sentence)',
+                    'defect': 'You get 4 years (worst), Other gets 1 year (best)'
+                },
+                'defect': {
+                    'cooperate': 'You get 1 year (best), Other gets 4 years (worst)',
+                    'defect': 'Both get 2 years (bad but not worst)'
+                }
+            };
             
-            // Clear previous graph
-            graph.innerHTML = '';
+            // Computer randomly chooses (but weighted toward defect as rational choice)
+            const computerChoice = Math.random() < 0.7 ? 'defect' : 'cooperate';
+            const outcome = outcomes[choice][computerChoice];
             
-            // Draw axes
-            const xAxis = document.createElement('div');
-            xAxis.className = 'graph-axis';
-            xAxis.style.width = width - 40 + 'px';
-            xAxis.style.height = '2px';
-            xAxis.style.bottom = '40px';
-            xAxis.style.left = '40px';
-            graph.appendChild(xAxis);
+            resultElement.innerHTML = `
+                <strong>You chose to ${choice}, Computer chose to ${computerChoice}</strong><br>
+                Result: ${outcome}<br>
+                <em>${choice === 'defect' ? 'This demonstrates the dominant strategy in prisoner\'s dilemma.' : 'Cooperation yields better collective outcomes but is risky.'}</em>
+            `;
             
-            const yAxis = document.createElement('div');
-            yAxis.className = 'graph-axis';
-            yAxis.style.width = '2px';
-            yAxis.style.height = height - 40 + 'px';
-            yAxis.style.left = '40px';
-            yAxis.style.bottom = '40px';
-            graph.appendChild(yAxis);
-            
-            // Draw kinked demand curve
-            const demandCurve = document.createElement('div');
-            demandCurve.className = 'graph-line';
-            demandCurve.style.width = '2px';
-            demandCurve.style.backgroundColor = '#e74c3c';
-            
-            // Draw the elastic portion (above kink)
-            for (let i = 0; i < 80; i++) {
-                const segment = demandCurve.cloneNode();
-                segment.style.left = (40 + i) + 'px';
-                segment.style.bottom = (40 + i * 0.8) + 'px';
-                graph.appendChild(segment);
+            if (choice === 'defect') {
+                resultElement.className = 'feedback incorrect';
+            } else {
+                resultElement.className = 'feedback correct';
             }
-            
-            // Draw the inelastic portion (below kink)
-            for (let i = 80; i < 200; i++) {
-                const segment = demandCurve.cloneNode();
-                segment.style.left = (40 + i) + 'px';
-                segment.style.bottom = (40 + 64 + (i - 80) * 0.2) + 'px'; // 64 = 80*0.8
-                graph.appendChild(segment);
-            }
-            
-            // Draw MR curve with discontinuity
-            const mrCurve = document.createElement('div');
-            mrCurve.className = 'graph-line';
-            mrCurve.style.width = '2px';
-            mrCurve.style.backgroundColor = '#3498db';
-            
-            // Draw MR above kink
-            for (let i = 0; i < 80; i++) {
-                const segment = mrCurve.cloneNode();
-                segment.style.left = (40 + i) + 'px';
-                segment.style.bottom = (40 + i * 1.2) + 'px';
-                graph.appendChild(segment);
-            }
-            
-            // Draw MR below kink
-            for (let i = 120; i < 200; i++) {
-                const segment = mrCurve.cloneNode();
-                segment.style.left = (40 + i) + 'px';
-                segment.style.bottom = (40 + 96 - (i - 120) * 0.5) + 'px'; // 96 = 80*1.2
-                graph.appendChild(segment);
-            }
-            
-            // Add labels
-            const priceLabel = document.createElement('div');
-            priceLabel.className = 'graph-label';
-            priceLabel.textContent = 'Price';
-            priceLabel.style.left = '20px';
-            priceLabel.style.top = '20px';
-            graph.appendChild(priceLabel);
-            
-            const qLabel = document.createElement('div');
-            qLabel.className = 'graph-label';
-            qLabel.textContent = 'Quantity';
-            qLabel.style.right = '10px';
-            qLabel.style.bottom = '20px';
-            graph.appendChild(qLabel);
-            
-            const dLabel = document.createElement('div');
-            dLabel.className = 'graph-label';
-            dLabel.textContent = 'D';
-            dLabel.style.right = '30px';
-            dLabel.style.top = '30px';
-            graph.appendChild(dLabel);
-            
-            const mrLabel = document.createElement('div');
-            mrLabel.className = 'graph-label';
-            mrLabel.textContent = 'MR';
-            mrLabel.style.right = '30px';
-            mrLabel.style.top = '80px';
-            graph.appendChild(mrLabel);
-            
-            // Add kink point
-            const kinkPoint = document.createElement('div');
-            kinkPoint.style.position = 'absolute';
-            kinkPoint.style.width = '8px';
-            kinkPoint.style.height = '8px';
-            kinkPoint.style.backgroundColor = '#2c3e50';
-            kinkPoint.style.borderRadius = '50%';
-            kinkPoint.style.left = (40 + 80 - 4) + 'px';
-            kinkPoint.style.bottom = (40 + 64 - 4) + 'px';
-            graph.appendChild(kinkPoint);
-            
-            const kinkLabel = document.createElement('div');
-            kinkLabel.className = 'graph-label';
-            kinkLabel.textContent = 'Kink';
-            kinkLabel.style.left = (40 + 80 + 5) + 'px';
-            kinkLabel.style.bottom = (40 + 64 - 10) + 'px';
-            graph.appendChild(kinkLabel);
         }
         
         function answerQuestion(questionNum, answer, button) {
