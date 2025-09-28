@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>National Income Accounts Simulation</title>
+    <title>GDP Components Simulation</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -89,6 +89,8 @@
             cursor: pointer;
             margin: 5px 0;
             transition: background-color 0.3s;
+            width: 100%;
+            text-align: left;
         }
         
         button:hover {
@@ -104,7 +106,7 @@
         }
         
         .options {
-            margin-left: 20px;
+            margin-left: 0;
         }
         
         .score-display {
@@ -184,16 +186,16 @@
             color: #2c3e50;
         }
         
-        .income-accounts {
+        .gdp-components {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin: 15px 0;
         }
         
-        .account-card {
+        .component-card {
             background-color: #e8f4fc;
-            padding: 10px;
+            padding: 15px;
             border-radius: 5px;
             flex: 1;
             min-width: 120px;
@@ -202,61 +204,81 @@
             border: 1px solid #3498db;
         }
         
-        .interactive-calculator {
+        .interactive-gdp {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
             margin: 15px 0;
         }
         
-        .calculator-controls {
+        .gdp-controls {
             display: flex;
             gap: 10px;
             margin-top: 10px;
             flex-wrap: wrap;
         }
         
-        .account-choice {
+        .component-choice {
             padding: 8px 12px;
             background-color: #3498db;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            flex: 1;
         }
         
-        .formula-box {
+        .gdp-formula {
             font-family: 'Courier New', monospace;
             background-color: #f8f9fa;
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
             text-align: center;
-            border-left: 4px solid #2980b9;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 2px solid #3498db;
         }
         
-        .relationship-chart {
+        .chart-container {
             width: 100%;
+            height: 200px;
+            background-color: #f8f9fa;
             margin: 15px 0;
-            padding: 15px;
-            background-color: #f0f8ff;
+            position: relative;
+            border: 1px solid #dee2e6;
             border-radius: 5px;
-            border-left: 4px solid #2980b9;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 10px;
         }
         
-        .chart-item {
-            margin: 10px 0;
-            padding: 8px;
-            background-color: white;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+        .chart-bar {
+            width: 60px;
+            background-color: #3498db;
+            margin: 0 5px;
+            position: relative;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            transition: height 0.5s ease;
         }
         
-        .chart-arrow {
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
             text-align: center;
-            font-size: 1.5rem;
-            color: #3498db;
-            margin: 5px 0;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .percentage {
+            position: absolute;
+            top: -20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
         }
         
         @media (max-width: 768px) {
@@ -267,13 +289,17 @@
             h1 {
                 font-size: 2rem;
             }
+            
+            .gdp-controls {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>National Income Accounts Simulation</h2>
+            <h2>GDP Components Simulation</h2>
             <p>Enter the password to access the simulation:</p>
             <input type="password" id="passwordInput" placeholder="Enter password">
             <button onclick="checkPassword()">Enter</button>
@@ -283,8 +309,8 @@
 
     <div class="container" id="gameContent" style="display: none;">
         <header>
-            <h1>National Income Accounts Simulation</h1>
-            <p>Explore different types of national income accounts and their relationships</p>
+            <h1>GDP Components Simulation</h1>
+            <p>Explore the components of Gross Domestic Product and their economic significance</p>
         </header>
         
         <div class="score-display">
@@ -294,114 +320,99 @@
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Interact with national income accounting concepts and calculations.</p>
+                <p>Interact with GDP components and see how different economic activities contribute to GDP.</p>
                 
                 <div class="concept-definition">
-                    <span class="concept-type">National Income Accounts:</span>
-                    <div class="income-accounts">
-                        <div class="account-card">GDP</div>
-                        <div class="account-card">GNP</div>
-                        <div class="account-card">NDP</div>
-                        <div class="account-card">NNP</div>
-                        <div class="account-card">NI</div>
+                    <span class="concept-type">GDP Components (Expenditure Approach):</span>
+                    <div class="gdp-components">
+                        <div class="component-card">
+                            <h4>Consumption (C)</h4>
+                            <p>Household spending on goods and services</p>
+                        </div>
+                        <div class="component-card">
+                            <h4>Investment (I)</h4>
+                            <p>Business spending on capital goods</p>
+                        </div>
+                        <div class="component-card">
+                            <h4>Government (G)</h4>
+                            <p>Government purchases of goods and services</p>
+                        </div>
+                        <div class="component-card">
+                            <h4>Net Exports (NX)</h4>
+                            <p>Exports minus imports</p>
+                        </div>
+                    </div>
+                    <div class="gdp-formula">
+                        GDP = C + I + G + (X - M)
                     </div>
                 </div>
                 
-                <div class="relationship-chart">
-                    <h3>Relationship Between National Income Aggregates</h3>
-                    <div class="chart-item">GDP (Gross Domestic Product)</div>
-                    <div class="chart-arrow">↓ + Net Factor Income from Abroad</div>
-                    <div class="chart-item">GNP (Gross National Product)</div>
-                    <div class="chart-arrow">↓ - Depreciation</div>
-                    <div class="chart-item">NDP (Net Domestic Product)</div>
-                    <div class="chart-arrow">↓ + Net Factor Income from Abroad</div>
-                    <div class="chart-item">NNP (Net National Product)</div>
-                    <div class="chart-arrow">↓ - Indirect Taxes + Subsidies</div>
-                    <div class="chart-item">NI (National Income)</div>
+                <div class="chart-container" id="gdpChart">
+                    <div class="chart-bar" style="height: 70%; background-color: #3498db;">
+                        <div class="percentage">70%</div>
+                        <div class="chart-label">Consumption</div>
+                    </div>
+                    <div class="chart-bar" style="height: 18%; background-color: #2ecc71;">
+                        <div class="percentage">18%</div>
+                        <div class="chart-label">Investment</div>
+                    </div>
+                    <div class="chart-bar" style="height: 17%; background-color: #e74c3c;">
+                        <div class="percentage">17%</div>
+                        <div class="chart-label">Government</div>
+                    </div>
+                    <div class="chart-bar" style="height: 5%; background-color: #f39c12;">
+                        <div class="percentage">-5%</div>
+                        <div class="chart-label">Net Exports</div>
+                    </div>
                 </div>
                 
-                <div class="interactive-calculator">
-                    <h3>Account Identification</h3>
-                    <p>Identify which national income account each description refers to:</p>
-                    <div class="calculator-controls">
-                        <button class="account-choice" onclick="checkAccount('gdp', this)">GDP</button>
-                        <button class="account-choice" onclick="checkAccount('gnp', this)">GNP</button>
-                        <button class="account-choice" onclick="checkAccount('ndp', this)">NDP</button>
-                        <button class="account-choice" onclick="checkAccount('nnp', this)">NNP</button>
-                        <button class="account-choice" onclick="checkAccount('ni', this)">NI</button>
+                <div class="interactive-gdp">
+                    <h3>Component Identification Game</h3>
+                    <p>Identify which GDP component each economic activity belongs to:</p>
+                    <div id="currentActivity" class="gdp-formula">
+                        <strong>Current Activity:</strong> A family buys a new car
                     </div>
-                    <div id="currentDescription" class="formula-box">
-                        <strong>Current Description:</strong> The total value of goods and services produced within a country's borders
+                    <div class="gdp-controls">
+                        <button class="component-choice" onclick="checkComponent('consumption', this)">Consumption (C)</button>
+                        <button class="component-choice" onclick="checkComponent('investment', this)">Investment (I)</button>
+                        <button class="component-choice" onclick="checkComponent('government', this)">Government (G)</button>
+                        <button class="component-choice" onclick="checkComponent('netexports', this)">Net Exports (NX)</button>
                     </div>
-                    <div id="accountResult" class="feedback"></div>
+                    <div id="componentResult" class="feedback"></div>
                 </div>
                 
                 <div id="simulationQuestions">
-                    <div class="question">
-                        <p>1. Which national income account measures the total output produced by a country's residents regardless of location?</p>
-                        <div class="options">
-                            <button onclick="answerQuestion(1, 'gnp', this)">GNP</button>
-                            <button onclick="answerQuestion(1, 'gdp', this)">GDP</button>
-                            <button onclick="answerQuestion(1, 'ndp', this)">NDP</button>
-                        </div>
-                        <div id="feedback1" class="feedback"></div>
-                    </div>
-                    
-                    <div class="question">
-                        <p>2. How is NNP (Net National Product) calculated?</p>
-                        <div class="options">
-                            <button onclick="answerQuestion(2, 'gnpdep', this)">GNP minus depreciation</button>
-                            <button onclick="answerQuestion(2, 'gdpdep', this)">GDP minus depreciation</button>
-                            <button onclick="answerQuestion(2, 'niindirect', this)">NI plus indirect taxes</button>
-                        </div>
-                        <div id="feedback2" class="feedback"></div>
-                    </div>
-                    
-                    <div class="question">
-                        <p>3. What is the key difference between GDP and GNP?</p>
-                        <div class="options">
-                            <button onclick="answerQuestion(3, 'location', this)">Geographic location vs. ownership</button>
-                            <button onclick="answerQuestion(3, 'depreciation', this)">Treatment of depreciation</button>
-                            <button onclick="answerQuestion(3, 'taxes', this)">Inclusion of indirect taxes</button>
-                        </div>
-                        <div id="feedback3" class="feedback"></div>
-                    </div>
+                    <!-- Questions will be populated by JavaScript -->
                 </div>
             </div>
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Analyze real-world examples of national income accounting applications.</p>
+                <p>Analyze real-world examples of GDP components in different economic scenarios.</p>
                 
                 <div class="question">
-                    <p><strong>Case 1:</strong> Country A has many multinational corporations operating within its borders, while Country B has many of its own corporations operating abroad.</p>
-                    <p>How would this affect the relationship between GDP and GNP in these countries?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(4, 'ahigher', this)">Country A's GDP > GNP, Country B's GNP > GDP</button>
-                        <button onclick="answerQuestion(4, 'bothhigher', this)">Both countries would have GDP > GNP</button>
-                        <button onclick="answerQuestion(4, 'equal', this)">GDP and GNP would be equal in both countries</button>
+                    <p><strong>Case 1:</strong> During an economic boom, consumer confidence is high, leading to increased spending on durable goods like cars and appliances. At the same time, businesses invest heavily in new equipment and factories.</p>
+                    <p>Which GDP components are primarily driving this economic growth?</p>
+                    <div class="options" id="case1Options">
+                        <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback4" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 2:</strong> A country implements policies that encourage investment in new machinery and equipment, leading to faster capital depreciation.</p>
-                    <p>How would this affect the gap between GDP and NDP?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(5, 'increase', this)">The gap would increase</button>
-                        <button onclick="answerQuestion(5, 'decrease', this)">The gap would decrease</button>
-                        <button onclick="answerQuestion(5, 'nochange', this)">There would be no change</button>
+                    <p><strong>Case 2:</strong> A country implements a large infrastructure spending program, building new roads, bridges, and public transportation systems. This creates jobs and stimulates economic activity.</p>
+                    <p>Which GDP component is most directly affected by this policy?</p>
+                    <div class="options" id="case2Options">
+                        <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback5" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 3:</strong> A developing country receives significant foreign aid and has high indirect taxes but provides few subsidies.</p>
-                    <p>How would this affect the relationship between NNP and National Income?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(6, 'nnhigher', this)">NNP would be higher than National Income</button>
-                        <button onclick="answerQuestion(6, 'nihigher', this)">National Income would be higher than NNP</button>
-                        <button onclick="answerQuestion(6, 'equal', this)">They would be approximately equal</button>
+                    <p><strong>Case 3:</strong> A nation's currency appreciates significantly, making its exports more expensive for foreign buyers and imports cheaper for domestic consumers. This leads to a decline in export volumes and an increase in imports.</p>
+                    <p>How would this affect the GDP components?</p>
+                    <div class="options" id="case3Options">
+                        <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback6" class="feedback"></div>
                 </div>
@@ -409,44 +420,36 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how national income accounting concepts affect business decisions and economic policy.</p>
+                <p>Understand how GDP components affect business decisions and economic strategy.</p>
                 
                 <div class="question">
-                    <p>1. Why would a multinational corporation pay attention to both GDP and GNP figures?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(7, 'operations', this)">To understand both domestic market size and national economic strength</button>
-                        <button onclick="answerQuestion(7, 'taxes', this)">To calculate appropriate tax liabilities</button>
-                        <button onclick="answerQuestion(7, 'employment', this)">To determine optimal employment levels</button>
+                    <p>1. If consumption expenditure is growing rapidly while investment is declining, what might this indicate about the economy?</p>
+                    <div class="options" id="managerial1Options">
+                        <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback7" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>2. How can NDP be a better measure of sustainable production than GDP?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(8, 'depreciation', this)">It accounts for capital consumption</button>
-                        <button onclick="answerQuestion(8, 'environment', this)">It includes environmental costs</button>
-                        <button onclick="answerQuestion(8, 'income', this)">It measures income rather than output</button>
+                    <p>2. How can businesses use information about changes in government spending to make strategic decisions?</p>
+                    <div class="options" id="managerial2Options">
+                        <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback8" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>3. What does a growing gap between GDP and NDP indicate about an economy?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(9, 'aging', this)">Aging capital stock and need for replacement investment</button>
-                        <button onclick="answerQuestion(9, 'efficient', this)">Increasing capital efficiency</button>
-                        <button onclick="answerQuestion(9, 'foreign', this)">Growing foreign investment</button>
+                    <p>3. Why might a company pay close attention to trends in net exports when planning international expansion?</p>
+                    <div class="options" id="managerial3Options">
+                        <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback9" class="feedback"></div>
                 </div>
                 
                 <div class="question">
-                    <p>4. Why might policymakers focus on National Income rather than NNP?</p>
-                    <div class="options">
-                        <button onclick="answerQuestion(10, 'distribution', this)">It better reflects income available to citizens</button>
-                        <button onclick="answerQuestion(10, 'simplicity', this)">It's simpler to calculate</button>
-                        <button onclick="answerQuestion(10, 'international', this)">It's more comparable internationally</button>
+                    <p>4. During a recession, which GDP component typically shows the largest percentage decline?</p>
+                    <div class="options" id="managerial4Options">
+                        <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback10" class="feedback"></div>
                 </div>
@@ -456,100 +459,265 @@
 
     <script>
         // Password protection
-        const correctPassword = "NationalIncome2023";
+        const correctPassword = "GDPComponents2023";
         let score = 0;
         const maxPossibleScore = 95; // Ensures no one can score 100%
-        const questionValues = {
-            1: 8, 2: 8, 3: 8, 4: 10, 5: 10,
-            6: 12, 7: 10, 8: 10, 9: 10, 10: 9
-        };
-        const correctAnswers = {
-            1: "gnp",
-            2: "gnpdep",
-            3: "location",
-            4: "ahigher",
-            5: "increase",
-            6: "nnhigher",
-            7: "operations",
-            8: "depreciation",
-            9: "aging",
-            10: "distribution"
-        };
-        const feedbackMessages = {
-            1: {
-                correct: "Correct! GNP measures output by a country's residents regardless of where they're located.",
-                incorrect: "Incorrect. GDP measures output within geographic borders, while GNP measures output by nationals."
-            },
-            2: {
-                correct: "Right! NNP is calculated as GNP minus depreciation (capital consumption).",
-                incorrect: "No, NNP is derived from GNP, not GDP, by subtracting depreciation."
-            },
-            3: {
-                correct: "Yes! GDP is based on geographic location, while GNP is based on ownership/citizenship.",
-                incorrect: "The key difference is geographic location (GDP) versus ownership (GNP)."
-            },
-            4: {
-                correct: "Exactly! Country A's GDP > GNP due to foreign operations, while Country B's GNP > GDP due to operations abroad.",
-                incorrect: "Foreign operations create differences between GDP and GNP as described in the correct answer."
-            },
-            5: {
-                correct: "Right! Faster depreciation increases the gap between GDP and NDP.",
-                incorrect: "Increased depreciation would widen, not narrow, the gap between GDP and NDP."
-            },
-            6: {
-                correct: "Correct! High indirect taxes and low subsidies make NNP higher than National Income.",
-                incorrect: "With high indirect taxes and low subsidies, NNP would be higher than National Income."
-            },
-            7: {
-                correct: "Yes! GDP indicates domestic market size, while GNP reflects the economic strength of the nation.",
-                incorrect: "The primary reason is understanding both domestic market conditions and national economic strength."
-            },
-            8: {
-                correct: "Right! By accounting for capital consumption, NDP better reflects sustainable production.",
-                incorrect: "NDP's advantage over GDP is accounting for depreciation, not environmental costs."
-            },
-            9: {
-                correct: "Correct! A growing GDP-NDP gap suggests aging capital that needs replacement.",
-                incorrect: "A widening gap typically indicates aging capital stock requiring replacement investment."
-            },
-            10: {
-                correct: "Exactly! National Income reflects income actually received by factors of production.",
-                incorrect: "National Income is preferred because it better reflects citizen income, not simplicity."
-            }
-        };
         
-        // Account descriptions for the identification game
-        const accountDescriptions = [
-            { description: "The total value of goods and services produced within a country's borders", account: "gdp" },
-            { description: "The total income earned by a country's residents regardless of location", account: "gnp" },
-            { description: "GDP minus depreciation of capital goods", account: "ndp" },
-            { description: "GNP minus depreciation of capital goods", account: "nnp" },
-            { description: "NNP minus indirect taxes plus subsidies", account: "ni" },
-            { description: "Measures production based on geographic boundaries", account: "gdp" },
-            { description: "Measures production based on nationality of producers", account: "gnp" },
-            { description: "Shows the net output after accounting for capital consumption", account: "ndp" }
+        // Questions with randomized answer positions
+        const questions = [
+            {
+                id: 1,
+                text: "Which of the following is included in Consumption expenditure (C)?",
+                options: [
+                    "Household purchase of new furniture",
+                    "Business purchase of new machinery",
+                    "Government building a new school",
+                    "Export of automobiles to another country"
+                ],
+                correct: 0,
+                feedback: {
+                    correct: "Correct! Household purchases of goods and services are part of consumption expenditure.",
+                    incorrect: "Incorrect. Consumption includes household spending, not business investment, government spending, or exports."
+                }
+            },
+            {
+                id: 2,
+                text: "Gross Private Domestic Investment includes:",
+                options: [
+                    "Purchase of stocks and bonds",
+                    "Business spending on new equipment",
+                    "Government infrastructure projects",
+                    "Household spending on services"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Right! Business spending on capital goods is part of investment expenditure.",
+                    incorrect: "No, investment includes business spending on capital goods, not financial assets or other components."
+                }
+            },
+            {
+                id: 3,
+                text: "Which transaction would be counted in Government purchases (G)?",
+                options: [
+                    "A family receiving unemployment benefits",
+                    "A business receiving a tax credit",
+                    "Construction of a new public library",
+                    "A consumer buying groceries"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Yes! Government purchases include spending on goods and services, like building public facilities.",
+                    incorrect: "Government purchases refer to direct spending on goods/services, not transfer payments or tax credits."
+                }
+            },
+            {
+                id: 4,
+                text: "In Case 1, which GDP components are primarily driving economic growth?",
+                options: [
+                    "Government spending and net exports",
+                    "Consumption and investment",
+                    "Only consumption",
+                    "Only investment"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Exactly! Both consumer spending and business investment are driving growth in this scenario.",
+                    incorrect: "The scenario describes increases in both consumption and investment as the primary drivers."
+                }
+            },
+            {
+                id: 5,
+                text: "In Case 2, which GDP component is most directly affected?",
+                options: [
+                    "Net exports",
+                    "Consumption",
+                    "Government spending",
+                    "Investment"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Right! Infrastructure spending directly increases government purchases component of GDP.",
+                    incorrect: "Infrastructure programs are government spending, not other components."
+                }
+            },
+            {
+                id: 6,
+                text: "In Case 3, how would currency appreciation affect GDP components?",
+                options: [
+                    "Net exports would increase",
+                    "Net exports would decrease",
+                    "Consumption would decrease significantly",
+                    "Investment would increase"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Correct! Currency appreciation makes exports more expensive and imports cheaper, reducing net exports.",
+                    incorrect: "Currency appreciation typically reduces net exports by making exports less competitive."
+                }
+            },
+            {
+                id: 7,
+                text: "If consumption is growing while investment is declining, this might indicate:",
+                options: [
+                    "Strong future economic growth",
+                    "Potential economic slowdown ahead",
+                    "No significant economic implications",
+                    "High levels of government intervention"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Yes! Declining investment may signal reduced business confidence about future growth.",
+                    incorrect: "Declining investment often signals concerns about future economic conditions."
+                }
+            },
+            {
+                id: 8,
+                text: "How can businesses use government spending information strategically?",
+                options: [
+                    "To predict consumer price changes",
+                    "To anticipate demand in specific sectors",
+                    "To forecast exchange rate movements",
+                    "To determine employee salary levels"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Right! Government spending patterns can indicate which sectors will experience increased demand.",
+                    incorrect: "Government spending information helps anticipate sector-specific demand, not other factors."
+                }
+            },
+            {
+                id: 9,
+                text: "Why monitor net exports for international expansion?",
+                options: [
+                    "To determine domestic tax rates",
+                    "To assess currency stability and trade competitiveness",
+                    "To predict government policy changes",
+                    "To estimate consumer confidence levels"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Correct! Net exports indicate trade competitiveness and potential currency movements.",
+                    incorrect: "Net exports help assess trade competitiveness, which is crucial for international business."
+                }
+            },
+            {
+                id: 10,
+                text: "During recessions, which component typically declines most?",
+                options: [
+                    "Government spending",
+                    "Net exports",
+                    "Investment",
+                    "Consumption of non-durable goods"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Yes! Investment is typically the most volatile component and declines sharply in recessions.",
+                    incorrect: "Investment usually shows the largest percentage decline during economic downturns."
+                }
+            }
+        ];
+
+        // Economic activities for the component identification game
+        const economicActivities = [
+            { activity: "A family buys a new car", component: "consumption" },
+            { activity: "A business purchases new machinery for its factory", component: "investment" },
+            { activity: "The military buys a new fighter jet", component: "government" },
+            { activity: "A company exports computers to Europe", component: "netexports" },
+            { activity: "A person pays for a haircut", component: "consumption" },
+            { activity: "A construction company builds a new warehouse", component: "investment" },
+            { activity: "A city government repairs public parks", component: "government" },
+            { activity: "A country imports more oil than it exports", component: "netexports" }
         ];
         
-        let currentDescriptionIndex = 0;
+        let currentActivityIndex = 0;
         
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
             if (input === correctPassword) {
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('gameContent').style.display = 'block';
+                initializeGame();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
         }
         
-        function checkAccount(choice, button) {
-            const resultElement = document.getElementById('accountResult');
-            const correctAccount = accountDescriptions[currentDescriptionIndex].account;
+        function initializeGame() {
+            // Shuffle questions and create HTML
+            const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
             
-            if (choice === correctAccount) {
+            // Populate simulation questions (first 3)
+            const simulationContainer = document.getElementById('simulationQuestions');
+            shuffledQuestions.slice(0, 3).forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <p>${q.text}</p>
+                    <div class="options" id="options${q.id}"></div>
+                    <div id="feedback${q.id}" class="feedback"></div>
+                `;
+                simulationContainer.appendChild(questionDiv);
+                
+                // Shuffle and populate options
+                const optionsContainer = document.getElementById(`options${q.id}`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        answerQuestion(q.id, optIndex === correctIndex, this, q.feedback); 
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+            
+            // Populate case study questions (next 3)
+            const caseQuestions = shuffledQuestions.slice(3, 6);
+            caseQuestions.forEach((q, index) => {
+                const caseNum = index + 4;
+                const optionsContainer = document.getElementById(`case${caseNum-3}Options`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        answerQuestion(q.id, optIndex === correctIndex, this, q.feedback); 
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+            
+            // Populate managerial questions (last 4)
+            const managerialQuestions = shuffledQuestions.slice(6);
+            managerialQuestions.forEach((q, index) => {
+                const managerialNum = index + 7;
+                const optionsContainer = document.getElementById(`managerial${managerialNum-6}Options`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        answerQuestion(q.id, optIndex === correctIndex, this, q.feedback); 
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+        }
+        
+        function checkComponent(choice, button) {
+            const resultElement = document.getElementById('componentResult');
+            const correctComponent = economicActivities[currentActivityIndex].component;
+            
+            if (choice === correctComponent) {
                 resultElement.innerHTML = `
-                    <strong>Correct!</strong> This describes ${getAccountName(correctAccount)}.
-                    ${getAccountExplanation(correctAccount)}
+                    <strong>Correct!</strong> This activity contributes to ${getComponentName(correctComponent)}.
+                    ${getComponentExplanation(correctComponent)}
                 `;
                 resultElement.className = 'feedback correct';
                 
@@ -558,48 +726,46 @@
                 updateScore();
             } else {
                 resultElement.innerHTML = `
-                    <strong>Incorrect.</strong> This describes ${getAccountName(correctAccount)}.
-                    ${getAccountExplanation(correctAccount)}
+                    <strong>Incorrect.</strong> This activity contributes to ${getComponentName(correctComponent)}.
+                    ${getComponentExplanation(correctComponent)}
                 `;
                 resultElement.className = 'feedback incorrect';
             }
             
-            // Move to next description after a delay
-            setTimeout(nextDescription, 2500);
+            // Move to next activity after a delay
+            setTimeout(nextActivity, 2500);
         }
         
-        function getAccountName(account) {
+        function getComponentName(component) {
             const names = {
-                'gdp': 'GDP (Gross Domestic Product)',
-                'gnp': 'GNP (Gross National Product)',
-                'ndp': 'NDP (Net Domestic Product)',
-                'nnp': 'NNP (Net National Product)',
-                'ni': 'NI (National Income)'
+                'consumption': 'Consumption (C)',
+                'investment': 'Investment (I)',
+                'government': 'Government Spending (G)',
+                'netexports': 'Net Exports (NX)'
             };
-            return names[account];
+            return names[component];
         }
         
-        function getAccountExplanation(account) {
+        function getComponentExplanation(component) {
             const explanations = {
-                'gdp': 'Measures total output within a country\'s borders.',
-                'gnp': 'Measures total output by a country\'s residents.',
-                'ndp': 'GDP adjusted for depreciation of capital.',
-                'nnp': 'GNP adjusted for depreciation of capital.',
-                'ni': 'Total income earned by factors of production.'
+                'consumption': 'Household spending on final goods and services.',
+                'investment': 'Business spending on capital goods and inventory changes.',
+                'government': 'Government purchases of goods and services.',
+                'netexports': 'Exports minus imports of goods and services.'
             };
-            return explanations[account];
+            return explanations[component];
         }
         
-        function nextDescription() {
-            currentDescriptionIndex = (currentDescriptionIndex + 1) % accountDescriptions.length;
-            const descriptionElement = document.getElementById('currentDescription');
-            descriptionElement.innerHTML = `
-                <strong>Current Description:</strong> ${accountDescriptions[currentDescriptionIndex].description}
+        function nextActivity() {
+            currentActivityIndex = (currentActivityIndex + 1) % economicActivities.length;
+            const activityElement = document.getElementById('currentActivity');
+            activityElement.innerHTML = `
+                <strong>Current Activity:</strong> ${economicActivities[currentActivityIndex].activity}
             `;
             
             // Clear the previous result
-            document.getElementById('accountResult').innerHTML = '';
-            document.getElementById('accountResult').className = 'feedback';
+            document.getElementById('componentResult').innerHTML = '';
+            document.getElementById('componentResult').className = 'feedback';
         }
         
         function updateScore() {
@@ -608,20 +774,20 @@
             document.getElementById('score').textContent = displayScore;
         }
         
-        function answerQuestion(questionNum, answer, button) {
-            const feedbackElement = document.getElementById(`feedback${questionNum}`);
+        function answerQuestion(questionId, isCorrect, button, feedback) {
+            const feedbackElement = document.getElementById(`feedback${questionId}`);
             
             // If already answered, don't allow answering again
             if (feedbackElement.innerHTML !== '') return;
             
-            if (answer === correctAnswers[questionNum]) {
+            if (isCorrect) {
                 // Correct answer
-                feedbackElement.innerHTML = feedbackMessages[questionNum].correct;
+                feedbackElement.innerHTML = feedback.correct;
                 feedbackElement.className = 'feedback correct';
-                score += questionValues[questionNum];
+                score += 10; // Each question is worth 10 points
             } else {
                 // Incorrect answer
-                feedbackElement.innerHTML = feedbackMessages[questionNum].incorrect;
+                feedbackElement.innerHTML = feedback.incorrect;
                 feedbackElement.className = 'feedback incorrect';
             }
             
@@ -635,11 +801,11 @@
             }
         }
         
-        // Initialize the first description
+        // Initialize the first activity
         window.onload = function() {
-            if (document.getElementById('currentDescription')) {
-                document.getElementById('currentDescription').innerHTML = `
-                    <strong>Current Description:</strong> ${accountDescriptions[0].description}
+            if (document.getElementById('currentActivity')) {
+                document.getElementById('currentActivity').innerHTML = `
+                    <strong>Current Activity:</strong> ${economicActivities[0].activity}
                 `;
             }
         };
