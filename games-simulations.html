@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GDP Components Simulation</title>
+    <title>Macroeconomic Concepts Simulation</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -186,14 +186,14 @@
             color: #2c3e50;
         }
         
-        .gdp-components {
+        .macro-concepts {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin: 15px 0;
         }
         
-        .component-card {
+        .concept-card {
             background-color: #e8f4fc;
             padding: 15px;
             border-radius: 5px;
@@ -204,21 +204,21 @@
             border: 1px solid #3498db;
         }
         
-        .interactive-gdp {
+        .interactive-simulation {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
             margin: 15px 0;
         }
         
-        .gdp-controls {
+        .simulation-controls {
             display: flex;
             gap: 10px;
             margin-top: 10px;
             flex-wrap: wrap;
         }
         
-        .component-choice {
+        .concept-choice {
             padding: 8px 12px;
             background-color: #3498db;
             color: white;
@@ -228,7 +228,7 @@
             flex: 1;
         }
         
-        .gdp-formula {
+        .formula-box {
             font-family: 'Courier New', monospace;
             background-color: #f8f9fa;
             padding: 10px;
@@ -240,45 +240,47 @@
             border: 2px solid #3498db;
         }
         
-        .chart-container {
+        .graph-container {
             width: 100%;
-            height: 200px;
+            height: 250px;
             background-color: #f8f9fa;
             margin: 15px 0;
             position: relative;
             border: 1px solid #dee2e6;
             border-radius: 5px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
             padding: 10px;
         }
         
-        .chart-bar {
-            width: 60px;
-            background-color: #3498db;
-            margin: 0 5px;
-            position: relative;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            transition: height 0.5s ease;
+        .graph-axis {
+            position: absolute;
+            background-color: #6c757d;
         }
         
-        .chart-label {
+        .graph-line {
             position: absolute;
-            bottom: -25px;
-            width: 100%;
-            text-align: center;
+            height: 2px;
+        }
+        
+        .graph-label {
+            position: absolute;
             font-size: 0.8rem;
             font-weight: bold;
         }
         
-        .percentage {
-            position: absolute;
-            top: -20px;
+        .velocity-calculator {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #2980b9;
+        }
+        
+        .calculator-input {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             width: 100%;
-            text-align: center;
-            font-size: 0.8rem;
         }
         
         @media (max-width: 768px) {
@@ -290,7 +292,7 @@
                 font-size: 2rem;
             }
             
-            .gdp-controls {
+            .simulation-controls {
                 flex-direction: column;
             }
         }
@@ -299,7 +301,7 @@
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>GDP Components Simulation</h2>
+            <h2>Macroeconomic Concepts Simulation</h2>
             <p>Enter the password to access the simulation:</p>
             <input type="password" id="passwordInput" placeholder="Enter password">
             <button onclick="checkPassword()">Enter</button>
@@ -309,8 +311,8 @@
 
     <div class="container" id="gameContent" style="display: none;">
         <header>
-            <h1>GDP Components Simulation</h1>
-            <p>Explore the components of Gross Domestic Product and their economic significance</p>
+            <h1>Macroeconomic Concepts Simulation</h1>
+            <p>Explore velocity of money, aggregate demand/supply, and key macroeconomic relationships</p>
         </header>
         
         <div class="score-display">
@@ -320,65 +322,65 @@
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Interact with GDP components and see how different economic activities contribute to GDP.</p>
+                <p>Interact with macroeconomic concepts and see how they interrelate.</p>
                 
                 <div class="concept-definition">
-                    <span class="concept-type">GDP Components (Expenditure Approach):</span>
-                    <div class="gdp-components">
-                        <div class="component-card">
-                            <h4>Consumption (C)</h4>
-                            <p>Household spending on goods and services</p>
+                    <span class="concept-type">Key Macroeconomic Concepts:</span>
+                    <div class="macro-concepts">
+                        <div class="concept-card">
+                            <h4>Velocity of Money</h4>
+                            <p>Rate at which money circulates</p>
                         </div>
-                        <div class="component-card">
-                            <h4>Investment (I)</h4>
-                            <p>Business spending on capital goods</p>
+                        <div class="concept-card">
+                            <h4>Aggregate Demand</h4>
+                            <p>Total demand for goods/services</p>
                         </div>
-                        <div class="component-card">
-                            <h4>Government (G)</h4>
-                            <p>Government purchases of goods and services</p>
+                        <div class="concept-card">
+                            <h4>Short-Run AS</h4>
+                            <p>Short-term production capacity</p>
                         </div>
-                        <div class="component-card">
-                            <h4>Net Exports (NX)</h4>
-                            <p>Exports minus imports</p>
+                        <div class="concept-card">
+                            <h4>Long-Run AS</h4>
+                            <p>Potential output level</p>
                         </div>
-                    </div>
-                    <div class="gdp-formula">
-                        GDP = C + I + G + (X - M)
                     </div>
                 </div>
                 
-                <div class="chart-container" id="gdpChart">
-                    <div class="chart-bar" style="height: 70%; background-color: #3498db;">
-                        <div class="percentage">70%</div>
-                        <div class="chart-label">Consumption</div>
+                <div class="velocity-calculator">
+                    <h3>Velocity of Money Calculator</h3>
+                    <p>Using the Equation of Exchange: MV = PY</p>
+                    <div class="formula-box">
+                        M × V = P × Y
                     </div>
-                    <div class="chart-bar" style="height: 18%; background-color: #2ecc71;">
-                        <div class="percentage">18%</div>
-                        <div class="chart-label">Investment</div>
+                    <div>
+                        <label>Nominal GDP (P × Y): $</label>
+                        <input type="number" id="nominalGDP" class="calculator-input" placeholder="Enter nominal GDP" value="20000">
                     </div>
-                    <div class="chart-bar" style="height: 17%; background-color: #e74c3c;">
-                        <div class="percentage">17%</div>
-                        <div class="chart-label">Government</div>
+                    <div>
+                        <label>Money Supply (M): $</label>
+                        <input type="number" id="moneySupply" class="calculator-input" placeholder="Enter money supply" value="5000">
                     </div>
-                    <div class="chart-bar" style="height: 5%; background-color: #f39c12;">
-                        <div class="percentage">-5%</div>
-                        <div class="chart-label">Net Exports</div>
-                    </div>
+                    <button onclick="calculateVelocity()" style="width: auto;">Calculate Velocity</button>
+                    <div id="velocityResult" class="feedback"></div>
                 </div>
                 
-                <div class="interactive-gdp">
-                    <h3>Component Identification Game</h3>
-                    <p>Identify which GDP component each economic activity belongs to:</p>
-                    <div id="currentActivity" class="gdp-formula">
-                        <strong>Current Activity:</strong> A family buys a new car
+                <div class="graph-container" id="adAsGraph">
+                    <!-- Graph will be drawn by JavaScript -->
+                </div>
+                
+                <div class="interactive-simulation">
+                    <h3>Concept Identification Game</h3>
+                    <p>Identify which macroeconomic concept each description refers to:</p>
+                    <div id="currentConcept" class="formula-box">
+                        <strong>Current Concept:</strong> The total quantity of goods and services demanded in an economy at different price levels
                     </div>
-                    <div class="gdp-controls">
-                        <button class="component-choice" onclick="checkComponent('consumption', this)">Consumption (C)</button>
-                        <button class="component-choice" onclick="checkComponent('investment', this)">Investment (I)</button>
-                        <button class="component-choice" onclick="checkComponent('government', this)">Government (G)</button>
-                        <button class="component-choice" onclick="checkComponent('netexports', this)">Net Exports (NX)</button>
+                    <div class="simulation-controls">
+                        <button class="concept-choice" onclick="checkConcept('velocity', this)">Velocity of Money</button>
+                        <button class="concept-choice" onclick="checkConcept('ad', this)">Aggregate Demand</button>
+                        <button class="concept-choice" onclick="checkConcept('sras', this)">Short-Run AS</button>
+                        <button class="concept-choice" onclick="checkConcept('lras', this)">Long-Run AS</button>
                     </div>
-                    <div id="componentResult" class="feedback"></div>
+                    <div id="conceptResult" class="feedback"></div>
                 </div>
                 
                 <div id="simulationQuestions">
@@ -388,11 +390,11 @@
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Analyze real-world examples of GDP components in different economic scenarios.</p>
+                <p>Analyze real-world examples of macroeconomic concepts in action.</p>
                 
                 <div class="question">
-                    <p><strong>Case 1:</strong> During an economic boom, consumer confidence is high, leading to increased spending on durable goods like cars and appliances. At the same time, businesses invest heavily in new equipment and factories.</p>
-                    <p>Which GDP components are primarily driving this economic growth?</p>
+                    <p><strong>Case 1:</strong> During a period of rapid technological innovation, productivity increases significantly across multiple industries. At the same time, consumer confidence is high and spending increases.</p>
+                    <p>How would this affect the aggregate supply and demand curves?</p>
                     <div class="options" id="case1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -400,8 +402,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 2:</strong> A country implements a large infrastructure spending program, building new roads, bridges, and public transportation systems. This creates jobs and stimulates economic activity.</p>
-                    <p>Which GDP component is most directly affected by this policy?</p>
+                    <p><strong>Case 2:</strong> A country experiences a banking crisis that reduces the availability of credit. Businesses struggle to obtain loans for investment, and consumers reduce spending due to economic uncertainty.</p>
+                    <p>What is the most likely impact on velocity of money and aggregate demand?</p>
                     <div class="options" id="case2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -409,8 +411,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 3:</strong> A nation's currency appreciates significantly, making its exports more expensive for foreign buyers and imports cheaper for domestic consumers. This leads to a decline in export volumes and an increase in imports.</p>
-                    <p>How would this affect the GDP components?</p>
+                    <p><strong>Case 3:</strong> A nation's central bank implements quantitative easing, significantly increasing the money supply. However, banks hold excess reserves and lending doesn't increase proportionally.</p>
+                    <p>What would be the effect on velocity of money and inflation?</p>
                     <div class="options" id="case3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -420,10 +422,10 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how GDP components affect business decisions and economic strategy.</p>
+                <p>Understand how macroeconomic concepts affect business decisions and strategy.</p>
                 
                 <div class="question">
-                    <p>1. If consumption expenditure is growing rapidly while investment is declining, what might this indicate about the economy?</p>
+                    <p>1. How can understanding velocity of money help businesses with inventory management?</p>
                     <div class="options" id="managerial1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -431,7 +433,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>2. How can businesses use information about changes in government spending to make strategic decisions?</p>
+                    <p>2. Why should businesses monitor changes in aggregate demand when making investment decisions?</p>
                     <div class="options" id="managerial2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -439,7 +441,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>3. Why might a company pay close attention to trends in net exports when planning international expansion?</p>
+                    <p>3. How does the difference between short-run and long-run aggregate supply affect business planning?</p>
                     <div class="options" id="managerial3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -447,7 +449,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>4. During a recession, which GDP component typically shows the largest percentage decline?</p>
+                    <p>4. What strategic advantage can businesses gain by anticipating shifts in aggregate supply curves?</p>
                     <div class="options" id="managerial4Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -459,7 +461,7 @@
 
     <script>
         // Password protection
-        const correctPassword = "GDPComponents2023";
+        const correctPassword = "MacroEcon2023";
         let score = 0;
         const maxPossibleScore = 95; // Ensures no one can score 100%
         
@@ -467,169 +469,169 @@
         const questions = [
             {
                 id: 1,
-                text: "Which of the following is included in Consumption expenditure (C)?",
+                text: "The velocity of money measures:",
                 options: [
-                    "Household purchase of new furniture",
-                    "Business purchase of new machinery",
-                    "Government building a new school",
-                    "Export of automobiles to another country"
+                    "The speed at which prices are increasing",
+                    "The rate at which money changes hands in transactions",
+                    "The growth rate of the money supply",
+                    "The frequency of international trade"
                 ],
-                correct: 0,
+                correct: 1,
                 feedback: {
-                    correct: "Correct! Household purchases of goods and services are part of consumption expenditure.",
-                    incorrect: "Incorrect. Consumption includes household spending, not business investment, government spending, or exports."
+                    correct: "Correct! Velocity measures how frequently money is used for transactions in a given period.",
+                    incorrect: "Incorrect. Velocity specifically measures how quickly money circulates through transactions."
                 }
             },
             {
                 id: 2,
-                text: "Gross Private Domestic Investment includes:",
+                text: "In the equation of exchange (MV = PY), if velocity decreases while money supply and output remain constant:",
                 options: [
-                    "Purchase of stocks and bonds",
-                    "Business spending on new equipment",
-                    "Government infrastructure projects",
-                    "Household spending on services"
+                    "Price level must increase",
+                    "Price level must decrease",
+                    "Real GDP must increase",
+                    "Nominal GDP must increase"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Right! Business spending on capital goods is part of investment expenditure.",
-                    incorrect: "No, investment includes business spending on capital goods, not financial assets or other components."
+                    correct: "Right! With lower velocity, fewer transactions occur, putting downward pressure on prices.",
+                    incorrect: "Lower velocity with constant money and output would require lower prices to maintain equilibrium."
                 }
             },
             {
                 id: 3,
-                text: "Which transaction would be counted in Government purchases (G)?",
+                text: "The long-run aggregate supply curve is vertical because:",
                 options: [
-                    "A family receiving unemployment benefits",
-                    "A business receiving a tax credit",
-                    "Construction of a new public library",
-                    "A consumer buying groceries"
+                    "Prices are fixed in the long run",
+                    "Output is determined by technology and resources, not price level",
+                    "Demand always equals supply in the long run",
+                    "Government controls production levels"
                 ],
-                correct: 2,
+                correct: 1,
                 feedback: {
-                    correct: "Yes! Government purchases include spending on goods and services, like building public facilities.",
-                    incorrect: "Government purchases refer to direct spending on goods/services, not transfer payments or tax credits."
+                    correct: "Yes! LRAS represents potential output determined by technology, resources, and institutions.",
+                    incorrect: "The vertical LRAS reflects that price changes don't affect potential output in the long run."
                 }
             },
             {
                 id: 4,
-                text: "In Case 1, which GDP components are primarily driving economic growth?",
+                text: "In Case 1, how would technological innovation affect aggregate curves?",
                 options: [
-                    "Government spending and net exports",
-                    "Consumption and investment",
-                    "Only consumption",
-                    "Only investment"
+                    "Only AD would shift right",
+                    "Both AS curves would shift right",
+                    "Only SRAS would shift left",
+                    "LRAS would shift left while AD shifts right"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Exactly! Both consumer spending and business investment are driving growth in this scenario.",
-                    incorrect: "The scenario describes increases in both consumption and investment as the primary drivers."
+                    correct: "Exactly! Technological progress increases both short-run and long-run productive capacity.",
+                    incorrect: "Technological innovation increases productive capacity, shifting both AS curves rightward."
                 }
             },
             {
                 id: 5,
-                text: "In Case 2, which GDP component is most directly affected?",
+                text: "In Case 2, what's the likely impact on velocity and AD?",
                 options: [
-                    "Net exports",
-                    "Consumption",
-                    "Government spending",
-                    "Investment"
+                    "Velocity increases, AD increases",
+                    "Velocity decreases, AD decreases",
+                    "Velocity increases, AD decreases",
+                    "Velocity decreases, AD increases"
                 ],
-                correct: 2,
+                correct: 1,
                 feedback: {
-                    correct: "Right! Infrastructure spending directly increases government purchases component of GDP.",
-                    incorrect: "Infrastructure programs are government spending, not other components."
+                    correct: "Right! Reduced lending and spending decrease both money velocity and aggregate demand.",
+                    incorrect: "Credit crunches typically reduce both the speed of money circulation and overall demand."
                 }
             },
             {
                 id: 6,
-                text: "In Case 3, how would currency appreciation affect GDP components?",
+                text: "In Case 3, with quantitative easing but limited lending:",
                 options: [
-                    "Net exports would increase",
-                    "Net exports would decrease",
-                    "Consumption would decrease significantly",
-                    "Investment would increase"
+                    "Velocity and inflation both increase rapidly",
+                    "Velocity decreases, limiting inflation despite money growth",
+                    "Velocity increases but inflation decreases",
+                    "Neither velocity nor inflation are affected"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Correct! Currency appreciation makes exports more expensive and imports cheaper, reducing net exports.",
-                    incorrect: "Currency appreciation typically reduces net exports by making exports less competitive."
+                    correct: "Correct! If money isn't circulating (low velocity), increased supply may not cause inflation.",
+                    incorrect: "When banks hold reserves instead of lending, velocity falls, limiting inflationary pressure."
                 }
             },
             {
                 id: 7,
-                text: "If consumption is growing while investment is declining, this might indicate:",
+                text: "How can velocity help with inventory management?",
                 options: [
-                    "Strong future economic growth",
-                    "Potential economic slowdown ahead",
-                    "No significant economic implications",
-                    "High levels of government intervention"
+                    "It predicts exact sales volumes",
+                    "It indicates overall economic activity and spending patterns",
+                    "It determines optimal storage costs",
+                    "It calculates transportation times"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Yes! Declining investment may signal reduced business confidence about future growth.",
-                    incorrect: "Declining investment often signals concerns about future economic conditions."
+                    correct: "Yes! Higher velocity suggests faster economic turnover, helping forecast inventory needs.",
+                    incorrect: "Velocity indicates general economic activity levels, which inform inventory planning."
                 }
             },
             {
                 id: 8,
-                text: "How can businesses use government spending information strategically?",
+                text: "Why monitor aggregate demand for investment decisions?",
                 options: [
-                    "To predict consumer price changes",
-                    "To anticipate demand in specific sectors",
-                    "To forecast exchange rate movements",
-                    "To determine employee salary levels"
+                    "It determines interest rates exactly",
+                    "It indicates potential market size and growth opportunities",
+                    "It fixes production costs",
+                    "It sets consumer price expectations"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Right! Government spending patterns can indicate which sectors will experience increased demand.",
-                    incorrect: "Government spending information helps anticipate sector-specific demand, not other factors."
+                    correct: "Right! Growing aggregate demand signals expanding markets and investment opportunities.",
+                    incorrect: "Aggregate demand trends help identify market growth potential for strategic investments."
                 }
             },
             {
                 id: 9,
-                text: "Why monitor net exports for international expansion?",
+                text: "How does SRAS vs LRAS difference affect business planning?",
                 options: [
-                    "To determine domestic tax rates",
-                    "To assess currency stability and trade competitiveness",
-                    "To predict government policy changes",
-                    "To estimate consumer confidence levels"
+                    "It determines employee vacation schedules",
+                    "It distinguishes temporary shocks from permanent capacity changes",
+                    "It fixes long-term contract prices",
+                    "It sets marketing campaign durations"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Correct! Net exports indicate trade competitiveness and potential currency movements.",
-                    incorrect: "Net exports help assess trade competitiveness, which is crucial for international business."
+                    correct: "Correct! This distinction helps separate temporary market conditions from fundamental changes.",
+                    incorrect: "The SRAS-LRAS distinction helps businesses differentiate short-term fluctuations from long-term trends."
                 }
             },
             {
                 id: 10,
-                text: "During recessions, which component typically declines most?",
+                text: "What advantage comes from anticipating AS shifts?",
                 options: [
-                    "Government spending",
-                    "Net exports",
-                    "Investment",
-                    "Consumption of non-durable goods"
+                    "Guaranteed profit margins",
+                    "Ability to adjust strategies before competitors",
+                    "Automatic government subsidies",
+                    "Fixed input costs forever"
                 ],
-                correct: 2,
+                correct: 1,
                 feedback: {
-                    correct: "Yes! Investment is typically the most volatile component and declines sharply in recessions.",
-                    incorrect: "Investment usually shows the largest percentage decline during economic downturns."
+                    correct: "Yes! Early recognition of supply changes allows proactive strategy adjustments.",
+                    incorrect: "Anticipating AS shifts provides competitive advantage through early strategic adaptation."
                 }
             }
         ];
 
-        // Economic activities for the component identification game
-        const economicActivities = [
-            { activity: "A family buys a new car", component: "consumption" },
-            { activity: "A business purchases new machinery for its factory", component: "investment" },
-            { activity: "The military buys a new fighter jet", component: "government" },
-            { activity: "A company exports computers to Europe", component: "netexports" },
-            { activity: "A person pays for a haircut", component: "consumption" },
-            { activity: "A construction company builds a new warehouse", component: "investment" },
-            { activity: "A city government repairs public parks", component: "government" },
-            { activity: "A country imports more oil than it exports", component: "netexports" }
+        // Concept descriptions for the identification game
+        const conceptDescriptions = [
+            { description: "The rate at which money circulates through the economy for transactions", concept: "velocity" },
+            { description: "The total quantity of goods and services demanded in an economy at different price levels", concept: "ad" },
+            { description: "The relationship between price level and production when some input prices are fixed", concept: "sras" },
+            { description: "The level of real GDP the economy would produce at full employment with flexible prices", concept: "lras" },
+            { description: "The number of times a unit of money is used to purchase final goods and services in a period", concept: "velocity" },
+            { description: "Shows what firms are willing to supply when wages and other input prices haven't fully adjusted", concept: "sras" },
+            { description: "Represents the economy's maximum sustainable output level", concept: "lras" },
+            { description: "The sum of consumption, investment, government spending, and net exports at various price levels", concept: "ad" }
         ];
         
-        let currentActivityIndex = 0;
+        let currentConceptIndex = 0;
         
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
@@ -637,6 +639,7 @@
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('gameContent').style.display = 'block';
                 initializeGame();
+                drawGraph();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
@@ -710,14 +713,135 @@
             });
         }
         
-        function checkComponent(choice, button) {
-            const resultElement = document.getElementById('componentResult');
-            const correctComponent = economicActivities[currentActivityIndex].component;
+        function drawGraph() {
+            const graph = document.getElementById('adAsGraph');
+            const width = graph.offsetWidth;
+            const height = graph.offsetHeight;
             
-            if (choice === correctComponent) {
+            // Clear previous graph
+            graph.innerHTML = '';
+            
+            // Draw axes
+            const xAxis = document.createElement('div');
+            xAxis.className = 'graph-axis';
+            xAxis.style.width = width - 40 + 'px';
+            xAxis.style.height = '2px';
+            xAxis.style.bottom = '40px';
+            xAxis.style.left = '40px';
+            graph.appendChild(xAxis);
+            
+            const yAxis = document.createElement('div');
+            yAxis.className = 'graph-axis';
+            yAxis.style.width = '2px';
+            yAxis.style.height = height - 40 + 'px';
+            yAxis.style.left = '40px';
+            yAxis.style.bottom = '40px';
+            graph.appendChild(yAxis);
+            
+            // Draw LRAS (vertical line)
+            const lras = document.createElement('div');
+            lras.className = 'graph-line';
+            lras.style.width = '2px';
+            lras.style.height = (height - 60) + 'px';
+            lras.style.left = (width * 0.6) + 'px';
+            lras.style.bottom = '40px';
+            lras.style.backgroundColor = '#2ecc71';
+            graph.appendChild(lras);
+            
+            // Draw AD (downward sloping)
+            for (let i = 0; i < width - 60; i += 3) {
+                const point = document.createElement('div');
+                point.className = 'graph-line';
+                point.style.width = '2px';
+                point.style.height = '2px';
+                point.style.left = (40 + i) + 'px';
+                point.style.bottom = (40 + i * 0.4) + 'px';
+                point.style.backgroundColor = '#e74c3c';
+                graph.appendChild(point);
+            }
+            
+            // Draw SRAS (upward sloping)
+            for (let i = 0; i < width - 60; i += 3) {
+                const point = document.createElement('div');
+                point.className = 'graph-line';
+                point.style.width = '2px';
+                point.style.height = '2px';
+                point.style.left = (40 + i) + 'px';
+                point.style.bottom = (40 + (width - 60 - i) * 0.3) + 'px';
+                point.style.backgroundColor = '#3498db';
+                graph.appendChild(point);
+            }
+            
+            // Add labels
+            const priceLabel = document.createElement('div');
+            priceLabel.className = 'graph-label';
+            priceLabel.textContent = 'Price Level';
+            priceLabel.style.left = '20px';
+            priceLabel.style.top = '10px';
+            graph.appendChild(priceLabel);
+            
+            const outputLabel = document.createElement('div');
+            outputLabel.className = 'graph-label';
+            outputLabel.textContent = 'Real GDP';
+            outputLabel.style.right = '10px';
+            outputLabel.style.bottom = '20px';
+            graph.appendChild(outputLabel);
+            
+            const adLabel = document.createElement('div');
+            adLabel.className = 'graph-label';
+            adLabel.textContent = 'AD';
+            adLabel.style.right = '30px';
+            adLabel.style.top = '30px';
+            adLabel.style.color = '#e74c3c';
+            graph.appendChild(adLabel);
+            
+            const srasLabel = document.createElement('div');
+            srasLabel.className = 'graph-label';
+            srasLabel.textContent = 'SRAS';
+            srasLabel.style.left = '100px';
+            srasLabel.style.bottom = '30px';
+            srasLabel.style.color = '#3498db';
+            graph.appendChild(srasLabel);
+            
+            const lrasLabel = document.createElement('div');
+            lrasLabel.className = 'graph-label';
+            lrasLabel.textContent = 'LRAS';
+            lrasLabel.style.left = (width * 0.6 + 5) + 'px';
+            lrasLabel.style.top = '30px';
+            lrasLabel.style.color = '#2ecc71';
+            graph.appendChild(lrasLabel);
+        }
+        
+        function calculateVelocity() {
+            const nominalGDP = parseFloat(document.getElementById('nominalGDP').value);
+            const moneySupply = parseFloat(document.getElementById('moneySupply').value);
+            
+            if (isNaN(nominalGDP) || isNaN(moneySupply) || moneySupply === 0) {
+                document.getElementById('velocityResult').innerHTML = 'Please enter valid numbers for both fields.';
+                document.getElementById('velocityResult').className = 'feedback incorrect';
+                return;
+            }
+            
+            const velocity = nominalGDP / moneySupply;
+            document.getElementById('velocityResult').innerHTML = `
+                <strong>Velocity of Money (V) = ${velocity.toFixed(2)}</strong><br>
+                This means each dollar circulates ${velocity.toFixed(2)} times per period.
+            `;
+            document.getElementById('velocityResult').className = 'feedback correct';
+            
+            // Add to score for using calculator
+            score += 2;
+            updateScore();
+        }
+        
+        function checkConcept(choice, button) {
+            const resultElement = document.getElementById('conceptResult');
+            const correctConcept = conceptDescriptions[currentConceptIndex].concept;
+            
+            if (choice === correctConcept) {
                 resultElement.innerHTML = `
-                    <strong>Correct!</strong> This activity contributes to ${getComponentName(correctComponent)}.
-                    ${getComponentExplanation(correctComponent)}
+                    <strong>Correct!</strong> This describes ${getConceptName(correctConcept)}.
+                    ${getConceptExplanation(correctConcept)}
                 `;
                 resultElement.className = 'feedback correct';
                 
@@ -726,46 +850,46 @@
                 updateScore();
             } else {
                 resultElement.innerHTML = `
-                    <strong>Incorrect.</strong> This activity contributes to ${getComponentName(correctComponent)}.
-                    ${getComponentExplanation(correctComponent)}
+                    <strong>Incorrect.</strong> This describes ${getConceptName(correctConcept)}.
+                    ${getConceptExplanation(correctConcept)}
                 `;
                 resultElement.className = 'feedback incorrect';
             }
             
-            // Move to next activity after a delay
-            setTimeout(nextActivity, 2500);
+            // Move to next concept after a delay
+            setTimeout(nextConcept, 2500);
         }
         
-        function getComponentName(component) {
+        function getConceptName(concept) {
             const names = {
-                'consumption': 'Consumption (C)',
-                'investment': 'Investment (I)',
-                'government': 'Government Spending (G)',
-                'netexports': 'Net Exports (NX)'
+                'velocity': 'Velocity of Money',
+                'ad': 'Aggregate Demand',
+                'sras': 'Short-Run Aggregate Supply',
+                'lras': 'Long-Run Aggregate Supply'
             };
-            return names[component];
+            return names[concept];
         }
         
-        function getComponentExplanation(component) {
+        function getConceptExplanation(concept) {
             const explanations = {
-                'consumption': 'Household spending on final goods and services.',
-                'investment': 'Business spending on capital goods and inventory changes.',
-                'government': 'Government purchases of goods and services.',
-                'netexports': 'Exports minus imports of goods and services.'
+                'velocity': 'Measures how quickly money circulates through transactions in the economy.',
+                'ad': 'Total spending on goods and services at different price levels.',
+                'sras': 'Production response to price changes when some costs are temporarily fixed.',
+                'lras': 'Maximum sustainable output determined by technology and resources.'
             };
-            return explanations[component];
+            return explanations[concept];
         }
         
-        function nextActivity() {
-            currentActivityIndex = (currentActivityIndex + 1) % economicActivities.length;
-            const activityElement = document.getElementById('currentActivity');
-            activityElement.innerHTML = `
-                <strong>Current Activity:</strong> ${economicActivities[currentActivityIndex].activity}
+        function nextConcept() {
+            currentConceptIndex = (currentConceptIndex + 1) % conceptDescriptions.length;
+            const conceptElement = document.getElementById('currentConcept');
+            conceptElement.innerHTML = `
+                <strong>Current Concept:</strong> ${conceptDescriptions[currentConceptIndex].description}
             `;
             
             // Clear the previous result
-            document.getElementById('componentResult').innerHTML = '';
-            document.getElementById('componentResult').className = 'feedback';
+            document.getElementById('conceptResult').innerHTML = '';
+            document.getElementById('conceptResult').className = 'feedback';
         }
         
         function updateScore() {
@@ -801,11 +925,11 @@
             }
         }
         
-        // Initialize the first activity
+        // Initialize the first concept
         window.onload = function() {
-            if (document.getElementById('currentActivity')) {
-                document.getElementById('currentActivity').innerHTML = `
-                    <strong>Current Activity:</strong> ${economicActivities[0].activity}
+            if (document.getElementById('currentConcept')) {
+                document.getElementById('currentConcept').innerHTML = `
+                    <strong>Current Concept:</strong> ${conceptDescriptions[0].description}
                 `;
             }
         };
