@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Macroeconomic Concepts Simulation</title>
+    <title>The Great Depression Simulation</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%);
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -186,14 +186,14 @@
             color: #2c3e50;
         }
         
-        .macro-concepts {
+        .depression-factors {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin: 15px 0;
         }
         
-        .concept-card {
+        .factor-card {
             background-color: #e8f4fc;
             padding: 15px;
             border-radius: 5px;
@@ -218,7 +218,7 @@
             flex-wrap: wrap;
         }
         
-        .concept-choice {
+        .timeline-choice {
             padding: 8px 12px;
             background-color: #3498db;
             color: white;
@@ -228,46 +228,38 @@
             flex: 1;
         }
         
-        .formula-box {
-            font-family: 'Courier New', monospace;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: 2px solid #3498db;
-        }
-        
-        .graph-container {
+        .timeline-container {
             width: 100%;
-            height: 250px;
+            height: 200px;
             background-color: #f8f9fa;
             margin: 15px 0;
             position: relative;
             border: 1px solid #dee2e6;
             border-radius: 5px;
             padding: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
         }
         
-        .graph-axis {
-            position: absolute;
-            background-color: #6c757d;
+        .timeline-event {
+            display: inline-block;
+            width: 120px;
+            height: 160px;
+            margin-right: 20px;
+            background-color: white;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+            padding: 10px;
+            vertical-align: top;
         }
         
-        .graph-line {
-            position: absolute;
-            height: 2px;
-        }
-        
-        .graph-label {
-            position: absolute;
-            font-size: 0.8rem;
+        .timeline-year {
             font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 5px;
         }
         
-        .velocity-calculator {
+        .economic-indicator {
             background-color: #f0f8ff;
             padding: 15px;
             border-radius: 5px;
@@ -275,12 +267,20 @@
             border-left: 4px solid #2980b9;
         }
         
-        .calculator-input {
+        .indicator-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
             margin: 10px 0;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        }
+        
+        .historical-image {
             width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin: 10px 0;
         }
         
         @media (max-width: 768px) {
@@ -295,13 +295,19 @@
             .simulation-controls {
                 flex-direction: column;
             }
+            
+            .timeline-event {
+                width: 100px;
+                height: 140px;
+                margin-right: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>Macroeconomic Concepts Simulation</h2>
+            <h2>The Great Depression Simulation</h2>
             <p>Enter the password to access the simulation:</p>
             <input type="password" id="passwordInput" placeholder="Enter password">
             <button onclick="checkPassword()">Enter</button>
@@ -311,8 +317,8 @@
 
     <div class="container" id="gameContent" style="display: none;">
         <header>
-            <h1>Macroeconomic Concepts Simulation</h1>
-            <p>Explore velocity of money, aggregate demand/supply, and key macroeconomic relationships</p>
+            <h1>The Great Depression Simulation</h1>
+            <p>Explore the causes, events, and lessons from the 1929 economic collapse</p>
         </header>
         
         <div class="score-display">
@@ -322,65 +328,78 @@
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Interact with macroeconomic concepts and see how they interrelate.</p>
+                <p>Experience the timeline and economic indicators of the Great Depression.</p>
                 
                 <div class="concept-definition">
-                    <span class="concept-type">Key Macroeconomic Concepts:</span>
-                    <div class="macro-concepts">
-                        <div class="concept-card">
-                            <h4>Velocity of Money</h4>
-                            <p>Rate at which money circulates</p>
+                    <span class="concept-type">Key Factors Leading to the Great Depression:</span>
+                    <div class="depression-factors">
+                        <div class="factor-card">
+                            <h4>Stock Market Crash</h4>
+                            <p>October 1929 collapse</p>
                         </div>
-                        <div class="concept-card">
-                            <h4>Aggregate Demand</h4>
-                            <p>Total demand for goods/services</p>
+                        <div class="factor-card">
+                            <h4>Banking Crisis</h4>
+                            <p>Mass bank failures</p>
                         </div>
-                        <div class="concept-card">
-                            <h4>Short-Run AS</h4>
-                            <p>Short-term production capacity</p>
+                        <div class="factor-card">
+                            <h4>Trade Collapse</h4>
+                            <p>Smoot-Hawley Tariff</p>
                         </div>
-                        <div class="concept-card">
-                            <h4>Long-Run AS</h4>
-                            <p>Potential output level</p>
+                        <div class="factor-card">
+                            <h4>Monetary Policy</h4>
+                            <p>Federal Reserve mistakes</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="velocity-calculator">
-                    <h3>Velocity of Money Calculator</h3>
-                    <p>Using the Equation of Exchange: MV = PY</p>
-                    <div class="formula-box">
-                        M × V = P × Y
-                    </div>
-                    <div>
-                        <label>Nominal GDP (P × Y): $</label>
-                        <input type="number" id="nominalGDP" class="calculator-input" placeholder="Enter nominal GDP" value="20000">
-                    </div>
-                    <div>
-                        <label>Money Supply (M): $</label>
-                        <input type="number" id="moneySupply" class="calculator-input" placeholder="Enter money supply" value="5000">
-                    </div>
-                    <button onclick="calculateVelocity()" style="width: auto;">Calculate Velocity</button>
-                    <div id="velocityResult" class="feedback"></div>
+                <div class="economic-indicator">
+                    <h3>Economic Impact Simulation</h3>
+                    <p>US Unemployment Rate During the Great Depression</p>
+                    <div class="indicator-value" id="unemploymentRate">3.2% (1929)</div>
+                    <button onclick="simulateNextYear()" style="width: auto;">Simulate Next Year</button>
+                    <div id="yearIndicator" style="text-align: center; margin-top: 10px; font-weight: bold;">Year: 1929</div>
                 </div>
                 
-                <div class="graph-container" id="adAsGraph">
-                    <!-- Graph will be drawn by JavaScript -->
+                <div class="timeline-container">
+                    <div class="timeline-event">
+                        <div class="timeline-year">1928</div>
+                        <p>Stock market speculation peaks</p>
+                    </div>
+                    <div class="timeline-event">
+                        <div class="timeline-year">1929</div>
+                        <p>Black Thursday (Oct 24) and Black Tuesday (Oct 29)</p>
+                    </div>
+                    <div class="timeline-event">
+                        <div class="timeline-year">1930</div>
+                        <p>Smoot-Hawley Tariff enacted</p>
+                    </div>
+                    <div class="timeline-event">
+                        <div class="timeline-year">1931</div>
+                        <p>European banking crisis spreads</p>
+                    </div>
+                    <div class="timeline-event">
+                        <div class="timeline-year">1932</div>
+                        <p>Unemployment reaches 23.6%</p>
+                    </div>
+                    <div class="timeline-event">
+                        <div class="timeline-year">1933</div>
+                        <p>Banking holiday, New Deal begins</p>
+                    </div>
                 </div>
                 
                 <div class="interactive-simulation">
-                    <h3>Concept Identification Game</h3>
-                    <p>Identify which macroeconomic concept each description refers to:</p>
-                    <div id="currentConcept" class="formula-box">
-                        <strong>Current Concept:</strong> The total quantity of goods and services demanded in an economy at different price levels
+                    <h3>Causes Identification Game</h3>
+                    <p>Identify which factor contributed most to each aspect of the Depression:</p>
+                    <div id="currentAspect" class="economic-indicator">
+                        <strong>Current Aspect:</strong> The initial stock market collapse in October 1929
                     </div>
                     <div class="simulation-controls">
-                        <button class="concept-choice" onclick="checkConcept('velocity', this)">Velocity of Money</button>
-                        <button class="concept-choice" onclick="checkConcept('ad', this)">Aggregate Demand</button>
-                        <button class="concept-choice" onclick="checkConcept('sras', this)">Short-Run AS</button>
-                        <button class="concept-choice" onclick="checkConcept('lras', this)">Long-Run AS</button>
+                        <button class="timeline-choice" onclick="checkCause('speculation', this)">Stock Speculation & Margin Buying</button>
+                        <button class="timeline-choice" onclick="checkCause('monetary', this)">Tight Monetary Policy</button>
+                        <button class="timeline-choice" onclick="checkCause('trade', this)">International Trade Issues</button>
+                        <button class="timeline-choice" onclick="checkCause('structural', this)">Structural Economic Weaknesses</button>
                     </div>
-                    <div id="conceptResult" class="feedback"></div>
+                    <div id="causeResult" class="feedback"></div>
                 </div>
                 
                 <div id="simulationQuestions">
@@ -390,11 +409,11 @@
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Analyze real-world examples of macroeconomic concepts in action.</p>
+                <p>Examine specific events and policies during the Great Depression.</p>
                 
                 <div class="question">
-                    <p><strong>Case 1:</strong> During a period of rapid technological innovation, productivity increases significantly across multiple industries. At the same time, consumer confidence is high and spending increases.</p>
-                    <p>How would this affect the aggregate supply and demand curves?</p>
+                    <p><strong>Case 1:</strong> The Smoot-Hawley Tariff Act of 1930 raised US tariffs on over 20,000 imported goods to record levels. Other countries retaliated with their own tariffs, leading to a collapse in international trade.</p>
+                    <p>What was the primary economic consequence of this protectionist policy?</p>
                     <div class="options" id="case1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -402,8 +421,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 2:</strong> A country experiences a banking crisis that reduces the availability of credit. Businesses struggle to obtain loans for investment, and consumers reduce spending due to economic uncertainty.</p>
-                    <p>What is the most likely impact on velocity of money and aggregate demand?</p>
+                    <p><strong>Case 2:</strong> Between 1929 and 1933, approximately 9,000 banks failed in the United States. Many banks had invested heavily in the stock market or made risky loans that defaulted during the economic downturn.</p>
+                    <p>How did these bank failures exacerbate the Depression?</p>
                     <div class="options" id="case2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -411,8 +430,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 3:</strong> A nation's central bank implements quantitative easing, significantly increasing the money supply. However, banks hold excess reserves and lending doesn't increase proportionally.</p>
-                    <p>What would be the effect on velocity of money and inflation?</p>
+                    <p><strong>Case 3:</strong> The Federal Reserve, concerned about stock market speculation and gold outflows, raised interest rates in 1928-1929. After the crash, they maintained relatively tight monetary policy instead of providing liquidity.</p>
+                    <p>How did Federal Reserve policy contribute to the severity of the Depression?</p>
                     <div class="options" id="case3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -422,10 +441,10 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how macroeconomic concepts affect business decisions and strategy.</p>
+                <p>Learn the economic lessons and business strategies from the Great Depression.</p>
                 
                 <div class="question">
-                    <p>1. How can understanding velocity of money help businesses with inventory management?</p>
+                    <p>1. What risk management lesson from the 1929 crash is most relevant for modern businesses?</p>
                     <div class="options" id="managerial1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -433,7 +452,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>2. Why should businesses monitor changes in aggregate demand when making investment decisions?</p>
+                    <p>2. How did companies that survived the Depression typically adapt their strategies?</p>
                     <div class="options" id="managerial2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -441,7 +460,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>3. How does the difference between short-run and long-run aggregate supply affect business planning?</p>
+                    <p>3. What does the banking crisis of the 1930s teach about corporate financial management?</p>
                     <div class="options" id="managerial3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -449,11 +468,22 @@
                 </div>
                 
                 <div class="question">
-                    <p>4. What strategic advantage can businesses gain by anticipating shifts in aggregate supply curves?</p>
+                    <p>4. How can businesses prepare for economic downturns based on Depression-era lessons?</p>
                     <div class="options" id="managerial4Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
                     <div id="feedback10" class="feedback"></div>
+                </div>
+                
+                <div class="economic-indicator">
+                    <h3>Key Economic Lessons</h3>
+                    <ul>
+                        <li>The importance of counter-cyclical fiscal policy</li>
+                        <li>The danger of protectionist trade policies</li>
+                        <li>The need for banking regulation and deposit insurance</li>
+                        <li>The role of monetary policy in economic stabilization</li>
+                        <li>The value of social safety nets during economic crises</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -461,7 +491,7 @@
 
     <script>
         // Password protection
-        const correctPassword = "MacroEcon2023";
+        const correctPassword = "Depression1929";
         let score = 0;
         const maxPossibleScore = 95; // Ensures no one can score 100%
         
@@ -469,169 +499,186 @@
         const questions = [
             {
                 id: 1,
-                text: "The velocity of money measures:",
+                text: "What was the immediate trigger of the Great Depression in October 1929?",
                 options: [
-                    "The speed at which prices are increasing",
-                    "The rate at which money changes hands in transactions",
-                    "The growth rate of the money supply",
-                    "The frequency of international trade"
+                    "The collapse of the stock market",
+                    "A major bank failure in Europe",
+                    "A sudden increase in interest rates",
+                    "The passage of protective tariffs"
                 ],
-                correct: 1,
+                correct: 0,
                 feedback: {
-                    correct: "Correct! Velocity measures how frequently money is used for transactions in a given period.",
-                    incorrect: "Incorrect. Velocity specifically measures how quickly money circulates through transactions."
+                    correct: "Correct! The stock market crash of October 1929 was the immediate trigger, though underlying economic weaknesses had been building.",
+                    incorrect: "Incorrect. While other factors contributed, the stock market crash was the immediate trigger that began the Great Depression."
                 }
             },
             {
                 id: 2,
-                text: "In the equation of exchange (MV = PY), if velocity decreases while money supply and output remain constant:",
+                text: "What percentage did the US stock market lose from its 1929 peak to its 1932 bottom?",
                 options: [
-                    "Price level must increase",
-                    "Price level must decrease",
-                    "Real GDP must increase",
-                    "Nominal GDP must increase"
+                    "About 50%",
+                    "About 70%",
+                    "About 85%",
+                    "About 95%"
                 ],
-                correct: 1,
+                correct: 2,
                 feedback: {
-                    correct: "Right! With lower velocity, fewer transactions occur, putting downward pressure on prices.",
-                    incorrect: "Lower velocity with constant money and output would require lower prices to maintain equilibrium."
+                    correct: "Right! The Dow Jones Industrial Average lost approximately 89% of its value from 1929 to 1932.",
+                    incorrect: "No, the decline was much more severe - nearly 90% from peak to trough."
                 }
             },
             {
                 id: 3,
-                text: "The long-run aggregate supply curve is vertical because:",
+                text: "Which of these was NOT a major cause of the Great Depression?",
                 options: [
-                    "Prices are fixed in the long run",
-                    "Output is determined by technology and resources, not price level",
-                    "Demand always equals supply in the long run",
-                    "Government controls production levels"
+                    "Excessive stock market speculation on margin",
+                    "The Federal Reserve's tight monetary policy",
+                    "High protective tariffs reducing international trade",
+                    "Major technological stagnation in the 1920s"
                 ],
-                correct: 1,
+                correct: 3,
                 feedback: {
-                    correct: "Yes! LRAS represents potential output determined by technology, resources, and institutions.",
-                    incorrect: "The vertical LRAS reflects that price changes don't affect potential output in the long run."
+                    correct: "Yes! The 1920s actually saw significant technological innovation, which was not a cause of the Depression.",
+                    incorrect: "Actually, the 1920s were a period of technological advancement, not stagnation."
                 }
             },
             {
                 id: 4,
-                text: "In Case 1, how would technological innovation affect aggregate curves?",
+                text: "In Case 1, what was the primary consequence of Smoot-Hawley tariffs?",
                 options: [
-                    "Only AD would shift right",
-                    "Both AS curves would shift right",
-                    "Only SRAS would shift left",
-                    "LRAS would shift left while AD shifts right"
+                    "Increased government revenue",
+                    "Collapse in international trade",
+                    "Rapid economic recovery",
+                    "Stable agricultural prices"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Exactly! Technological progress increases both short-run and long-run productive capacity.",
-                    incorrect: "Technological innovation increases productive capacity, shifting both AS curves rightward."
+                    correct: "Exactly! Global trade collapsed by about 66% between 1929 and 1934 due to retaliatory tariffs.",
+                    incorrect: "The main consequence was a dramatic reduction in international trade as countries retaliated."
                 }
             },
             {
                 id: 5,
-                text: "In Case 2, what's the likely impact on velocity and AD?",
+                text: "In Case 2, how did bank failures exacerbate the Depression?",
                 options: [
-                    "Velocity increases, AD increases",
-                    "Velocity decreases, AD decreases",
-                    "Velocity increases, AD decreases",
-                    "Velocity decreases, AD increases"
+                    "They had minimal impact on the economy",
+                    "They destroyed savings and reduced money supply",
+                    "They increased international confidence in US banks",
+                    "They led to immediate government bailouts"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Right! Reduced lending and spending decrease both money velocity and aggregate demand.",
-                    incorrect: "Credit crunches typically reduce both the speed of money circulation and overall demand."
+                    correct: "Right! Bank failures wiped out savings and caused a contraction in the money supply, deepening the Depression.",
+                    incorrect: "Bank failures had devastating effects by destroying savings and reducing the money supply."
                 }
             },
             {
                 id: 6,
-                text: "In Case 3, with quantitative easing but limited lending:",
+                text: "In Case 3, how did Federal Reserve policy contribute?",
                 options: [
-                    "Velocity and inflation both increase rapidly",
-                    "Velocity decreases, limiting inflation despite money growth",
-                    "Velocity increases but inflation decreases",
-                    "Neither velocity nor inflation are affected"
+                    "By providing too much liquidity to banks",
+                    "By maintaining tight money when expansion was needed",
+                    "By lowering interest rates too quickly",
+                    "By focusing only on unemployment"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Correct! If money isn't circulating (low velocity), increased supply may not cause inflation.",
-                    incorrect: "When banks hold reserves instead of lending, velocity falls, limiting inflationary pressure."
+                    correct: "Correct! The Fed maintained relatively tight monetary policy instead of providing liquidity, worsening deflation.",
+                    incorrect: "The Fed's mistake was maintaining tight monetary policy when the economy needed expansionary policy."
                 }
             },
             {
                 id: 7,
-                text: "How can velocity help with inventory management?",
+                text: "What risk management lesson from 1929 is most relevant today?",
                 options: [
-                    "It predicts exact sales volumes",
-                    "It indicates overall economic activity and spending patterns",
-                    "It determines optimal storage costs",
-                    "It calculates transportation times"
+                    "Ignore market speculation as it always corrects itself",
+                    "Maintain excessive leverage during boom periods",
+                    "Diversify investments and avoid excessive debt",
+                    "Focus only on short-term profits"
                 ],
-                correct: 1,
+                correct: 2,
                 feedback: {
-                    correct: "Yes! Higher velocity suggests faster economic turnover, helping forecast inventory needs.",
-                    incorrect: "Velocity indicates general economic activity levels, which inform inventory planning."
+                    correct: "Yes! Diversification and avoiding excessive debt are crucial lessons from the over-leveraged speculation of the 1920s.",
+                    incorrect: "The key lesson is the danger of excessive debt and lack of diversification, not ignoring risks."
                 }
             },
             {
                 id: 8,
-                text: "Why monitor aggregate demand for investment decisions?",
+                text: "How did surviving companies adapt during the Depression?",
                 options: [
-                    "It determines interest rates exactly",
-                    "It indicates potential market size and growth opportunities",
-                    "It fixes production costs",
-                    "It sets consumer price expectations"
+                    "They focused only on cutting costs and laying off workers",
+                    "They invested in innovation and found new markets",
+                    "They relied entirely on government support",
+                    "They stopped all research and development"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Right! Growing aggregate demand signals expanding markets and investment opportunities.",
-                    incorrect: "Aggregate demand trends help identify market growth potential for strategic investments."
+                    correct: "Right! Successful companies often innovated, found new markets, and adapted their products for changing consumer needs.",
+                    incorrect: "Surviving companies typically adapted through innovation and finding new opportunities, not just cost-cutting."
                 }
             },
             {
                 id: 9,
-                text: "How does SRAS vs LRAS difference affect business planning?",
+                text: "What does the 1930s banking crisis teach about financial management?",
                 options: [
-                    "It determines employee vacation schedules",
-                    "It distinguishes temporary shocks from permanent capacity changes",
-                    "It fixes long-term contract prices",
-                    "It sets marketing campaign durations"
+                    "Banks should never fail in a market economy",
+                    "Liquidity and conservative lending are crucial",
+                    "Government should control all banking operations",
+                    "Depositors don't need protection"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Correct! This distinction helps separate temporary market conditions from fundamental changes.",
-                    incorrect: "The SRAS-LRAS distinction helps businesses differentiate short-term fluctuations from long-term trends."
+                    correct: "Correct! The crisis showed the importance of liquidity, conservative lending practices, and regulatory oversight.",
+                    incorrect: "The key lesson is the importance of liquidity and prudent lending, not complete government control."
                 }
             },
             {
                 id: 10,
-                text: "What advantage comes from anticipating AS shifts?",
+                text: "How can businesses prepare for economic downturns?",
                 options: [
-                    "Guaranteed profit margins",
-                    "Ability to adjust strategies before competitors",
-                    "Automatic government subsidies",
-                    "Fixed input costs forever"
+                    "By maximizing debt during good times",
+                    "By maintaining cash reserves and flexible operations",
+                    "By focusing only on the domestic market",
+                    "By avoiding all long-term planning"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Yes! Early recognition of supply changes allows proactive strategy adjustments.",
-                    incorrect: "Anticipating AS shifts provides competitive advantage through early strategic adaptation."
+                    correct: "Yes! Maintaining cash reserves, flexible operations, and diversified revenue streams help businesses weather economic storms.",
+                    incorrect: "Preparation involves prudent financial management and operational flexibility, not avoiding planning."
                 }
             }
         ];
 
-        // Concept descriptions for the identification game
-        const conceptDescriptions = [
-            { description: "The rate at which money circulates through the economy for transactions", concept: "velocity" },
-            { description: "The total quantity of goods and services demanded in an economy at different price levels", concept: "ad" },
-            { description: "The relationship between price level and production when some input prices are fixed", concept: "sras" },
-            { description: "The level of real GDP the economy would produce at full employment with flexible prices", concept: "lras" },
-            { description: "The number of times a unit of money is used to purchase final goods and services in a period", concept: "velocity" },
-            { description: "Shows what firms are willing to supply when wages and other input prices haven't fully adjusted", concept: "sras" },
-            { description: "Represents the economy's maximum sustainable output level", concept: "lras" },
-            { description: "The sum of consumption, investment, government spending, and net exports at various price levels", concept: "ad" }
+        // Depression aspects for the cause identification game
+        const depressionAspects = [
+            { aspect: "The initial stock market collapse in October 1929", cause: "speculation" },
+            { aspect: "The wave of bank failures between 1930-1933", cause: "monetary" },
+            { aspect: "The dramatic decline in international trade", cause: "trade" },
+            { aspect: "The prolonged duration of high unemployment", cause: "structural" },
+            { aspect: "The deflationary spiral of 1930-1932", cause: "monetary" },
+            { aspect: "The agricultural crisis throughout the 1930s", cause: "structural" },
+            { aspect: "The collapse of business investment", cause: "speculation" },
+            { aspect: "The failure of recovery policies in early 1930s", cause: "monetary" }
         ];
         
-        let currentConceptIndex = 0;
+        // Unemployment data by year
+        const unemploymentData = [
+            { year: 1929, rate: 3.2 },
+            { year: 1930, rate: 8.7 },
+            { year: 1931, rate: 15.9 },
+            { year: 1932, rate: 23.6 },
+            { year: 1933, rate: 24.9 },
+            { year: 1934, rate: 21.7 },
+            { year: 1935, rate: 20.1 },
+            { year: 1936, rate: 16.9 },
+            { year: 1937, rate: 14.3 },
+            { year: 1938, rate: 19.0 },
+            { year: 1939, rate: 17.2 },
+            { year: 1940, rate: 14.6 }
+        ];
+        
+        let currentAspectIndex = 0;
+        let currentYearIndex = 0;
         
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
@@ -639,7 +686,6 @@
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('gameContent').style.display = 'block';
                 initializeGame();
-                drawGraph();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
@@ -713,135 +759,30 @@
             });
         }
         
-        function drawGraph() {
-            const graph = document.getElementById('adAsGraph');
-            const width = graph.offsetWidth;
-            const height = graph.offsetHeight;
-            
-            // Clear previous graph
-            graph.innerHTML = '';
-            
-            // Draw axes
-            const xAxis = document.createElement('div');
-            xAxis.className = 'graph-axis';
-            xAxis.style.width = width - 40 + 'px';
-            xAxis.style.height = '2px';
-            xAxis.style.bottom = '40px';
-            xAxis.style.left = '40px';
-            graph.appendChild(xAxis);
-            
-            const yAxis = document.createElement('div');
-            yAxis.className = 'graph-axis';
-            yAxis.style.width = '2px';
-            yAxis.style.height = height - 40 + 'px';
-            yAxis.style.left = '40px';
-            yAxis.style.bottom = '40px';
-            graph.appendChild(yAxis);
-            
-            // Draw LRAS (vertical line)
-            const lras = document.createElement('div');
-            lras.className = 'graph-line';
-            lras.style.width = '2px';
-            lras.style.height = (height - 60) + 'px';
-            lras.style.left = (width * 0.6) + 'px';
-            lras.style.bottom = '40px';
-            lras.style.backgroundColor = '#2ecc71';
-            graph.appendChild(lras);
-            
-            // Draw AD (downward sloping)
-            for (let i = 0; i < width - 60; i += 3) {
-                const point = document.createElement('div');
-                point.className = 'graph-line';
-                point.style.width = '2px';
-                point.style.height = '2px';
-                point.style.left = (40 + i) + 'px';
-                point.style.bottom = (40 + i * 0.4) + 'px';
-                point.style.backgroundColor = '#e74c3c';
-                graph.appendChild(point);
+        function simulateNextYear() {
+            if (currentYearIndex < unemploymentData.length - 1) {
+                currentYearIndex++;
+                const currentData = unemploymentData[currentYearIndex];
+                document.getElementById('unemploymentRate').textContent = 
+                    `${currentData.rate}% (${currentData.year})`;
+                document.getElementById('yearIndicator').textContent = `Year: ${currentData.year}`;
+                
+                // Add to score for using simulation
+                score += 1;
+                updateScore();
+            } else {
+                document.getElementById('yearIndicator').textContent = 
+                    "Simulation Complete - The New Deal and WWII eventually reduced unemployment";
             }
-            
-            // Draw SRAS (upward sloping)
-            for (let i = 0; i < width - 60; i += 3) {
-                const point = document.createElement('div');
-                point.className = 'graph-line';
-                point.style.width = '2px';
-                point.style.height = '2px';
-                point.style.left = (40 + i) + 'px';
-                point.style.bottom = (40 + (width - 60 - i) * 0.3) + 'px';
-                point.style.backgroundColor = '#3498db';
-                graph.appendChild(point);
-            }
-            
-            // Add labels
-            const priceLabel = document.createElement('div');
-            priceLabel.className = 'graph-label';
-            priceLabel.textContent = 'Price Level';
-            priceLabel.style.left = '20px';
-            priceLabel.style.top = '10px';
-            graph.appendChild(priceLabel);
-            
-            const outputLabel = document.createElement('div');
-            outputLabel.className = 'graph-label';
-            outputLabel.textContent = 'Real GDP';
-            outputLabel.style.right = '10px';
-            outputLabel.style.bottom = '20px';
-            graph.appendChild(outputLabel);
-            
-            const adLabel = document.createElement('div');
-            adLabel.className = 'graph-label';
-            adLabel.textContent = 'AD';
-            adLabel.style.right = '30px';
-            adLabel.style.top = '30px';
-            adLabel.style.color = '#e74c3c';
-            graph.appendChild(adLabel);
-            
-            const srasLabel = document.createElement('div');
-            srasLabel.className = 'graph-label';
-            srasLabel.textContent = 'SRAS';
-            srasLabel.style.left = '100px';
-            srasLabel.style.bottom = '30px';
-            srasLabel.style.color = '#3498db';
-            graph.appendChild(srasLabel);
-            
-            const lrasLabel = document.createElement('div');
-            lrasLabel.className = 'graph-label';
-            lrasLabel.textContent = 'LRAS';
-            lrasLabel.style.left = (width * 0.6 + 5) + 'px';
-            lrasLabel.style.top = '30px';
-            lrasLabel.style.color = '#2ecc71';
-            graph.appendChild(lrasLabel);
         }
         
-        function calculateVelocity() {
-            const nominalGDP = parseFloat(document.getElementById('nominalGDP').value);
-            const moneySupply = parseFloat(document.getElementById('moneySupply').value);
+        function checkCause(choice, button) {
+            const resultElement = document.getElementById('causeResult');
+            const correctCause = depressionAspects[currentAspectIndex].cause;
             
-            if (isNaN(nominalGDP) || isNaN(moneySupply) || moneySupply === 0) {
-                document.getElementById('velocityResult').innerHTML = 'Please enter valid numbers for both fields.';
-                document.getElementById('velocityResult').className = 'feedback incorrect';
-                return;
-            }
-            
-            const velocity = nominalGDP / moneySupply;
-            document.getElementById('velocityResult').innerHTML = `
-                <strong>Velocity of Money (V) = ${velocity.toFixed(2)}</strong><br>
-                This means each dollar circulates ${velocity.toFixed(2)} times per period.
-            `;
-            document.getElementById('velocityResult').className = 'feedback correct';
-            
-            // Add to score for using calculator
-            score += 2;
-            updateScore();
-        }
-        
-        function checkConcept(choice, button) {
-            const resultElement = document.getElementById('conceptResult');
-            const correctConcept = conceptDescriptions[currentConceptIndex].concept;
-            
-            if (choice === correctConcept) {
+            if (choice === correctCause) {
                 resultElement.innerHTML = `
-                    <strong>Correct!</strong> This describes ${getConceptName(correctConcept)}.
-                    ${getConceptExplanation(correctConcept)}
+                    <strong>Correct!</strong> ${getCauseExplanation(correctCause)}
                 `;
                 resultElement.className = 'feedback correct';
                 
@@ -850,46 +791,35 @@
                 updateScore();
             } else {
                 resultElement.innerHTML = `
-                    <strong>Incorrect.</strong> This describes ${getConceptName(correctConcept)}.
-                    ${getConceptExplanation(correctConcept)}
+                    <strong>Incorrect.</strong> ${getCauseExplanation(correctCause)}
                 `;
                 resultElement.className = 'feedback incorrect';
             }
             
-            // Move to next concept after a delay
-            setTimeout(nextConcept, 2500);
+            // Move to next aspect after a delay
+            setTimeout(nextAspect, 2500);
         }
         
-        function getConceptName(concept) {
-            const names = {
-                'velocity': 'Velocity of Money',
-                'ad': 'Aggregate Demand',
-                'sras': 'Short-Run Aggregate Supply',
-                'lras': 'Long-Run Aggregate Supply'
-            };
-            return names[concept];
-        }
-        
-        function getConceptExplanation(concept) {
+        function getCauseExplanation(cause) {
             const explanations = {
-                'velocity': 'Measures how quickly money circulates through transactions in the economy.',
-                'ad': 'Total spending on goods and services at different price levels.',
-                'sras': 'Production response to price changes when some costs are temporarily fixed.',
-                'lras': 'Maximum sustainable output determined by technology and resources.'
+                'speculation': 'Excessive stock market speculation with borrowed money (buying on margin) created a bubble that inevitably burst.',
+                'monetary': 'The Federal Reserve maintained tight monetary policy and failed to provide liquidity, worsening bank failures and deflation.',
+                'trade': 'Protectionist policies like the Smoot-Hawley Tariff led to international trade wars, collapsing global commerce.',
+                'structural': 'Underlying economic weaknesses including agricultural depression and income inequality made the economy vulnerable.'
             };
-            return explanations[concept];
+            return explanations[cause];
         }
         
-        function nextConcept() {
-            currentConceptIndex = (currentConceptIndex + 1) % conceptDescriptions.length;
-            const conceptElement = document.getElementById('currentConcept');
-            conceptElement.innerHTML = `
-                <strong>Current Concept:</strong> ${conceptDescriptions[currentConceptIndex].description}
+        function nextAspect() {
+            currentAspectIndex = (currentAspectIndex + 1) % depressionAspects.length;
+            const aspectElement = document.getElementById('currentAspect');
+            aspectElement.innerHTML = `
+                <strong>Current Aspect:</strong> ${depressionAspects[currentAspectIndex].aspect}
             `;
             
             // Clear the previous result
-            document.getElementById('conceptResult').innerHTML = '';
-            document.getElementById('conceptResult').className = 'feedback';
+            document.getElementById('causeResult').innerHTML = '';
+            document.getElementById('causeResult').className = 'feedback';
         }
         
         function updateScore() {
@@ -925,11 +855,11 @@
             }
         }
         
-        // Initialize the first concept
+        // Initialize the first aspect
         window.onload = function() {
-            if (document.getElementById('currentConcept')) {
-                document.getElementById('currentConcept').innerHTML = `
-                    <strong>Current Concept:</strong> ${conceptDescriptions[0].description}
+            if (document.getElementById('currentAspect')) {
+                document.getElementById('currentAspect').innerHTML = `
+                    <strong>Current Aspect:</strong> ${depressionAspects[0].aspect}
                 `;
             }
         };
