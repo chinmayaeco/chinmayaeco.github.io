@@ -1,523 +1,900 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oligopoly Lab: Simulation • Case Studies • Managerial Implications</title>
-  <style>
-    :root{
-      --bg:#0b1020; /* deep ink */
-      --panel:#121734; /* card */
-      --accent:#7dd3fc; /* cyan */
-      --accent-2:#a78bfa; /* violet */
-      --muted:#aab1c2; /* text muted */
-      --text:#e8ecf3;
-      --danger:#f87171;
-      --success:#34d399;
-      --warn:#fbbf24;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
-    }
-    html,body{height:100%;}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 700px at 10% -10%, #1b2550 0%, var(--bg) 60%);
-      color: var(--text);
-    }
-    header{
-      max-width:1200px; margin: 24px auto 12px; padding: 0 16px;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    header h1{font-size: clamp(1.2rem, 2vw + .4rem, 2rem); margin:0; letter-spacing:.2px}
-    header .tag{font-size:.9rem; color:var(--muted)}
-
-    .grid{
-      display:grid; grid-template-columns: 1.2fr .9fr .9fr; gap:16px;
-      max-width:1200px; margin: 6px auto 40px; padding: 0 16px 40px;
-    }
-    @media (max-width: 1050px){ .grid{ grid-template-columns: 1fr; } }
-
-    .card{
-      background: linear-gradient(175deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      backdrop-filter: blur(6px);
-    }
-    .card h2{margin:4px 0 12px; font-size:1.15rem}
-    .sub{color:var(--muted); font-size:.95rem; margin-top:-6px}
-
-    .row{display:flex; gap:10px; flex-wrap:wrap}
-    .row > *{flex:1}
-    label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:6px}
-    input, select, button, .seg{
-      background:#0f1430; color:var(--text);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius: 12px; padding: 10px 12px; font-size: .95rem;
-    }
-    input[type=number]{width:120px}
-
-    button{ cursor:pointer; transition: transform .03s ease, box-shadow .15s ease; }
-    button:hover{ box-shadow: 0 6px 18px rgba(125,211,252,.18); }
-    button:active{ transform: translateY(1px); }
-
-    .btn-primary{ background: linear-gradient(120deg, var(--accent), var(--accent-2)); color:#0b0f1e; font-weight:700; border:0 }
-    .btn-ghost{ background: transparent }
-
-    .seg{ display:inline-flex; gap:6px; padding:6px; border-radius: 14px; }
-    .seg input{ display:none }
-    .seg label{ margin:0; padding:8px 12px; border-radius: 10px; color: var(--muted); cursor:pointer; }
-    .seg input:checked + label{ background: #202955; color: var(--text); border:1px solid rgba(255,255,255,.12) }
-
-    .payoff{ display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:.92rem }
-    .payoff .cell{ background:#0f1430; border:1px dashed rgba(255,255,255,.1); padding:10px; border-radius: 12px; text-align:center }
-
-    .scoreboard{
-      display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:8px;
-    }
-    .score{
-      background: #0f1430; border:1px solid rgba(255,255,255,.08); padding:12px; border-radius: 12px;
-    }
-    .bar{height:10px; background:#1a2248; border-radius:8px; overflow:hidden; margin-top:6px}
-    .bar > span{ display:block; height:100%; width:0; background: linear-gradient(90deg, var(--success), var(--accent)); transition: width .35s ease }
-
-    .muted{ color:var(--muted); font-size:.9rem }
-    .kpi{ font-size:1.4rem; font-weight:800 }
-
-    details{ border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 12px; background:#0f1430 }
-    details + details{ margin-top:8px }
-    summary{ cursor:pointer }
-
-    .tiny{ font-size:.78rem; color:var(--muted) }
-    .warn{ color:var(--warn) }
-    .danger{ color:var(--danger) }
-
-    /* Password Gate */
-    .gate{
-      position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
-      background: linear-gradient(180deg, rgba(11,16,32,.9), rgba(8,12,26,.9));
-      backdrop-filter: blur(10px);
-    }
-    .gate .box{ width:min(560px, 92vw); background: #121734; border:1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 22px; box-shadow: var(--shadow) }
-    .gate h3{ margin: 6px 0 4px }
-    .gate .row{ align-items:flex-end }
-    .shake{ animation: shake .35s ease }
-    @keyframes shake{ 10%, 90%{ transform: translateX(-1px)} 20%,80%{ transform: translateX(2px)} 30%,50%,70%{ transform: translateX(-4px)} 40%,60%{ transform: translateX(4px)} }
-
-    footer{ max-width:1200px; margin: 0 auto 40px; padding: 0 16px; color:var(--muted); font-size:.85rem }
-    code.inline{ background:#0f1430; padding:2px 6px; border-radius:6px; border:1px solid rgba(255,255,255,.06) }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiscal Multiplier Simulation</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .simulation-panel {
+            border-top: 5px solid #3498db;
+        }
+        
+        .case-studies {
+            border-top: 5px solid #e74c3c;
+        }
+        
+        .managerial-implications {
+            border-top: 5px solid #2ecc71;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        h3 {
+            color: #3498db;
+            margin: 15px 0 10px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 0;
+            transition: background-color 0.3s;
+            width: 100%;
+            text-align: left;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            border-radius: 5px;
+        }
+        
+        .options {
+            margin-left: 0;
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .password-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .password-box input {
+            padding: 12px;
+            margin: 15px 0;
+            width: 100%;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .concept-definition {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .concept-type {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .multiplier-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .multiplier-card {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 1px solid #3498db;
+        }
+        
+        .interactive-simulation {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .simulation-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .policy-choice {
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .calculator-container {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #2980b9;
+        }
+        
+        .calculator-input {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+        
+        .formula-box {
+            font-family: 'Courier New', monospace;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 2px solid #3498db;
+        }
+        
+        .economic-indicator {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .indicator-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .strategy-game {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .budget-slider {
+            width: 100%;
+            margin: 15px 0;
+        }
+        
+        .policy-result {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .simulation-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- PASSWORD GATE (front-end only; for real security use server-side auth) -->
-  <div id="gate" class="gate" aria-modal="true" role="dialog">
-    <div class="box" id="gateBox">
-      <h3>🔒 Enter Access Password</h3>
-      <p class="tiny">Protected teaching module. Password is shared with participants only.</p>
-      <div class="row" style="margin-top:8px">
-        <div>
-          <label for="pw">Password</label>
-          <input id="pw" type="password" placeholder="Enter password" autocomplete="current-password" />
-          <div class="tiny" style="margin-top:6px">Hint: TAES + topic + year</div>
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <h2>Fiscal Multiplier Simulation</h2>
+            <p>Enter the password to access the simulation:</p>
+            <input type="password" id="passwordInput" placeholder="Enter password">
+            <button onclick="checkPassword()">Enter</button>
+            <p id="passwordError" style="color: red; display: none; margin-top: 10px;">Incorrect password. Try again.</p>
         </div>
-        <div style="flex:0 0 auto">
-          <button id="unlockBtn" class="btn-primary">Unlock</button>
-        </div>
-      </div>
-      <p class="tiny" style="margin-top:10px">Note: Front‑end password gating is a deterrent, not strong security.</p>
     </div>
-  </div>
 
-  <header>
-    <h1>Oligopoly Lab</h1>
-    <div class="tag">Simulation • Case Studies • Managerial Implications</div>
-  </header>
-
-  <main class="grid" aria-live="polite">
-    <!-- 1) SIMULATION PANEL -->
-    <section class="card" id="simPanel">
-      <h2>1) Simulation Panel</h2>
-      <div class="sub">Play a repeated pricing game (High Price vs Low Price). Points map to profits. A market-friction cap ensures no one can hit 100%.</div>
-
-      <div class="row" style="margin-top:10px">
-        <div>
-          <label>Mode</label>
-          <div class="seg" role="radiogroup" aria-label="Mode selector">
-            <input type="radio" name="mode" id="modeSolo" value="solo" checked>
-            <label for="modeSolo">Solo vs AI</label>
-            <input type="radio" name="mode" id="modeDuo" value="duo">
-            <label for="modeDuo">Two‑Player (same device)</label>
-          </div>
+    <div class="container" id="gameContent" style="display: none;">
+        <header>
+            <h1>Fiscal Multiplier Simulation</h1>
+            <p>Explore Government Purchase Multipliers and Tax Multipliers through strategic decision-making</p>
+        </header>
+        
+        <div class="score-display">
+            Your Score: <span id="score">0</span>%
         </div>
-        <div>
-          <label for="rounds">Rounds</label>
-          <input id="rounds" type="number" min="3" max="50" step="1" value="10">
-        </div>
-        <div style="flex:0 0 auto; display:flex; gap:8px">
-          <button id="startBtn" class="btn-primary">Start Game</button>
-          <button id="resetBtn" class="btn-ghost">Reset</button>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:4px">
-        <div>
-          <label>Payoff Matrix (per round)</label>
-          <div class="payoff">
-            <div class="cell"><strong>Both High</strong><br> A: +3 • B: +3</div>
-            <div class="cell"><strong>Both Low</strong><br> A: +1 • B: +1</div>
-            <div class="cell"><strong>A High, B Low</strong><br> A: +0 • B: +5</div>
-            <div class="cell"><strong>A Low, B High</strong><br> A: +5 • B: +0</div>
-          </div>
-          <div class="tiny" style="margin-top:6px">Max per‑round points for a player = 5. Percentage scores are scaled and capped at <strong>95%</strong> to model market frictions.</div>
-        </div>
-      </div>
-
-      <div id="playArea" style="margin-top:12px; display:none">
-        <div class="row">
-          <div>
-            <label>Round</label>
-            <div class="kpi" id="roundLabel">–</div>
-          </div>
-          <div>
-            <label>Friction Cap</label>
-            <div class="kpi">95% <span class="tiny">(no perfect scores)</span></div>
-          </div>
-          <div>
-            <label>AI Strategy (Solo mode)</label>
-            <select id="aiStyle">
-              <option value="tft">Tit‑for‑Tat (with 10% noise)</option>
-              <option value="alwaysHigh">Always High</option>
-              <option value="alwaysLow">Always Low</option>
-              <option value="random">Random</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:10px" id="controlsSolo">
-          <div>
-            <label>Player A Choice</label>
-            <div class="seg">
-              <input type="radio" name="aChoice" id="aHigh" value="H" checked>
-              <label for="aHigh">High Price</label>
-              <input type="radio" name="aChoice" id="aLow" value="L">
-              <label for="aLow">Low Price</label>
+        
+        <div class="game-container">
+            <div class="panel simulation-panel">
+                <h2>Simulation Panel</h2>
+                <p>Make strategic fiscal policy decisions and see their economic impacts.</p>
+                
+                <div class="concept-definition">
+                    <span class="concept-type">Key Multiplier Concepts:</span>
+                    <div class="multiplier-cards">
+                        <div class="multiplier-card">
+                            <h4>Government Multiplier</h4>
+                            <p>1/(1-MPC)</p>
+                            <p>Spending has direct impact</p>
+                        </div>
+                        <div class="multiplier-card">
+                            <h4>Tax Multiplier</h4>
+                            <p>-MPC/(1-MPC)</p>
+                            <p>Smaller than spending multiplier</p>
+                        </div>
+                        <div class="multiplier-card">
+                            <h4>Balanced Budget</h4>
+                            <p>Multiplier = 1</p>
+                            <p>Equal spending and taxes</p>
+                        </div>
+                    </div>
+                    <div class="formula-box">
+                        Government Multiplier = 1 ÷ (1 - MPC) &nbsp;&nbsp;&nbsp; Tax Multiplier = -MPC ÷ (1 - MPC)
+                    </div>
+                </div>
+                
+                <div class="strategy-game">
+                    <h3>Fiscal Policy Strategy Game</h3>
+                    <p><strong>Scenario:</strong> The economy is in recession with 8% unemployment. GDP is $800 billion below potential. Your budget: $200 billion.</p>
+                    
+                    <div class="economic-indicator">
+                        <p><strong>Current Economic Status:</strong></p>
+                        <div class="indicator-value" id="currentGDP">$800B below potential</div>
+                        <p>Unemployment: 8% | MPC: 0.75</p>
+                    </div>
+                    
+                    <div class="calculator-container">
+                        <h4>Choose Your Fiscal Policy Mix:</h4>
+                        <label>Government Spending (in billions): $</label>
+                        <input type="number" id="govSpending" class="calculator-input" min="0" max="200" value="100">
+                        
+                        <label>Tax Cuts (in billions): $</label>
+                        <input type="number" id="taxCut" class="calculator-input" min="0" max="200" value="100">
+                        
+                        <div id="budgetStatus" class="policy-result">
+                            Remaining Budget: $<span id="remainingBudget">0</span> billion
+                        </div>
+                        
+                        <button onclick="calculateMultiplierImpact()" style="width: auto;">Calculate Economic Impact</button>
+                    </div>
+                    
+                    <div id="policyResult" class="feedback"></div>
+                </div>
+                
+                <div class="interactive-simulation">
+                    <h3>Multiplier Calculation Practice</h3>
+                    <p>Calculate the multiplier effect for different scenarios:</p>
+                    <div id="currentScenario" class="formula-box">
+                        <strong>Current Scenario:</strong> MPC = 0.8, Government Spending Increase = $50 billion
+                    </div>
+                    <div class="simulation-controls">
+                        <button class="policy-choice" onclick="checkMultiplier('spending', this)">Calculate Spending Multiplier</button>
+                        <button class="policy-choice" onclick="checkMultiplier('tax', this)">Calculate Tax Multiplier</button>
+                        <button class="policy-choice" onclick="checkMultiplier('balanced', this)">Calculate Balanced Budget Multiplier</button>
+                    </div>
+                    <div id="multiplierResult" class="feedback"></div>
+                </div>
+                
+                <div id="simulationQuestions">
+                    <!-- Questions will be populated by JavaScript -->
+                </div>
             </div>
-          </div>
-          <div style="flex:0 0 auto; display:flex; align-items:flex-end">
-            <button id="playRoundBtn" class="btn-primary">Play Round</button>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:10px; display:none" id="controlsDuo">
-          <div>
-            <label>Player A Choice</label>
-            <div class="seg">
-              <input type="radio" name="aChoice2" id="aHigh2" value="H" checked>
-              <label for="aHigh2">High Price</label>
-              <input type="radio" name="aChoice2" id="aLow2" value="L">
-              <label for="aLow2">Low Price</label>
+            
+            <div class="panel case-studies">
+                <h2>Case Studies</h2>
+                <p>Examine real-world applications of fiscal multipliers.</p>
+                
+                <div class="question">
+                    <p><strong>Case 1:</strong> During the 2009 financial crisis, the US government passed the American Recovery and Reinvestment Act with $800 billion in stimulus - about 2/3 in spending and 1/3 in tax cuts. The MPC was estimated at 0.6.</p>
+                    <p>Why did policymakers choose more spending than tax cuts?</p>
+                    <div class="options" id="case1Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback4" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>Case 2:</strong> In 2017, the Trump administration passed tax cuts totaling $1.5 trillion over 10 years. The Congressional Budget Office estimated a multiplier of 0.3-0.5 for these cuts.</p>
+                    <p>Why was the tax multiplier relatively low in this case?</p>
+                    <div class="options" id="case2Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback5" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>Case 3:</strong> During the COVID-19 pandemic, many countries implemented direct cash transfers to citizens. Studies showed these had higher multipliers than traditional tax cuts.</p>
+                    <p>What explains the higher multiplier for direct transfers?</p>
+                    <div class="options" id="case3Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback6" class="feedback"></div>
+                </div>
             </div>
-          </div>
-          <div>
-            <label>Player B Choice</label>
-            <div class="seg">
-              <input type="radio" name="bChoice2" id="bHigh2" value="H" checked>
-              <label for="bHigh2">High Price</label>
-              <input type="radio" name="bChoice2" id="bLow2" value="L">
-              <label for="bLow2">Low Price</label>
+            
+            <div class="panel managerial-implications">
+                <h2>Managerial Implications</h2>
+                <p>Understand how multiplier effects impact business decisions and economic strategy.</p>
+                
+                <div class="question">
+                    <p>1. How can businesses use knowledge of fiscal multipliers in strategic planning?</p>
+                    <div class="options" id="managerial1Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback7" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>2. Why might a business prefer government spending stimulus over tax cuts?</p>
+                    <div class="options" id="managerial2Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback8" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>3. How does the timing of fiscal policy affect its effectiveness for businesses?</p>
+                    <div class="options" id="managerial3Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback9" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>4. What risk management strategies should businesses employ during fiscal stimulus periods?</p>
+                    <div class="options" id="managerial4Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback10" class="feedback"></div>
+                </div>
+                
+                <div class="economic-indicator">
+                    <h3>Key Business Insights</h3>
+                    <ul>
+                        <li>Government spending multipliers are typically larger than tax multipliers</li>
+                        <li>Infrastructure spending often has high multipliers due to job creation</li>
+                        <li>Tax cuts for lower-income households have higher multipliers</li>
+                        <li>Multipliers are higher during recessions than expansions</li>
+                        <li>Timing lags can reduce multiplier effectiveness</li>
+                    </ul>
+                </div>
             </div>
-          </div>
-          <div style="flex:0 0 auto; display:flex; align-items:flex-end">
-            <button id="resolveBtn" class="btn-primary">Resolve Round</button>
-          </div>
         </div>
+    </div>
 
-        <div class="scoreboard">
-          <div class="score" id="scoreA">
-            <div><strong>Player A</strong></div>
-            <div>Total Points: <span id="pointsA">0</span></div>
-            <div>Score % (friction‑capped): <span id="pctA">0</span>%</div>
-            <div class="bar"><span id="barA" style="width:0%"></span></div>
-            <div class="tiny">Collusion Index (share of High choices): <span id="collA">0.00</span></div>
-            <div class="tiny">Assessment: <span id="assessA">–</span></div>
-          </div>
-          <div class="score" id="scoreB">
-            <div><strong>Player B</strong></div>
-            <div>Total Points: <span id="pointsB">0</span></div>
-            <div>Score % (friction‑capped): <span id="pctB">0</span>%</div>
-            <div class="bar"><span id="barB" style="width:0%"></span></div>
-            <div class="tiny">Collusion Index (share of High choices): <span id="collB">0.00</span></div>
-            <div class="tiny">Assessment: <span id="assessB">–</span></div>
-          </div>
-        </div>
+    <script>
+        // Password protection
+        const correctPassword = "Multiplier2023";
+        let score = 0;
+        const maxPossibleScore = 95; // Ensures no one can score 100%
+        
+        // Questions with randomized answer positions
+        const questions = [
+            {
+                id: 1,
+                text: "If MPC = 0.8, what is the government spending multiplier?",
+                options: [
+                    "1.25",
+                    "4",
+                    "5",
+                    "0.8"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Correct! Government multiplier = 1/(1-MPC) = 1/(1-0.8) = 1/0.2 = 5",
+                    incorrect: "Incorrect. Remember: Government multiplier = 1 ÷ (1 - MPC)"
+                }
+            },
+            {
+                id: 2,
+                text: "With MPC = 0.75, a $100 million tax cut will increase GDP by:",
+                options: [
+                    "$100 million",
+                    "$75 million",
+                    "$300 million",
+                    "$400 million"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Right! Tax multiplier = -MPC/(1-MPC) = -0.75/0.25 = -3, so $100M tax cut × 3 = $300M GDP increase",
+                    incorrect: "Remember: Tax multiplier = -MPC ÷ (1 - MPC)"
+                }
+            },
+            {
+                id: 3,
+                text: "The balanced budget multiplier is always equal to:",
+                options: [
+                    "Zero",
+                    "One",
+                    "The MPC",
+                    "1 - MPC"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Yes! When government spending and taxes increase by the same amount, the net multiplier effect is 1.",
+                    incorrect: "The balanced budget multiplier is always 1, regardless of MPC."
+                }
+            },
+            {
+                id: 4,
+                text: "In Case 1, why more spending than tax cuts in the 2009 stimulus?",
+                options: [
+                    "Spending multipliers are typically larger than tax multipliers",
+                    "Tax cuts are politically unpopular",
+                    "Spending creates immediate economic activity",
+                    "Both A and C are correct"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Exactly! Spending multipliers are larger, and direct spending often has more immediate economic impact.",
+                    incorrect: "The primary reasons are both the larger multiplier effect and more immediate economic impact of spending."
+                }
+            },
+            {
+                id: 5,
+                text: "In Case 2, why was the 2017 tax cut multiplier low?",
+                options: [
+                    "The economy was already near full employment",
+                    "Tax cuts went mostly to high-income households with lower MPC",
+                    "Both A and B",
+                    "The tax cuts were too small"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Right! Near full employment reduces multiplier effects, and high-income recipients have lower marginal propensity to consume.",
+                    incorrect: "Both the economic context (near full employment) and distribution (high-income recipients) contributed to lower multipliers."
+                }
+            },
+            {
+                id: 6,
+                text: "In Case 3, why did direct transfers have higher multipliers?",
+                options: [
+                    "Recipients had higher marginal propensity to consume",
+                    "Transfers were timed during economic distress",
+                    "Both A and B",
+                    "Transfers avoided bureaucratic delays"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Correct! Those receiving direct transfers typically have high MPC, and timing during crisis increases effectiveness.",
+                    incorrect: "The combination of high MPC recipients and crisis timing created strong multiplier effects."
+                }
+            },
+            {
+                id: 7,
+                text: "How can businesses use fiscal multiplier knowledge?",
+                options: [
+                    "To predict consumer demand changes from policy",
+                    "To plan investment timing",
+                    "To anticipate sector-specific impacts",
+                    "All of the above"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Yes! All these applications help businesses make better strategic decisions.",
+                    incorrect: "Businesses can use multiplier knowledge for demand prediction, investment timing, and sector analysis."
+                }
+            },
+            {
+                id: 8,
+                text: "Why might businesses prefer spending stimulus?",
+                options: [
+                    "It creates more direct demand for their products",
+                    "It typically has larger economic impact",
+                    "It often targets infrastructure they use",
+                    "All of the above"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Right! Spending stimulus creates demand, has larger multipliers, and often improves business infrastructure.",
+                    incorrect: "All these factors make spending stimulus attractive to businesses."
+                }
+            },
+            {
+                id: 9,
+                text: "How does timing affect fiscal policy effectiveness?",
+                options: [
+                    "Multipliers are higher during economic slack",
+                    "Implementation lags can reduce impact",
+                    "Both A and B",
+                    "Timing has no effect on multipliers"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Correct! Both economic conditions and implementation timing significantly affect multiplier effectiveness.",
+                    incorrect: "Timing matters both for economic conditions (higher multipliers in recessions) and implementation speed."
+                }
+            },
+            {
+                id: 10,
+                text: "What risk management during fiscal stimulus?",
+                options: [
+                    "Prepare for potential inflation",
+                    "Diversify across sectors benefiting from stimulus",
+                    "Maintain flexibility for policy changes",
+                    "All of the above"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Yes! All these strategies help manage risks associated with fiscal stimulus periods.",
+                    incorrect: "Businesses should consider inflation risks, sector diversification, and policy flexibility."
+                }
+            }
+        ];
 
-        <div style="margin-top:10px">
-          <label for="log">Round Log</label>
-          <div id="log" style="max-height:160px; overflow:auto; background:#0f1430; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px; font-size:.92rem"></div>
-        </div>
-
-        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
-          <button id="exportBtn" class="btn-ghost">Export CSV</button>
-          <div class="tiny">CSV includes round‑by‑round choices & payoffs.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2) CASE STUDIES -->
-    <section class="card" id="caseStudies">
-      <h2>2) Case Studies</h2>
-      <div class="sub">Compact, classroom‑ready capsules. Use them for discussion prompts after running the game.</div>
-
-      <details>
-        <summary><strong>OPEC’s Production Coordination</strong> — price leadership in a global commodity</summary>
-        <div class="muted" style="margin-top:8px">
-          Organization of Petroleum Exporting Countries often acts as a focal point for coordinated output decisions. Production quotas resemble a collusive outcome, while non‑OPEC supply and demand shocks introduce instability. Discuss incentive to defect (over‑produce) vs reputational punishments (future quota cuts).
-        </div>
-      </details>
-
-      <details>
-        <summary><strong>Airline Fare Wars</strong> — Bertrand dynamics with capacity constraints</summary>
-        <div class="muted" style="margin-top:8px">
-          On competitive routes, airlines may cut prices (low) to fill seats, triggering cascades. When capacity is constrained or differentiated, tacit coordination emerges via advance‑purchase restrictions and price‑match policies. Explore how transparency (fare search engines) affects undercutting.
-        </div>
-      </details>
-
-      <details>
-        <summary><strong>Smartphone Platforms</strong> — multi‑sided oligopoly</summary>
-        <div class="muted" style="margin-top:8px">
-          A few platforms set rules for developers and users. Pricing bundles (devices, app store fees, ads) create cross‑group spillovers. Study how vertical integration and ecosystem lock‑in alter payoff matrices relative to simple price games.
-        </div>
-      </details>
-
-      <details>
-        <summary><strong>Cement Markets</strong> — repeated interactions & investigations</summary>
-        <div class="muted" style="margin-top:8px">
-          Homogeneous product, repeated bids, and observable capacity create fertile ground for tacit or explicit coordination. Regulatory scrutiny focuses on parallel pricing and exchange of sensitive information.
-        </div>
-      </details>
-
-    </section>
-
-    <!-- 3) MANAGERIAL IMPLICATIONS -->
-    <section class="card" id="implications">
-      <h2>3) Managerial Implications</h2>
-      <div class="sub">Translate game outcomes into strategy and compliance.
-      </div>
-
-      <ul>
-        <li><strong>Trigger strategies</strong>: A one‑time undercut can collapse margins for many rounds. Map your tolerance for defection before competitive moves.</li>
-        <li><strong>Capacity & commitment</strong>: Credible capacity expansions shift payoffs toward aggressive pricing; pre‑commitments can deter rivals.</li>
-        <li><strong>Differentiation</strong>: Reduce head‑to‑head Bertrand spirals by adding features, service, or bundles—changing the payoff table.</li>
-        <li><strong>Information policy</strong>: Public price signaling or sharing competitively sensitive data can create legal exposure—build internal compliance guardrails.</li>
-        <li><strong>Regulator lens</strong>: Stable high prices with frequent contact among rivals risks inference of coordination. Document independent decision processes.</li>
-        <li><strong>Experimentation</strong>: Run A/B style market tests with geo‑fencing to infer rival response functions safely.</li>
-      </ul>
-      <p class="tiny warn">Pedagogical note: This module models incentives, not legal advice. Always consult your competition‑law counsel.</p>
-    </section>
-  </main>
-
-  <footer>
-    Built for classroom use. Payoff cap implemented via a 5% friction factor so a perfect 100% is unattainable by design. You can tweak it in <code class="inline">FRICTION</code> inside the script.
-  </footer>
-
-  <script>
-    // ===============================
-    // Password Gate (front‑end)
-    // ===============================
-    // Precomputed SHA‑256 of the accepted password string.
-    // Password (for instructors): TAES-oligopoly-2025
-    // Hash generated via crypto: 3dac5af7c5520121269c861536c6815727f161072f4289f13f0c25268636a75b
-    const PASS_HASH = '3dac5af7c5520121269c861536c6815727f161072f4289f13f0c25268636a75b';
-
-    async function sha256Hex(str){
-      const buf = new TextEncoder().encode(str);
-      const digest = await crypto.subtle.digest('SHA-256', buf);
-      const bytes = new Uint8Array(digest);
-      return Array.from(bytes).map(b=>b.toString(16).padStart(2,'0')).join('');
-    }
-
-    async function tryUnlock(){
-      const box = document.getElementById('gateBox');
-      const pw = document.getElementById('pw').value || '';
-      const hex = await sha256Hex(pw);
-      if(hex === PASS_HASH){
-        sessionStorage.setItem('oligo_gate','ok');
-        document.getElementById('gate').style.display='none';
-        setTimeout(()=>document.getElementById('pw').value='', 50);
-      } else {
-        box.classList.remove('shake'); box.offsetWidth; box.classList.add('shake');
-      }
-    }
-
-    (function initGate(){
-      const saved = sessionStorage.getItem('oligo_gate');
-      if(saved==='ok'){ document.getElementById('gate').style.display='none'; }
-      document.getElementById('unlockBtn').addEventListener('click', tryUnlock);
-      document.getElementById('pw').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ tryUnlock(); }});
-    })();
-
-    // ===============================
-    // Simulation Logic
-    // ===============================
-    const MAX_PER_ROUND = 5;               // maximum points a player can earn in a round
-    const FRICTION = 0.95;                 // 95% cap: ensures nobody reaches 100%
-    const NOISE = 0.10;                    // AI noise level for Tit‑for‑Tat
-
-    // State
-    let mode = 'solo';
-    let totalRounds = 10;
-    let round = 0;
-    let aPoints = 0; let bPoints = 0;
-    let aHighCount = 0; let bHighCount = 0;
-    let lastA='H', lastB='H';
-    let logRows = [];
-
-    // DOM helpers
-    const $ = sel => document.querySelector(sel);
-    const logEl = $('#log');
-
-    function reset(){
-      round = 0; aPoints = 0; bPoints = 0; aHighCount=0; bHighCount=0; lastA='H'; lastB='H'; logRows=[];
-      $('#roundLabel').textContent = '–';
-      $('#pointsA').textContent = '0'; $('#pointsB').textContent='0';
-      $('#pctA').textContent='0'; $('#pctB').textContent='0';
-      $('#barA').style.width='0%'; $('#barB').style.width='0%';
-      $('#collA').textContent='0.00'; $('#collB').textContent='0.00';
-      $('#assessA').textContent='–'; $('#assessB').textContent='–';
-      logEl.innerHTML='';
-    }
-
-    function start(){
-      reset();
-      totalRounds = Math.max(3, Math.min(50, parseInt($('#rounds').value || '10')));
-      $('#playArea').style.display='block';
-      mode = document.querySelector('input[name="mode"]:checked').value;
-      $('#controlsSolo').style.display = (mode==='solo') ? 'flex' : 'none';
-      $('#controlsDuo').style.display = (mode==='duo') ? 'flex' : 'none';
-      round = 1; updateRoundLabel();
-      appendLog(`Game started • Mode: ${mode==='solo'?'Solo vs AI':'Two‑Player'} • Rounds: ${totalRounds}`);
-    }
-
-    function updateRoundLabel(){ $('#roundLabel').textContent = `${round} / ${totalRounds}`; }
-
-    function appendLog(text){
-      const p = document.createElement('div'); p.textContent = `R${round}: ${text}`; logEl.appendChild(p); logEl.scrollTop = logEl.scrollHeight;
-      logRows.push({r: round, text});
-    }
-
-    function payoff(a, b){
-      // returns [aPoints, bPoints]
-      if(a==='H' && b==='H') return [3,3];
-      if(a==='L' && b==='L') return [1,1];
-      if(a==='H' && b==='L') return [0,5];
-      if(a==='L' && b==='H') return [5,0];
-      return [0,0];
-    }
-
-    function assess(coll){
-      if(coll>=0.8) return 'Strongly collusive';
-      if(coll>=0.5) return 'Mixed / tacit coordination';
-      if(coll>=0.25) return 'Moderate competition';
-      return 'Aggressive competition';
-    }
-
-    function pct(points){
-      // percent with friction cap (cannot reach 100)
-      if(round<=0) return 0;
-      const raw = (points / (MAX_PER_ROUND * round)) * 100;
-      return Math.min( Math.round(raw * FRICTION), 99 );
-    }
-
-    function updateScores(){
-      const pA = pct(aPoints), pB = pct(bPoints);
-      $('#pointsA').textContent = aPoints; $('#pointsB').textContent = bPoints;
-      $('#pctA').textContent = pA; $('#pctB').textContent = pB;
-      $('#barA').style.width = pA + '%'; $('#barB').style.width = pB + '%';
-      const cA = (round? (aHighCount/round):0).toFixed(2), cB = (round? (bHighCount/round):0).toFixed(2);
-      $('#collA').textContent = cA; $('#collB').textContent = cB;
-      $('#assessA').textContent = assess(parseFloat(cA));
-      $('#assessB').textContent = assess(parseFloat(cB));
-    }
-
-    function nextRound(){
-      if(round < totalRounds){ round++; updateRoundLabel(); }
-      else { appendLog('Game over. Review scores & export CSV.'); }
-    }
-
-    function aiChoice(){
-      const style = $('#aiStyle').value;
-      if(style==='alwaysHigh') return 'H';
-      if(style==='alwaysLow') return 'L';
-      if(style==='random') return Math.random()<0.5 ? 'H' : 'L';
-      // Tit‑for‑Tat with noise: mirror opponent's last move; occasionally flip
-      let c = lastA; // mirror A's last move
-      if(Math.random() < NOISE) c = (c==='H'?'L':'H');
-      return c;
-    }
-
-    function resolve(a, b){
-      const [pa, pb] = payoff(a,b);
-      aPoints += pa; bPoints += pb;
-      if(a==='H') aHighCount++; if(b==='H') bHighCount++;
-      appendLog(`A chose ${a==='H'?'High':'Low'}; B chose ${b==='H'?'High':'Low'} → ΔA:${pa}, ΔB:${pb}`);
-      lastA = a; lastB = b;
-      updateScores();
-      nextRound();
-    }
-
-    // Solo play handler
-    function playSolo(){
-      if(round>totalRounds){ return; }
-      const a = document.querySelector('input[name="aChoice"]:checked').value;
-      const b = aiChoice();
-      resolve(a,b);
-    }
-
-    // Duo play handler
-    function playDuo(){
-      if(round>totalRounds){ return; }
-      const a = document.querySelector('input[name="aChoice2"]:checked').value;
-      const b = document.querySelector('input[name="bChoice2"]:checked').value;
-      resolve(a,b);
-    }
-
-    function exportCSV(){
-      let csv = 'round,a_choice,b_choice,a_delta,b_delta,a_total,b_total\n';
-      // reconstruct deltas via payoff of stored last moves in logRows
-      let aT=0, bT=0;
-      for(let i=0;i<logRows.length;i++){
-        const t = logRows[i].text;
-        const m = /A chose (High|Low); B chose (High|Low) → ΔA:(\-?\d+), ΔB:(\-?\d+)/.exec(t);
-        if(!m) continue;
-        const aC = (m[1]==='High'?'H':'L');
-        const bC = (m[2]==='High'?'H':'L');
-        const aD = parseInt(m[3]);
-        const bD = parseInt(m[4]);
-        aT += aD; bT += bD;
-        csv += `${i+1},${aC},${bC},${aD},${bD},${aT},${bT}\n`;
-      }
-      const blob = new Blob([csv], {type:'text/csv'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'oligopoly_simulation_results.csv';
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    // Events
-    (function init(){
-      $('#startBtn').addEventListener('click', start);
-      $('#resetBtn').addEventListener('click', reset);
-      $('#playRoundBtn').addEventListener('click', playSolo);
-      $('#resolveBtn').addEventListener('click', playDuo);
-      $('#exportBtn').addEventListener('click', exportCSV);
-      document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', (e)=>{
-        mode = e.target.value;
-        $('#controlsSolo').style.display = (mode==='solo') ? 'flex' : 'none';
-        $('#controlsDuo').style.display = (mode==='duo') ? 'flex' : 'none';
-      }));
-    })();
-  </script>
+        // Multiplier scenarios for practice
+        const multiplierScenarios = [
+            { mpc: 0.8, spending: 50, type: "spending" },
+            { mpc: 0.75, taxCut: 40, type: "tax" },
+            { mpc: 0.9, spending: 30, taxChange: 30, type: "balanced" },
+            { mpc: 0.6, spending: 100, type: "spending" },
+            { mpc: 0.85, taxCut: 25, type: "tax" }
+        ];
+        
+        let currentScenarioIndex = 0;
+        let budget = 200;
+        
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === correctPassword) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('gameContent').style.display = 'block';
+                initializeGame();
+                updateBudget();
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+            }
+        }
+        
+        function initializeGame() {
+            // Shuffle questions and create HTML
+            const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            
+            // Populate simulation questions (first 3)
+            const simulationContainer = document.getElementById('simulationQuestions');
+            shuffledQuestions.slice(0, 3).forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <p>${q.text}</p>
+                    <div class="options" id="options${q.id}"></div>
+                    <div id="feedback${q.id}" class="feedback"></div>
+                `;
+                simulationContainer.appendChild(questionDiv);
+                
+                // Shuffle and populate options
+                const optionsContainer = document.getElementById(`options${q.id}`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        answerQuestion(q.id, optIndex === correctIndex, this, q.feedback); 
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+            
+            // Populate case study questions (next 3)
+            const caseQuestions = shuffledQuestions.slice(3, 6);
+            caseQuestions.forEach((q, index) => {
+                const caseNum = index + 4;
+                const optionsContainer = document.getElementById(`case${caseNum-3}Options`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        answerQuestion(q.id, optIndex === correctIndex, this, q.feedback); 
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+            
+            // Populate managerial questions (last 4)
+            const managerialQuestions = shuffledQuestions.slice(6);
+            managerialQuestions.forEach((q, index) => {
+                const managerialNum = index + 7;
+                const optionsContainer = document.getElementById(`managerial${managerialNum-6}Options`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        answerQuestion(q.id, optIndex === correctIndex, this, q.feedback); 
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+        }
+        
+        function updateBudget() {
+            const govSpending = parseFloat(document.getElementById('govSpending').value) || 0;
+            const taxCut = parseFloat(document.getElementById('taxCut').value) || 0;
+            const remaining = budget - govSpending - taxCut;
+            document.getElementById('remainingBudget').textContent = remaining;
+            
+            if (remaining < 0) {
+                document.getElementById('budgetStatus').style.backgroundColor = '#f8d7da';
+                document.getElementById('budgetStatus').style.color = '#721c24';
+            } else {
+                document.getElementById('budgetStatus').style.backgroundColor = '#e3f2fd';
+                document.getElementById('budgetStatus').style.color = '#333';
+            }
+        }
+        
+        function calculateMultiplierImpact() {
+            const govSpending = parseFloat(document.getElementById('govSpending').value) || 0;
+            const taxCut = parseFloat(document.getElementById('taxCut').value) || 0;
+            const remaining = budget - govSpending - taxCut;
+            
+            if (remaining < 0) {
+                document.getElementById('policyResult').innerHTML = 
+                    "<strong>Budget Overrun!</strong> You've exceeded your $200 billion budget. Adjust your numbers.";
+                document.getElementById('policyResult').className = 'feedback incorrect';
+                return;
+            }
+            
+            const mpc = 0.75;
+            const govMultiplier = 1 / (1 - mpc); // 4
+            const taxMultiplier = -mpc / (1 - mpc); // -3
+            
+            const govImpact = govSpending * govMultiplier;
+            const taxImpact = taxCut * taxMultiplier;
+            const totalImpact = govImpact + taxImpact;
+            
+            // Calculate score based on effectiveness (closing the $800B gap)
+            const effectiveness = Math.min(100, Math.max(0, (totalImpact / 800) * 100));
+            const strategyBonus = govSpending > taxCut ? 10 : 0; // Bonus for preferring spending
+            
+            score += Math.floor(effectiveness / 10) + strategyBonus;
+            updateScore();
+            
+            document.getElementById('policyResult').innerHTML = `
+                <strong>Policy Impact Analysis:</strong><br>
+                Government Spending Impact: $${govImpact.toFixed(1)}B ($${govSpending}B × ${govMultiplier})<br>
+                Tax Cut Impact: $${taxImpact.toFixed(1)}B ($${taxCut}B × ${taxMultiplier})<br>
+                <strong>Total GDP Impact: $${totalImpact.toFixed(1)}B</strong><br>
+                This closes ${(totalImpact/800*100).toFixed(1)}% of the output gap.<br>
+                <em>${effectiveness > 50 ? 'Good strategy!' : 'Consider adjusting your policy mix for greater impact.'}</em>
+            `;
+            document.getElementById('policyResult').className = 'feedback correct';
+        }
+        
+        function checkMultiplier(type, button) {
+            const resultElement = document.getElementById('multiplierResult');
+            const scenario = multiplierScenarios[currentScenarioIndex];
+            let correctAnswer, explanation;
+            
+            if (type === "spending") {
+                const multiplier = 1 / (1 - scenario.mpc);
+                const impact = scenario.spending * multiplier;
+                correctAnswer = impact;
+                explanation = `Spending multiplier = 1 ÷ (1 - ${scenario.mpc}) = ${multiplier.toFixed(2)}. Impact = $${scenario.spending}B × ${multiplier.toFixed(2)} = $${impact.toFixed(1)}B`;
+            } else if (type === "tax") {
+                const multiplier = -scenario.mpc / (1 - scenario.mpc);
+                const impact = scenario.taxCut * multiplier;
+                correctAnswer = impact;
+                explanation = `Tax multiplier = -${scenario.mpc} ÷ (1 - ${scenario.mpc}) = ${multiplier.toFixed(2)}. Impact = $${scenario.taxCut}B × ${multiplier.toFixed(2)} = $${impact.toFixed(1)}B`;
+            } else {
+                // Balanced budget - multiplier is always 1
+                const impact = scenario.spending; // Since spending and taxes change equally
+                correctAnswer = impact;
+                explanation = `Balanced budget multiplier = 1. Impact = $${scenario.spending}B (equal spending and tax changes)`;
+            }
+            
+            resultElement.innerHTML = `
+                <strong>Calculation:</strong> ${explanation}
+            `;
+            resultElement.className = 'feedback correct';
+            
+            // Add to score for correct calculation
+            score += 5;
+            updateScore();
+            
+            // Move to next scenario after a delay
+            setTimeout(nextScenario, 3000);
+        }
+        
+        function nextScenario() {
+            currentScenarioIndex = (currentScenarioIndex + 1) % multiplierScenarios.length;
+            const scenario = multiplierScenarios[currentScenarioIndex];
+            const scenarioElement = document.getElementById('currentScenario');
+            
+            if (scenario.type === "spending") {
+                scenarioElement.innerHTML = `<strong>Current Scenario:</strong> MPC = ${scenario.mpc}, Government Spending Increase = $${scenario.spending} billion`;
+            } else if (scenario.type === "tax") {
+                scenarioElement.innerHTML = `<strong>Current Scenario:</strong> MPC = ${scenario.mpc}, Tax Cut = $${scenario.taxCut} billion`;
+            } else {
+                scenarioElement.innerHTML = `<strong>Current Scenario:</strong> MPC = ${scenario.mpc}, Government Spending Increase = $${scenario.spending} billion, Tax Increase = $${scenario.taxChange} billion`;
+            }
+            
+            // Clear the previous result
+            document.getElementById('multiplierResult').innerHTML = '';
+            document.getElementById('multiplierResult').className = 'feedback';
+        }
+        
+        function updateScore() {
+            // Update score display (capped at maxPossibleScore)
+            const displayScore = Math.min(score, maxPossibleScore);
+            document.getElementById('score').textContent = displayScore;
+        }
+        
+        function answerQuestion(questionId, isCorrect, button, feedback) {
+            const feedbackElement = document.getElementById(`feedback${questionId}`);
+            
+            // If already answered, don't allow answering again
+            if (feedbackElement.innerHTML !== '') return;
+            
+            if (isCorrect) {
+                // Correct answer
+                feedbackElement.innerHTML = feedback.correct;
+                feedbackElement.className = 'feedback correct';
+                score += 10; // Each question is worth 10 points
+            } else {
+                // Incorrect answer
+                feedbackElement.innerHTML = feedback.incorrect;
+                feedbackElement.className = 'feedback incorrect';
+            }
+            
+            // Update score display
+            updateScore();
+            
+            // Disable all buttons for this question
+            const buttons = button.parentElement.getElementsByTagName('button');
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+        }
+        
+        // Initialize the first scenario and budget tracking
+        window.onload = function() {
+            if (document.getElementById('currentScenario')) {
+                const firstScenario = multiplierScenarios[0];
+                document.getElementById('currentScenario').innerHTML = 
+                    `<strong>Current Scenario:</strong> MPC = ${firstScenario.mpc}, Government Spending Increase = $${firstScenario.spending} billion`;
+            }
+            
+            // Add event listeners for budget tracking
+            document.getElementById('govSpending').addEventListener('input', updateBudget);
+            document.getElementById('taxCut').addEventListener('input', updateBudget);
+        };
+    </script>
 </body>
 </html>
