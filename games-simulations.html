@@ -3,607 +3,1099 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GARCH Family Models Simulation Tool</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>IS Curve & Goods Market Equilibrium Simulation</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, #0f4c75 0%, #3282b8 50%, #bbe1fa 100%);
             color: #333;
             line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
         
         header {
             text-align: center;
             margin-bottom: 30px;
-            padding: 20px;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             color: white;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
             gap: 20px;
+            margin-bottom: 30px;
         }
         
-        .controls {
+        .panel {
             background-color: white;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
         }
         
-        .model-info {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        .simulation-panel {
+            border-top: 5px solid #3498db;
         }
         
-        .visualization {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            height: 500px;
+        .case-studies {
+            border-top: 5px solid #e74c3c;
         }
         
-        .form-group {
+        .managerial-implications {
+            border-top: 5px solid #2ecc71;
+        }
+        
+        h2 {
+            color: #2c3e50;
             margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
         }
         
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+        h3 {
+            color: #3498db;
+            margin: 15px 0 10px;
         }
         
         button {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
+            margin: 5px 0;
+            transition: background-color 0.3s;
             width: 100%;
-            transition: all 0.3s ease;
+            text-align: left;
         }
         
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #2980b9;
         }
         
-        .model-selector {
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            border-radius: 5px;
+        }
+        
+        .options {
+            margin-left: 0;
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .password-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .password-box input {
+            padding: 12px;
+            margin: 15px 0;
+            width: 100%;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .concept-definition {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .concept-type {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .is-curve-cards {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 20px;
+            margin: 15px 0;
         }
         
-        .model-btn {
+        .curve-card {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
             flex: 1;
             min-width: 120px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
             text-align: center;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: 1px solid #3498db;
         }
         
-        .model-btn.active {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-            color: white;
-        }
-        
-        .model-btn:hover {
-            background-color: #d8dbe0;
-        }
-        
-        .model-btn.active:hover {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-        }
-        
-        .math-formula {
+        .interactive-simulation {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
             margin: 15px 0;
-            overflow-x: auto;
         }
         
-        .references {
-            margin-top: 30px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .simulation-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
         }
         
-        .references h2 {
-            margin-bottom: 15px;
-            color: #1a2a6c;
+        .policy-choice {
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
         }
         
-        .references ul {
-            list-style-type: none;
+        .calculator-container {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #2980b9;
         }
         
-        .references li {
-            margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
+        .calculator-input {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
         }
         
-        .references li:before {
-            content: "•";
-            color: #b21f1f;
+        .formula-box {
+            font-family: 'Courier New', monospace;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 1.2rem;
             font-weight: bold;
+            border: 2px solid #3498db;
+        }
+        
+        .economic-indicator {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .indicator-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .strategy-game {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .policy-result {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .graph-container {
+            width: 100%;
+            height: 250px;
+            background-color: #f8f9fa;
+            margin: 15px 0;
+            position: relative;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .graph-axis {
             position: absolute;
-            left: 0;
+            background-color: #6c757d;
+        }
+        
+        .graph-line {
+            position: absolute;
+            height: 2px;
+        }
+        
+        .graph-label {
+            position: absolute;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .attempt-counter {
+            background-color: #f8d7da;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-size: 0.9rem;
+            display: inline-block;
         }
         
         @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
+            .game-container {
+                flex-direction: column;
             }
             
-            .model-selector {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .simulation-controls {
                 flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <h2>IS Curve & Goods Market Equilibrium Simulation</h2>
+            <p>Enter the password to access the simulation:</p>
+            <input type="password" id="passwordInput" placeholder="Enter password">
+            <button onclick="checkPassword()">Enter</button>
+            <p id="passwordError" style="color: red; display: none; margin-top: 10px;">Incorrect password. Try again.</p>
+        </div>
+    </div>
+
+    <div class="container" id="gameContent" style="display: none;">
         <header>
-            <h1>GARCH Family Models Simulation Tool</h1>
-            <p class="subtitle">For Academic Research in Financial Econometrics</p>
+            <h1>IS Curve & Goods Market Equilibrium Simulation</h1>
+            <p>Explore the relationship between interest rates and output in the goods market</p>
         </header>
         
-        <div class="model-selector">
-            <button class="model-btn active" data-model="garch">GARCH</button>
-            <button class="model-btn" data-model="egarch">EGARCH</button>
-            <button class="model-btn" data-model="gjr-garch">GJR-GARCH</button>
-            <button class="model-btn" data-model="dcc-garch">DCC-GARCH</button>
-            <button class="model-btn" data-model="figarch">FIGARCH</button>
+        <div class="score-display">
+            Your Score: <span id="score">0</span>% &nbsp; | &nbsp; 
+            Attempts Remaining: <span id="attempts">3</span> &nbsp; | &nbsp;
+            Time Penalty: <span id="timePenalty">0</span> points
         </div>
         
-        <div class="content">
-            <div class="controls">
-                <div class="form-group">
-                    <label for="model">Model Type</label>
-                    <select id="model">
-                        <option value="garch">GARCH (1,1)</option>
-                        <option value="egarch">EGARCH (1,1)</option>
-                        <option value="gjr-garch">GJR-GARCH (1,1)</option>
-                        <option value="dcc-garch">DCC-GARCH</option>
-                        <option value="figarch">FIGARCH</option>
-                    </select>
+        <div class="game-container">
+            <div class="panel simulation-panel">
+                <h2>Simulation Panel</h2>
+                <p>Make strategic decisions to achieve goods market equilibrium.</p>
+                
+                <div class="concept-definition">
+                    <span class="concept-type">IS Curve Fundamentals:</span>
+                    <div class="is-curve-cards">
+                        <div class="curve-card">
+                            <h4>IS Curve</h4>
+                            <p>Shows equilibrium in goods market</p>
+                            <p>Y = C + I + G</p>
+                        </div>
+                        <div class="curve-card">
+                            <h4>Investment</h4>
+                            <p>I = I₀ - b·r</p>
+                            <p>Inversely related to interest rates</p>
+                        </div>
+                        <div class="curve-card">
+                            <h4>Consumption</h4>
+                            <p>C = C₀ + c·(Y-T)</p>
+                            <p>Depends on disposable income</p>
+                        </div>
+                    </div>
+                    <div class="formula-box">
+                        Y = C₀ + c(Y-T) + I₀ - b·r + G &nbsp;&nbsp; → &nbsp;&nbsp; IS: Y = α(A - b·r)
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="observations">Number of Observations</label>
-                    <input type="number" id="observations" value="1000" min="100" max="10000">
+                <div class="graph-container" id="isCurveGraph">
+                    <!-- IS Curve graph will be drawn here -->
                 </div>
                 
-                <div class="form-group">
-                    <label for="omega">Omega (ω)</label>
-                    <input type="number" id="omega" value="0.1" step="0.01" min="0.01" max="1">
+                <div class="strategy-game">
+                    <h3>Goods Market Equilibrium Challenge</h3>
+                    <p><strong>Scenario:</strong> The economy is experiencing a recessionary gap of $200 billion. Current interest rate is 6%. Your goal: Achieve equilibrium through fiscal policy.</p>
+                    
+                    <div class="economic-indicator">
+                        <p><strong>Current Economic Status:</strong></p>
+                        <div class="indicator-value" id="outputGap">-$200B (Recessionary Gap)</div>
+                        <p>Interest Rate: 6% | MPC: 0.8 | Investment Sensitivity (b): 50</p>
+                    </div>
+                    
+                    <div class="calculator-container">
+                        <h4>Policy Decision Dashboard:</h4>
+                        
+                        <label>Government Spending Change (ΔG in billions):</label>
+                        <input type="number" id="govSpending" class="calculator-input" min="-100" max="100" value="0">
+                        
+                        <label>Tax Change (ΔT in billions, positive for increase):</label>
+                        <input type="number" id="taxChange" class="calculator-input" min="-100" max="100" value="0">
+                        
+                        <label>Interest Rate Change (Δr in percentage points):</label>
+                        <input type="number" id="interestChange" class="calculator-input" min="-5" max="5" step="0.1" value="0">
+                        
+                        <div class="attempt-counter">
+                            Policy Attempts Used: <span id="policyAttempts">0</span>/3
+                        </div>
+                        
+                        <button onclick="calculateISEqulibrium()" style="width: auto;">Analyze Policy Impact</button>
+                    </div>
+                    
+                    <div id="policyResult" class="feedback"></div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="alpha">Alpha (α)</label>
-                    <input type="number" id="alpha" value="0.1" step="0.01" min="0.01" max="0.5">
+                <div class="interactive-simulation">
+                    <h3>IS Curve Shifter Identification</h3>
+                    <p>Identify which factor would shift the IS curve in each scenario:</p>
+                    <div id="currentShiftScenario" class="formula-box">
+                        <strong>Current Scenario:</strong> Consumer confidence increases significantly
+                    </div>
+                    <div class="simulation-controls">
+                        <button class="policy-choice" onclick="checkISShift('right', this)">Shift IS Right</button>
+                        <button class="policy-choice" onclick="checkISShift('left', this)">Shift IS Left</button>
+                        <button class="policy-choice" onclick="checkISShift('nochange', this)">No Shift - Movement Along</button>
+                    </div>
+                    <div id="shiftResult" class="feedback"></div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="beta">Beta (β)</label>
-                    <input type="number" id="beta" value="0.85" step="0.01" min="0.1" max="0.95">
+                <div id="simulationQuestions">
+                    <!-- Questions will be populated by JavaScript -->
                 </div>
-                
-                <div id="additional-params">
-                    <!-- Additional parameters will be added here based on model selection -->
-                </div>
-                
-                <button id="simulate-btn">Run Simulation</button>
             </div>
             
-            <div class="visualization">
-                <canvas id="simulation-chart"></canvas>
+            <div class="panel case-studies">
+                <h2>Case Studies</h2>
+                <p>Examine real-world applications of IS curve analysis.</p>
+                
+                <div class="question">
+                    <p><strong>Case 1:</strong> During the 2001 recession, the Federal Reserve cut interest rates from 6.5% to 1.75% while the government implemented tax cuts. The IS curve shifted rightward.</p>
+                    <p>What was the combined effect of these policies on goods market equilibrium?</p>
+                    <div class="options" id="case1Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback4" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>Case 2:</strong> In 2013, the US government implemented sequestration cuts, reducing government spending by $85 billion. At the same time, consumer confidence was rising.</p>
+                    <p>How did these conflicting forces affect the IS curve position?</p>
+                    <div class="options" id="case2Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback5" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>Case 3:</strong> Japan in the 1990s experienced a "liquidity trap" where interest rates were near zero but investment remained weak due to pessimistic expectations.</p>
+                    <p>Why was monetary policy ineffective in shifting the IS curve in this situation?</p>
+                    <div class="options" id="case3Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback6" class="feedback"></div>
+                </div>
             </div>
-        </div>
-        
-        <div class="model-info">
-            <h2 id="model-title">GARCH Model</h2>
-            <div class="math-formula">
-                <p id="model-formula">$$ \sigma_t^2 = \omega + \alpha \varepsilon_{t-1}^2 + \beta \sigma_{t-1}^2 $$</p>
+            
+            <div class="panel managerial-implications">
+                <h2>Managerial Implications</h2>
+                <p>Understand how IS curve analysis impacts business decisions and strategy.</p>
+                
+                <div class="question">
+                    <p>1. How can businesses use IS curve analysis for investment timing decisions?</p>
+                    <div class="options" id="managerial1Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback7" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>2. Why should companies monitor fiscal policy changes when the IS curve is steep?</p>
+                    <div class="options" id="managerial2Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback8" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>3. How does the slope of the IS curve affect business sensitivity to interest rate changes?</p>
+                    <div class="options" id="managerial3Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback9" class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>4. What strategic advantage comes from anticipating IS curve shifts?</p>
+                    <div class="options" id="managerial4Options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    <div id="feedback10" class="feedback"></div>
+                </div>
+                
+                <div class="economic-indicator">
+                    <h3>Key Business Insights</h3>
+                    <ul>
+                        <li>Steeper IS curves mean investment is less sensitive to interest rates</li>
+                        <li>IS shifts indicate changes in autonomous spending components</li>
+                        <li>Fiscal policy directly shifts the IS curve</li>
+                        <li>Monetary policy causes movements along the IS curve</li>
+                        <li>Expectations can cause significant IS curve shifts</li>
+                    </ul>
+                </div>
             </div>
-            <p id="model-description">
-                The Generalized Autoregressive Conditional Heteroskedasticity (GARCH) model, introduced by Bollerslev (1986), 
-                extends the ARCH model by including lagged conditional variances. This allows for a more parsimonious representation 
-                of persistent volatility clustering commonly observed in financial time series.
-            </p>
-        </div>
-        
-        <div class="references">
-            <h2>Key References</h2>
-            <ul>
-                <li>Bollerslev, T. (1986). Generalized autoregressive conditional heteroskedasticity. Journal of Econometrics, 31(3), 307-327.</li>
-                <li>Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. Econometrica, 50(4), 987-1007.</li>
-                <li>Nelson, D. B. (1991). Conditional heteroskedasticity in asset returns: A new approach. Econometrica, 59(2), 347-370.</li>
-                <li>Glosten, L. R., Jagannathan, R., & Runkle, D. E. (1993). On the relation between the expected value and the volatility of the nominal excess return on stocks. The Journal of Finance, 48(5), 1779-1801.</li>
-                <li>Engle, R. F. (2002). Dynamic conditional correlation: A simple class of multivariate generalized autoregressive conditional heteroskedasticity models. Journal of Business & Economic Statistics, 20(3), 339-350.</li>
-                <li>Baillie, R. T., Bollerslev, T., & Mikkelsen, H. O. (1996). Fractionally integrated generalized autoregressive conditional heteroskedasticity. Journal of Econometrics, 74(1), 3-30.</li>
-            </ul>
         </div>
     </div>
 
     <script>
-        // Model information
-        const models = {
-            garch: {
-                title: "GARCH Model",
-                formula: "$$ \\sigma_t^2 = \\omega + \\alpha \\varepsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2 $$",
-                description: "The Generalized Autoregressive Conditional Heteroskedasticity (GARCH) model, introduced by Bollerslev (1986), extends the ARCH model by including lagged conditional variances. This allows for a more parsimonious representation of persistent volatility clustering commonly observed in financial time series."
-            },
-            egarch: {
-                title: "EGARCH Model",
-                formula: "$$ \\ln(\\sigma_t^2) = \\omega + \\alpha \\left|\\frac{\\varepsilon_{t-1}}{\\sigma_{t-1}}\\right| + \\gamma \\frac{\\varepsilon_{t-1}}{\\sigma_{t-1}} + \\beta \\ln(\\sigma_{t-1}^2) $$",
-                description: "The Exponential GARCH (EGARCH) model, proposed by Nelson (1991), models the logarithm of conditional variance. This formulation ensures that variance remains positive without parameter restrictions and allows for asymmetric effects of positive and negative shocks on volatility."
-            },
-            "gjr-garch": {
-                title: "GJR-GARCH Model",
-                formula: "$$ \\sigma_t^2 = \\omega + (\\alpha + \\gamma I_{t-1}) \\varepsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2 $$",
-                description: "The GJR-GARCH model, developed by Glosten, Jagannathan, and Runkle (1993), extends GARCH to account for leverage effects. It includes an indicator function that differentiates between positive and negative shocks, allowing for asymmetric volatility responses."
-            },
-            "dcc-garch": {
-                title: "DCC-GARCH Model",
-                formula: "$$ Q_t = (1 - \\theta_1 - \\theta_2) \\bar{Q} + \\theta_1 \\varepsilon_{t-1} \\varepsilon_{t-1}' + \\theta_2 Q_{t-1} $$",
-                description: "The Dynamic Conditional Correlation GARCH (DCC-GARCH) model, introduced by Engle (2002), is a multivariate GARCH specification that allows time-varying correlations between multiple assets while keeping the model computationally tractable."
-            },
-            figarch: {
-                title: "FIGARCH Model",
-                formula: "$$ \\sigma_t^2 = \\omega + [1 - \\beta(L) - \\phi(L)(1-L)^d] \\varepsilon_t^2 + \\beta(L) \\sigma_t^2 $$",
-                description: "The Fractionally Integrated GARCH (FIGARCH) model, proposed by Baillie, Bollerslev, and Mikkelsen (1996), incorporates long memory in volatility by using fractional integration. This allows for slow hyperbolic decay in the autocorrelation of squared returns."
-            }
-        };
-
-        // DOM elements
-        const modelButtons = document.querySelectorAll('.model-btn');
-        const modelSelect = document.getElementById('model');
-        const modelTitle = document.getElementById('model-title');
-        const modelFormula = document.getElementById('model-formula');
-        const modelDescription = document.getElementById('model-description');
-        const additionalParams = document.getElementById('additional-params');
-        const simulateBtn = document.getElementById('simulate-btn');
+        // Password protection
+        const correctPassword = "ISCurve2023";
+        let score = 0;
+        let attempts = 3;
+        let timePenalty = 0;
+        let policyAttempts = 0;
+        const maxPossibleScore = 95; // Ensures no one can score 100%
+        let startTime = null;
+        let answeredQuestions = new Set();
         
-        // Chart initialization
-        const ctx = document.getElementById('simulation-chart').getContext('2d');
-        let simulationChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [
-                    {
-                        label: 'Returns',
-                        data: [],
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                        borderWidth: 1,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'Volatility',
-                        data: [],
-                        borderColor: 'rgb(255, 99, 132)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                        borderWidth: 1,
-                        tension: 0.1
-                    }
-                ]
+        // Questions with randomized answer positions
+        const questions = [
+            {
+                id: 1,
+                text: "The IS curve shows combinations of interest rates and output where:",
+                options: [
+                    "Money market is in equilibrium",
+                    "Goods market is in equilibrium",
+                    "Both goods and money markets are in equilibrium",
+                    "Unemployment is at natural rate"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Correct! The IS curve represents goods market equilibrium where planned spending equals output.",
+                    incorrect: "Incorrect. The IS curve specifically shows goods market equilibrium, not money market or other conditions."
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Time'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Value'
-                        }
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'GARCH Simulation Results'
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
+            {
+                id: 2,
+                text: "What happens to the IS curve when government spending increases?",
+                options: [
+                    "It shifts to the left",
+                    "It becomes steeper",
+                    "It shifts to the right",
+                    "It becomes flatter"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Right! Increased government spending raises aggregate demand, shifting the IS curve rightward at every interest rate.",
+                    incorrect: "Remember: Increases in autonomous spending components shift the IS curve to the right."
+                }
+            },
+            {
+                id: 3,
+                text: "If investment becomes more sensitive to interest rates, the IS curve:",
+                options: [
+                    "Shifts to the right",
+                    "Shifts to the left",
+                    "Becomes steeper",
+                    "Becomes flatter"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Yes! Higher interest rate sensitivity means investment changes more for a given rate change, making the IS curve flatter.",
+                    incorrect: "When investment is more responsive to interest rates, the IS curve becomes flatter, not steeper."
+                }
+            },
+            {
+                id: 4,
+                text: "In Case 1, what was the 2001 policy combination effect?",
+                options: [
+                    "IS shifted left, lowering equilibrium output",
+                    "IS shifted right, raising equilibrium output",
+                    "Movement along IS with no shift",
+                    "IS became steeper with uncertain output effect"
+                ],
+                correct: 1,
+                feedback: {
+                    correct: "Exactly! Both interest rate cuts and tax cuts stimulated demand, shifting IS right and increasing equilibrium output.",
+                    incorrect: "The combination of expansionary monetary and fiscal policy shifted the IS curve rightward."
+                }
+            },
+            {
+                id: 5,
+                text: "In Case 2, what was the net effect on IS curve?",
+                options: [
+                    "Definite rightward shift",
+                    "Definite leftward shift",
+                    "Uncertain net shift direction",
+                    "No shift - effects canceled perfectly"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Right! Conflicting forces made the net shift uncertain without knowing the magnitude of each effect.",
+                    incorrect: "With opposing forces (spending cuts vs confidence increase), the net IS shift direction was uncertain."
+                }
+            },
+            {
+                id: 6,
+                text: "In Case 3, why was monetary policy ineffective?",
+                options: [
+                    "Interest rates couldn't fall below zero",
+                    "Investment was insensitive to interest rates due to expectations",
+                    "Both A and B",
+                    "Government spending was too high"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Correct! The zero lower bound and investment insensitivity due to pessimism made monetary policy ineffective.",
+                    incorrect: "Both the zero lower bound and expectations-driven investment insensitivity contributed to policy ineffectiveness."
+                }
+            },
+            {
+                id: 7,
+                text: "How can businesses use IS analysis for timing?",
+                options: [
+                    "Predict interest rate impacts on their sector",
+                    "Anticipate fiscal policy effects on demand",
+                    "Time capital investments strategically",
+                    "All of the above"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Yes! All these applications help businesses make better timing decisions.",
+                    incorrect: "IS analysis helps with interest rate predictions, demand forecasting, and investment timing."
+                }
+            },
+            {
+                id: 8,
+                text: "Why monitor fiscal policy with steep IS curves?",
+                options: [
+                    "Fiscal policy has larger output effects when IS is steep",
+                    "Monetary policy is more effective",
+                    "Interest rates don't matter",
+                    "Investment is always stable"
+                ],
+                correct: 0,
+                feedback: {
+                    correct: "Right! With steep IS curves (interest-insensitive investment), fiscal policy has stronger output effects.",
+                    incorrect: "Steep IS curves mean fiscal policy has greater impact, making it more important to monitor."
+                }
+            },
+            {
+                id: 9,
+                text: "How does IS slope affect business sensitivity?",
+                options: [
+                    "Steeper IS means less sensitivity to interest rates",
+                    "Flatter IS means more sensitivity to interest rates",
+                    "Both A and B",
+                    "IS slope doesn't affect business decisions"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Correct! Both statements are true - slope indicates interest rate sensitivity.",
+                    incorrect: "The IS slope directly indicates how sensitive the economy is to interest rate changes."
+                }
+            },
+            {
+                id: 10,
+                text: "What advantage from anticipating IS shifts?",
+                options: [
+                    "First-mover advantage in changing business strategy",
+                    "Better inventory management",
+                    "More accurate revenue forecasting",
+                    "All of the above"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Yes! All these strategic advantages come from anticipating IS curve movements.",
+                    incorrect: "Anticipating IS shifts helps with strategy, inventory, and forecasting decisions."
                 }
             }
-        });
+        ];
 
-        // Update model information based on selection
-        function updateModelInfo(model) {
-            modelTitle.textContent = models[model].title;
-            modelFormula.innerHTML = models[model].formula;
-            modelDescription.textContent = models[model].description;
-            
-            // Update additional parameters based on model
-            additionalParams.innerHTML = '';
-            
-            if (model === 'egarch') {
-                additionalParams.innerHTML = `
-                    <div class="form-group">
-                        <label for="gamma">Gamma (γ)</label>
-                        <input type="number" id="gamma" value="0.1" step="0.01" min="-0.5" max="0.5">
-                    </div>
-                `;
-            } else if (model === 'gjr-garch') {
-                additionalParams.innerHTML = `
-                    <div class="form-group">
-                        <label for="gamma">Gamma (γ)</label>
-                        <input type="number" id="gamma" value="0.05" step="0.01" min="0" max="0.5">
-                    </div>
-                `;
-            } else if (model === 'dcc-garch') {
-                additionalParams.innerHTML = `
-                    <div class="form-group">
-                        <label for="theta1">Theta 1 (θ₁)</label>
-                        <input type="number" id="theta1" value="0.05" step="0.01" min="0" max="0.5">
-                    </div>
-                    <div class="form-group">
-                        <label for="theta2">Theta 2 (θ₂)</label>
-                        <input type="number" id="theta2" value="0.9" step="0.01" min="0" max="0.95">
-                    </div>
-                `;
-            } else if (model === 'figarch') {
-                additionalParams.innerHTML = `
-                    <div class="form-group">
-                        <label for="d">Fractional Parameter (d)</label>
-                        <input type="number" id="d" value="0.5" step="0.01" min="0" max="1">
-                    </div>
-                `;
-            }
-            
-            // Re-render MathJax
-            if (window.MathJax) {
-                MathJax.typeset();
-            }
-        }
-
-        // GARCH simulation function
-        function simulateGARCH(omega, alpha, beta, n) {
-            const returns = new Array(n);
-            const volatility = new Array(n);
-            
-            // Initialize
-            returns[0] = 0;
-            volatility[0] = Math.sqrt(omega / (1 - alpha - beta));
-            
-            // Generate the series
-            for (let i = 1; i < n; i++) {
-                volatility[i] = Math.sqrt(omega + alpha * Math.pow(returns[i-1], 2) + beta * Math.pow(volatility[i-1], 2));
-                returns[i] = volatility[i] * (Math.random() - 0.5) * 3.46; // Approximate standard normal
-            }
-            
-            return { returns, volatility };
-        }
-
-        // EGARCH simulation function
-        function simulateEGARCH(omega, alpha, beta, gamma, n) {
-            const returns = new Array(n);
-            const volatility = new Array(n);
-            
-            // Initialize
-            returns[0] = 0;
-            volatility[0] = Math.exp(omega / 2);
-            
-            // Generate the series
-            for (let i = 1; i < n; i++) {
-                const z = returns[i-1] / volatility[i-1];
-                const logVol = omega + alpha * (Math.abs(z) - Math.sqrt(2/Math.PI)) + gamma * z + beta * Math.log(volatility[i-1]);
-                volatility[i] = Math.exp(logVol / 2);
-                returns[i] = volatility[i] * (Math.random() - 0.5) * 3.46; // Approximate standard normal
-            }
-            
-            return { returns, volatility };
-        }
-
-        // GJR-GARCH simulation function
-        function simulateGJRGARCH(omega, alpha, beta, gamma, n) {
-            const returns = new Array(n);
-            const volatility = new Array(n);
-            
-            // Initialize
-            returns[0] = 0;
-            volatility[0] = Math.sqrt(omega / (1 - alpha - beta - gamma/2));
-            
-            // Generate the series
-            for (let i = 1; i < n; i++) {
-                const indicator = returns[i-1] < 0 ? 1 : 0;
-                volatility[i] = Math.sqrt(omega + (alpha + gamma * indicator) * Math.pow(returns[i-1], 2) + beta * Math.pow(volatility[i-1], 2));
-                returns[i] = volatility[i] * (Math.random() - 0.5) * 3.46; // Approximate standard normal
-            }
-            
-            return { returns, volatility };
-        }
-
-        // DCC-GARCH simulation function (simplified)
-        function simulateDCCGARCH(omega, alpha, beta, theta1, theta2, n) {
-            // For simplicity, we'll simulate two correlated assets
-            const returns1 = new Array(n);
-            const returns2 = new Array(n);
-            const volatility1 = new Array(n);
-            const volatility2 = new Array(n);
-            const correlation = new Array(n);
-            
-            // Initialize
-            returns1[0] = 0;
-            returns2[0] = 0;
-            volatility1[0] = Math.sqrt(omega / (1 - alpha - beta));
-            volatility2[0] = Math.sqrt(omega / (1 - alpha - beta));
-            correlation[0] = 0.5;
-            
-            // Generate the series
-            for (let i = 1; i < n; i++) {
-                // Update volatilities (using GARCH for each asset)
-                volatility1[i] = Math.sqrt(omega + alpha * Math.pow(returns1[i-1], 2) + beta * Math.pow(volatility1[i-1], 2));
-                volatility2[i] = Math.sqrt(omega + alpha * Math.pow(returns2[i-1], 2) + beta * Math.pow(volatility2[i-1], 2));
-                
-                // Update correlation (simplified DCC process)
-                correlation[i] = (1 - theta1 - theta2) * 0.5 + theta1 * 
-                                (returns1[i-1]/volatility1[i-1]) * (returns2[i-1]/volatility2[i-1]) + 
-                                theta2 * correlation[i-1];
-                
-                // Generate correlated returns
-                const z1 = (Math.random() - 0.5) * 3.46;
-                const z2 = correlation[i] * z1 + Math.sqrt(1 - Math.pow(correlation[i], 2)) * (Math.random() - 0.5) * 3.46;
-                
-                returns1[i] = volatility1[i] * z1;
-                returns2[i] = volatility2[i] * z2;
-            }
-            
-            // For visualization, we'll just return the first asset
-            return { returns: returns1, volatility: volatility1 };
-        }
-
-        // FIGARCH simulation function (simplified)
-        function simulateFIGARCH(omega, alpha, beta, d, n) {
-            const returns = new Array(n);
-            const volatility = new Array(n);
-            
-            // Initialize
-            returns[0] = 0;
-            volatility[0] = Math.sqrt(omega / (1 - alpha - beta));
-            
-            // Generate the series (simplified implementation)
-            for (let i = 1; i < n; i++) {
-                // Simplified FIGARCH - in practice, this would require fractional differencing
-                volatility[i] = Math.sqrt(omega + alpha * Math.pow(returns[i-1], 2) + beta * Math.pow(volatility[i-1], 2));
-                returns[i] = volatility[i] * (Math.random() - 0.5) * 3.46;
-            }
-            
-            return { returns, volatility };
-        }
-
-        // Run simulation based on selected model
-        function runSimulation() {
-            const model = modelSelect.value;
-            const n = parseInt(document.getElementById('observations').value);
-            const omega = parseFloat(document.getElementById('omega').value);
-            const alpha = parseFloat(document.getElementById('alpha').value);
-            const beta = parseFloat(document.getElementById('beta').value);
-            
-            let result;
-            
-            switch(model) {
-                case 'garch':
-                    result = simulateGARCH(omega, alpha, beta, n);
-                    break;
-                case 'egarch':
-                    const gammaEG = parseFloat(document.getElementById('gamma').value);
-                    result = simulateEGARCH(omega, alpha, beta, gammaEG, n);
-                    break;
-                case 'gjr-garch':
-                    const gammaGJR = parseFloat(document.getElementById('gamma').value);
-                    result = simulateGJRGARCH(omega, alpha, beta, gammaGJR, n);
-                    break;
-                case 'dcc-garch':
-                    const theta1 = parseFloat(document.getElementById('theta1').value);
-                    const theta2 = parseFloat(document.getElementById('theta2').value);
-                    result = simulateDCCGARCH(omega, alpha, beta, theta1, theta2, n);
-                    break;
-                case 'figarch':
-                    const d = parseFloat(document.getElementById('d').value);
-                    result = simulateFIGARCH(omega, alpha, beta, d, n);
-                    break;
-                default:
-                    result = simulateGARCH(omega, alpha, beta, n);
-            }
-            
-            // Update chart
-            const labels = Array.from({length: n}, (_, i) => i);
-            simulationChart.data.labels = labels;
-            simulationChart.data.datasets[0].data = result.returns;
-            simulationChart.data.datasets[1].data = result.volatility;
-            simulationChart.update();
-        }
-
-        // Event listeners
-        modelButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                modelButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                modelSelect.value = button.dataset.model;
-                updateModelInfo(button.dataset.model);
-            });
-        });
-
-        modelSelect.addEventListener('change', () => {
-            modelButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.model === modelSelect.value);
-            });
-            updateModelInfo(modelSelect.value);
-        });
-
-        simulateBtn.addEventListener('click', runSimulation);
-
-        // Initialize with GARCH model
-        updateModelInfo('garch');
+        // IS shift scenarios for practice
+        const shiftScenarios = [
+            { scenario: "Consumer confidence increases significantly", correct: "right" },
+            { scenario: "Government implements austerity spending cuts", correct: "left" },
+            { scenario: "Central bank raises interest rates", correct: "nochange" },
+            { scenario: "Business taxes are reduced", correct: "right" },
+            { scenario: "Households become more pessimistic about future income", correct: "left" },
+            { scenario: "Central bank lowers interest rates", correct: "nochange" }
+        ];
         
-        // Run initial simulation
-        setTimeout(runSimulation, 500);
+        let currentScenarioIndex = 0;
+        let currentGap = -200; // $200 billion recessionary gap
+        
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === correctPassword) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('gameContent').style.display = 'block';
+                startTime = Date.now();
+                initializeGame();
+                drawISCurve();
+                updateDisplay();
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+            }
+        }
+        
+        function initializeGame() {
+            // Shuffle questions and create HTML
+            const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            
+            // Populate simulation questions (first 3)
+            const simulationContainer = document.getElementById('simulationQuestions');
+            shuffledQuestions.slice(0, 3).forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <p>${q.text}</p>
+                    <div class="options" id="options${q.id}"></div>
+                    <div id="feedback${q.id}" class="feedback"></div>
+                `;
+                simulationContainer.appendChild(questionDiv);
+                
+                // Shuffle and populate options
+                const optionsContainer = document.getElementById(`options${q.id}`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        if (!answeredQuestions.has(q.id)) {
+                            answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
+                            answeredQuestions.add(q.id);
+                        }
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+            
+            // Populate case study questions (next 3)
+            const caseQuestions = shuffledQuestions.slice(3, 6);
+            caseQuestions.forEach((q, index) => {
+                const caseNum = index + 4;
+                const optionsContainer = document.getElementById(`case${caseNum-3}Options`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        if (!answeredQuestions.has(q.id)) {
+                            answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
+                            answeredQuestions.add(q.id);
+                        }
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+            
+            // Populate managerial questions (last 4)
+            const managerialQuestions = shuffledQuestions.slice(6);
+            managerialQuestions.forEach((q, index) => {
+                const managerialNum = index + 7;
+                const optionsContainer = document.getElementById(`managerial${managerialNum-6}Options`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
+                
+                shuffledOptions.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = function() { 
+                        if (!answeredQuestions.has(q.id)) {
+                            answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
+                            answeredQuestions.add(q.id);
+                        }
+                    };
+                    optionsContainer.appendChild(button);
+                });
+            });
+        }
+        
+        function drawISCurve() {
+            const graph = document.getElementById('isCurveGraph');
+            const width = graph.offsetWidth;
+            const height = graph.offsetHeight;
+            
+            // Clear previous graph
+            graph.innerHTML = '';
+            
+            // Draw axes
+            const xAxis = document.createElement('div');
+            xAxis.className = 'graph-axis';
+            xAxis.style.width = width - 40 + 'px';
+            xAxis.style.height = '2px';
+            xAxis.style.bottom = '40px';
+            xAxis.style.left = '40px';
+            graph.appendChild(xAxis);
+            
+            const yAxis = document.createElement('div');
+            yAxis.className = 'graph-axis';
+            yAxis.style.width = '2px';
+            yAxis.style.height = height - 40 + 'px';
+            yAxis.style.left = '40px';
+            yAxis.style.bottom = '40px';
+            graph.appendChild(yAxis);
+            
+            // Draw IS curve (downward sloping)
+            for (let i = 0; i < width - 60; i += 2) {
+                const point = document.createElement('div');
+                point.className = 'graph-line';
+                point.style.width = '2px';
+                point.style.height = '2px';
+                point.style.left = (40 + i) + 'px';
+                point.style.bottom = (40 + (width - 60 - i) * 0.3) + 'px';
+                point.style.backgroundColor = '#e74c3c';
+                graph.appendChild(point);
+            }
+            
+            // Add labels
+            const rLabel = document.createElement('div');
+            rLabel.className = 'graph-label';
+            rLabel.textContent = 'Interest Rate (r)';
+            rLabel.style.left = '20px';
+            rLabel.style.top = '10px';
+            graph.appendChild(rLabel);
+            
+            const yLabel = document.createElement('div');
+            yLabel.className = 'graph-label';
+            yLabel.textContent = 'Output (Y)';
+            yLabel.style.right = '10px';
+            yLabel.style.bottom = '20px';
+            graph.appendChild(yLabel);
+            
+            const isLabel = document.createElement('div');
+            isLabel.className = 'graph-label';
+            isLabel.textContent = 'IS';
+            isLabel.style.right = '30px';
+            isLabel.style.top = '30px';
+            isLabel.style.color = '#e74c3c';
+            graph.appendChild(isLabel);
+            
+            // Add equilibrium point
+            const eqPoint = document.createElement('div');
+            eqPoint.style.position = 'absolute';
+            eqPoint.style.width = '8px';
+            eqPoint.style.height = '8px';
+            eqPoint.style.backgroundColor = '#2ecc71';
+            eqPoint.style.borderRadius = '50%';
+            eqPoint.style.left = (width * 0.6 - 4) + 'px';
+            eqPoint.style.bottom = (40 + (width - 60 - width * 0.6) * 0.3 - 4) + 'px';
+            graph.appendChild(eqPoint);
+        }
+        
+        function calculateISEqulibrium() {
+            if (policyAttempts >= 3) {
+                document.getElementById('policyResult').innerHTML = 
+                    "<strong>No more attempts!</strong> You've used all 3 policy attempts. Your final score has been calculated.";
+                document.getElementById('policyResult').className = 'feedback incorrect';
+                return;
+            }
+            
+            const govSpending = parseFloat(document.getElementById('govSpending').value) || 0;
+            const taxChange = parseFloat(document.getElementById('taxChange').value) || 0;
+            const interestChange = parseFloat(document.getElementById('interestChange').value) || 0;
+            
+            policyAttempts++;
+            document.getElementById('policyAttempts').textContent = policyAttempts;
+            
+            // Calculate impacts
+            const mpc = 0.8;
+            const b = 50; // Investment sensitivity to interest rates
+            
+            // Government spending multiplier
+            const govMultiplier = 1 / (1 - mpc); // 5
+            const govImpact = govSpending * govMultiplier;
+            
+            // Tax multiplier
+            const taxMultiplier = -mpc / (1 - mpc); // -4
+            const taxImpact = taxChange * taxMultiplier;
+            
+            // Interest rate impact on investment
+            const interestImpact = -b * interestChange * govMultiplier;
+            
+            const totalImpact = govImpact + taxImpact + interestImpact;
+            const newGap = currentGap + totalImpact;
+            
+            // Calculate score based on closing the gap
+            const gapReduction = Math.abs(totalImpact);
+            const effectiveness = Math.min(100, (gapReduction / 200) * 100);
+            
+            // Strategy bonus for using appropriate policy mix
+            let strategyBonus = 0;
+            if (currentGap < 0 && totalImpact > 0) strategyBonus = 10; // Expansionary policy for recession
+            if (currentGap > 0 && totalImpact < 0) strategyBonus = 10; // Contractionary policy for inflation
+            
+            // Efficiency penalty for over-shooting
+            const efficiencyPenalty = Math.max(0, Math.abs(newGap) - 50) * 0.5;
+            
+            const pointsEarned = Math.floor(effectiveness / 5) + strategyBonus - efficiencyPenalty;
+            score += Math.max(0, pointsEarned);
+            
+            updateDisplay();
+            
+            document.getElementById('policyResult').innerHTML = `
+                <strong>Policy Impact Analysis:</strong><br>
+                Government Spending Impact: $${govImpact.toFixed(1)}B<br>
+                Tax Change Impact: $${taxImpact.toFixed(1)}B<br>
+                Interest Rate Impact: $${interestImpact.toFixed(1)}B<br>
+                <strong>Total Impact: $${totalImpact.toFixed(1)}B</strong><br>
+                New Output Gap: $${newGap.toFixed(1)}B<br>
+                Points Earned: ${pointsEarned.toFixed(1)}<br>
+                <em>${newGap > -10 && newGap < 10 ? 'Excellent! Near equilibrium!' : 
+                     Math.abs(newGap) < 50 ? 'Good progress!' : 
+                     'Keep adjusting your policy mix.'}</em>
+            `;
+            
+            if (Math.abs(newGap) < 10) {
+                document.getElementById('policyResult').className = 'feedback correct';
+                // Bonus for achieving equilibrium
+                score += 15;
+                updateDisplay();
+            } else if (Math.abs(newGap) < 50) {
+                document.getElementById('policyResult').className = 'feedback correct';
+            } else {
+                document.getElementById('policyResult').className = 'feedback incorrect';
+            }
+            
+            // Update current gap for next iteration
+            currentGap = newGap;
+            document.getElementById('outputGap').textContent = 
+                `${newGap >= 0 ? '+' : ''}$${newGap.toFixed(1)}B ${newGap < 0 ? 'Recessionary' : 'Inflationary'} Gap`;
+        }
+        
+        function checkISShift(direction, button) {
+            if (answeredQuestions.has('shift' + currentScenarioIndex)) {
+                return; // Already answered this scenario
+            }
+            
+            const resultElement = document.getElementById('shiftResult');
+            const correctDirection = shiftScenarios[currentScenarioIndex].correct;
+            
+            if (direction === correctDirection) {
+                resultElement.innerHTML = `
+                    <strong>Correct!</strong> ${getShiftExplanation(correctDirection)}
+                `;
+                resultElement.className = 'feedback correct';
+                
+                // Add to score for correct identification (with diminishing returns)
+                const points = Math.max(2, 10 - (answeredQuestions.size * 2));
+                score += points;
+                answeredQuestions.add('shift' + currentScenarioIndex);
+            } else {
+                resultElement.innerHTML = `
+                    <strong>Incorrect.</strong> ${getShiftExplanation(correctDirection)}
+                `;
+                resultElement.className = 'feedback incorrect';
+                
+                // Small penalty for incorrect answers
+                attempts--;
+                score = Math.max(0, score - 2);
+            }
+            
+            updateDisplay();
+            
+            // Move to next scenario after a delay
+            setTimeout(nextShiftScenario, 2500);
+        }
+        
+        function getShiftExplanation(direction) {
+            const explanations = {
+                'right': 'This increases autonomous spending, shifting IS rightward at every interest rate.',
+                'left': 'This decreases autonomous spending, shifting IS leftward at every interest rate.',
+                'nochange': 'This causes movement along the IS curve, not a shift of the curve itself.'
+            };
+            return explanations[direction];
+        }
+        
+        function nextShiftScenario() {
+            currentScenarioIndex = (currentScenarioIndex + 1) % shiftScenarios.length;
+            const scenarioElement = document.getElementById('currentShiftScenario');
+            scenarioElement.innerHTML = `
+                <strong>Current Scenario:</strong> ${shiftScenarios[currentScenarioIndex].scenario}
+            `;
+            
+            // Clear the previous result
+            document.getElementById('shiftResult').innerHTML = '';
+            document.getElementById('shiftResult').className = 'feedback';
+        }
+        
+        function updateDisplay() {
+            // Update score display (capped at maxPossibleScore)
+            const displayScore = Math.min(score, maxPossibleScore);
+            document.getElementById('score').textContent = displayScore;
+            document.getElementById('attempts').textContent = attempts;
+            
+            // Calculate time penalty
+            if (startTime) {
+                const timeElapsed = Math.floor((Date.now() - startTime) / 60000); // minutes
+                timePenalty = Math.min(20, Math.floor(timeElapsed / 2)); // 1 point per 2 minutes, max 20
+                document.getElementById('timePenalty').textContent = timePenalty;
+            }
+            
+            // Apply time penalty to final score display
+            const finalScore = Math.max(0, displayScore - timePenalty);
+            document.getElementById('score').textContent = finalScore;
+            
+            // Check if game should end
+            if (attempts <= 0 || policyAttempts >= 3) {
+                endGame();
+            }
+        }
+        
+        function endGame() {
+            const finalScore = Math.min(maxPossibleScore, Math.max(0, score - timePenalty));
+            document.getElementById('score').textContent = finalScore;
+            
+            // Disable all interactive elements
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(btn => btn.disabled = true);
+            
+            const allInputs = document.querySelectorAll('input');
+            allInputs.forEach(input => input.disabled = true);
+            
+            document.getElementById('policyResult').innerHTML += 
+                `<br><br><strong>Game Over! Final Score: ${finalScore}%</strong>`;
+        }
+        
+        function answerQuestion(questionId, isCorrect, button, feedback) {
+            if (answeredQuestions.has(questionId)) {
+                return; // Already answered this question
+            }
+            
+            const feedbackElement = document.getElementById(`feedback${questionId}`);
+            
+            if (isCorrect) {
+                // Correct answer
+                feedbackElement.innerHTML = feedback.correct;
+                feedbackElement.className = 'feedback correct';
+                
+                // Points with diminishing returns for multiple quick answers
+                const basePoints = 10;
+                const timeSinceStart = Date.now() - startTime;
+                const speedBonus = timeSinceStart < 120000 ? 5 : 0; // Bonus if answered in first 2 minutes
+                const points = basePoints + speedBonus - (answeredQuestions.size * 2);
+                
+                score += Math.max(2, points);
+                answeredQuestions.add(questionId);
+            } else {
+                // Incorrect answer
+                feedbackElement.innerHTML = feedback.incorrect;
+                feedbackElement.className = 'feedback incorrect';
+                
+                // Penalty for incorrect answers
+                attempts--;
+                score = Math.max(0, score - 3);
+                answeredQuestions.add(questionId); // Count attempt even if wrong
+            }
+            
+            updateDisplay();
+            
+            // Disable all buttons for this question
+            const buttons = button.parentElement.getElementsByTagName('button');
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+        }
+        
+        // Initialize the first scenario
+        window.onload = function() {
+            if (document.getElementById('currentShiftScenario')) {
+                document.getElementById('currentShiftScenario').innerHTML = `
+                    <strong>Current Scenario:</strong> ${shiftScenarios[0].scenario}
+                `;
+            }
+        };
     </script>
 </body>
 </html>
