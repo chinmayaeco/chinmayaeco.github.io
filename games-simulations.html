@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LM Curve & Money Market Equilibrium Simulation</title>
+    <title>IS-LM Curve Equilibrium Simulation</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+            background: linear-gradient(135deg, #1a237e 0%, #4a148c 50%, #880e4f 100%);
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -191,7 +191,7 @@
             color: #2c3e50;
         }
         
-        .lm-curve-cards {
+        .islm-cards {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -256,7 +256,7 @@
             border-radius: 5px;
             margin: 10px 0;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             border: 2px solid #3498db;
         }
@@ -270,7 +270,7 @@
         }
         
         .indicator-value {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #e74c3c;
             text-align: center;
@@ -295,7 +295,7 @@
         
         .graph-container {
             width: 100%;
-            height: 250px;
+            height: 300px;
             background-color: #f8f9fa;
             margin: 15px 0;
             position: relative;
@@ -320,6 +320,43 @@
             font-weight: bold;
         }
         
+        .equilibrium-point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .policy-tabs {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .policy-tab {
+            padding: 10px 15px;
+            background-color: #e8f4fc;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .policy-tab.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .policy-content {
+            display: none;
+        }
+        
+        .policy-content.active {
+            display: block;
+        }
+        
         .attempt-counter {
             background-color: #f8d7da;
             padding: 5px 10px;
@@ -327,16 +364,6 @@
             margin: 5px 0;
             font-size: 0.9rem;
             display: inline-block;
-        }
-        
-        .penalty-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 8px;
-            border-radius: 4px;
-            margin: 5px 0;
-            font-size: 0.9rem;
-            border-left: 4px solid #ffc107;
         }
         
         @media (max-width: 768px) {
@@ -351,13 +378,17 @@
             .simulation-controls {
                 flex-direction: column;
             }
+            
+            .policy-tabs {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>LM Curve & Money Market Equilibrium Simulation</h2>
+            <h2>IS-LM Curve Equilibrium Simulation</h2>
             <p>Enter the password to access the simulation:</p>
             <input type="password" id="passwordInput" placeholder="Enter password">
             <button onclick="checkPassword()">Enter</button>
@@ -367,98 +398,129 @@
 
     <div class="container" id="gameContent" style="display: none;">
         <header>
-            <h1>LM Curve & Money Market Equilibrium Simulation</h1>
-            <p>Explore the relationship between interest rates and output in the money market</p>
+            <h1>IS-LM Curve Equilibrium Simulation</h1>
+            <p>Explore simultaneous equilibrium in goods and money markets through strategic policy decisions</p>
         </header>
         
         <div class="score-display">
             Your Score: <span id="score">0</span>% &nbsp; | &nbsp; 
-            Attempts Remaining: <span id="attempts">3</span> &nbsp; | &nbsp;
-            Time Penalty: <span id="timePenalty">0</span> points &nbsp; | &nbsp;
-            Quick Click Penalty: <span id="clickPenalty">0</span> points
+            Policy Attempts: <span id="policyAttempts">0</span>/5 &nbsp; | &nbsp;
+            Equilibrium Status: <span id="equilibriumStatus">Not Achieved</span>
         </div>
         
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Make strategic monetary policy decisions to achieve money market equilibrium.</p>
+                <p>Make strategic fiscal and monetary policy decisions to achieve simultaneous equilibrium.</p>
                 
                 <div class="concept-definition">
-                    <span class="concept-type">LM Curve Fundamentals:</span>
-                    <div class="lm-curve-cards">
+                    <span class="concept-type">IS-LM Model Fundamentals:</span>
+                    <div class="islm-cards">
+                        <div class="curve-card">
+                            <h4>IS Curve</h4>
+                            <p>Goods Market Equilibrium</p>
+                            <p>Y = C + I + G</p>
+                        </div>
                         <div class="curve-card">
                             <h4>LM Curve</h4>
-                            <p>Shows equilibrium in money market</p>
+                            <p>Money Market Equilibrium</p>
                             <p>M/P = L(Y, r)</p>
                         </div>
                         <div class="curve-card">
-                            <h4>Money Demand</h4>
-                            <p>L = kY - hr</p>
-                            <p>Transactions + Speculative demand</p>
-                        </div>
-                        <div class="curve-card">
-                            <h4>Money Supply</h4>
-                            <p>Controlled by central bank</p>
-                            <p>M/P (real money supply)</p>
+                            <h4>Equilibrium</h4>
+                            <p>Both Markets Clear</p>
+                            <p>IS = LM</p>
                         </div>
                     </div>
                     <div class="formula-box">
-                        M/P = kY - h·r &nbsp;&nbsp; → &nbsp;&nbsp; LM: r = (k/h)Y - (1/h)(M/P)
+                        IS: Y = α(A - b·r) &nbsp;&nbsp; LM: r = (k/h)Y - (1/h)(M/P)
                     </div>
                 </div>
                 
-                <div class="graph-container" id="lmCurveGraph">
-                    <!-- LM Curve graph will be drawn here -->
+                <div class="graph-container" id="islmGraph">
+                    <!-- IS-LM graph will be drawn here -->
                 </div>
                 
                 <div class="strategy-game">
-                    <h3>Money Market Equilibrium Challenge</h3>
-                    <p><strong>Scenario:</strong> The economy has excess money demand at current interest rates. Inflation is 3%. Your goal: Achieve money market equilibrium through monetary policy.</p>
+                    <h3>Policy Coordination Challenge</h3>
+                    <p><strong>Scenario:</strong> The economy is in recession with high unemployment (8%) and excess money demand. Current equilibrium is below potential output.</p>
                     
                     <div class="economic-indicator">
-                        <p><strong>Current Money Market Status:</strong></p>
-                        <div class="indicator-value" id="moneyMarketStatus">Excess Money Demand</div>
-                        <p>Interest Rate: 4% | Output: $800B | Money Demand Sensitivity (k): 0.2 | Interest Sensitivity (h): 50</p>
+                        <p><strong>Current Economic Status:</strong></p>
+                        <div class="indicator-value" id="outputGap">-$300B (Recessionary Gap)</div>
+                        <div class="indicator-value" id="interestRate">Interest Rate: 3%</div>
+                        <p>Unemployment: 8% | Inflation: 1.5% | MPC: 0.8 | Money Multiplier: 5</p>
+                    </div>
+                    
+                    <div class="policy-tabs">
+                        <button class="policy-tab active" onclick="switchPolicyTab('fiscal')">Fiscal Policy</button>
+                        <button class="policy-tab" onclick="switchPolicyTab('monetary')">Monetary Policy</button>
+                        <button class="policy-tab" onclick="switchPolicyTab('coordinated')">Coordinated Policy</button>
                     </div>
                     
                     <div class="calculator-container">
-                        <h4>Monetary Policy Decision Dashboard:</h4>
+                        <div id="fiscalPolicy" class="policy-content active">
+                            <h4>Fiscal Policy Tools:</h4>
+                            <label>Government Spending Change (ΔG in billions):</label>
+                            <input type="number" id="govSpending" class="calculator-input" min="-200" max="200" value="0">
+                            
+                            <label>Tax Change (ΔT in billions, positive for increase):</label>
+                            <input type="number" id="taxChange" class="calculator-input" min="-200" max="200" value="0">
+                            
+                            <div class="policy-result">
+                                <strong>Fiscal Impact:</strong> Primarily shifts IS curve. Spending has larger multiplier than taxes.
+                            </div>
+                        </div>
                         
-                        <label>Change Money Supply (ΔM in billions):</label>
-                        <input type="number" id="moneySupply" class="calculator-input" min="-200" max="200" value="0">
+                        <div id="monetaryPolicy" class="policy-content">
+                            <h4>Monetary Policy Tools:</h4>
+                            <label>Change Money Supply (ΔM in billions):</label>
+                            <input type="number" id="moneySupply" class="calculator-input" min="-300" max="300" value="0">
+                            
+                            <label>Change Policy Interest Rate (percentage points):</label>
+                            <input type="number" id="policyRate" class="calculator-input" min="-4" max="4" step="0.25" value="0">
+                            
+                            <div class="policy-result">
+                                <strong>Monetary Impact:</strong> Primarily shifts LM curve. Money supply changes have direct effect.
+                            </div>
+                        </div>
                         
-                        <label>Change Reserve Requirements (percentage points, negative to decrease):</label>
-                        <input type="number" id="reserveReq" class="calculator-input" min="-5" max="5" step="0.1" value="0">
-                        
-                        <label>Change Policy Interest Rate (percentage points):</label>
-                        <input type="number" id="policyRate" class="calculator-input" min="-3" max="3" step="0.25" value="0">
+                        <div id="coordinatedPolicy" class="policy-content">
+                            <h4>Coordinated Policy Approach:</h4>
+                            <label>Fiscal Stimulus (combined G and T in billions):</label>
+                            <input type="number" id="fiscalStimulus" class="calculator-input" min="-200" max="200" value="0">
+                            
+                            <label>Monetary Accommodation (money supply change in billions):</label>
+                            <input type="number" id="monetaryAccommodation" class="calculator-input" min="-300" max="300" value="0">
+                            
+                            <div class="policy-result">
+                                <strong>Coordinated Impact:</strong> IS and LM shift together. Can achieve equilibrium with less crowding out.
+                            </div>
+                        </div>
                         
                         <div class="attempt-counter">
-                            Policy Attempts Used: <span id="policyAttempts">0</span>/3
+                            Policy Attempts Used: <span id="attemptsUsed">0</span>/5
                         </div>
                         
-                        <div class="penalty-warning" id="quickClickWarning" style="display: none;">
-                            ⚠️ Slow down! Quick successive clicks reduce your score.
-                        </div>
-                        
-                        <button onclick="calculateLMEquilibrium()" style="width: auto;">Analyze Policy Impact</button>
+                        <button onclick="calculateISLMEquilibrium()" style="width: auto;">Analyze Policy Impact</button>
                     </div>
                     
                     <div id="policyResult" class="feedback"></div>
                 </div>
                 
                 <div class="interactive-simulation">
-                    <h3>LM Curve Shifter Identification</h3>
-                    <p>Identify which factor would shift the LM curve in each scenario:</p>
-                    <div id="currentShiftScenario" class="formula-box">
-                        <strong>Current Scenario:</strong> Central bank conducts open market purchases
+                    <h3>Policy Effect Identification</h3>
+                    <p>Identify which curve would be primarily affected by each policy:</p>
+                    <div id="currentPolicyScenario" class="formula-box">
+                        <strong>Current Scenario:</strong> Government increases infrastructure spending
                     </div>
                     <div class="simulation-controls">
-                        <button class="policy-choice" onclick="checkLMShift('right', this)">Shift LM Right</button>
-                        <button class="policy-choice" onclick="checkLMShift('left', this)">Shift LM Left</button>
-                        <button class="policy-choice" onclick="checkLMShift('nochange', this)">No Shift - Movement Along</button>
+                        <button class="policy-choice" onclick="checkPolicyEffect('is', this)">Shifts IS Curve</button>
+                        <button class="policy-choice" onclick="checkPolicyEffect('lm', this)">Shifts LM Curve</button>
+                        <button class="policy-choice" onclick="checkPolicyEffect('both', this)">Shifts Both Curves</button>
+                        <button class="policy-choice" onclick="checkPolicyEffect('movement', this)">Movement Along Curves</button>
                     </div>
-                    <div id="shiftResult" class="feedback"></div>
+                    <div id="policyEffectResult" class="feedback"></div>
                 </div>
                 
                 <div id="simulationQuestions">
@@ -468,11 +530,11 @@
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Examine real-world applications of LM curve analysis.</p>
+                <p>Examine real-world applications of IS-LM analysis.</p>
                 
                 <div class="question">
-                    <p><strong>Case 1:</strong> During the 2008 financial crisis, the Federal Reserve implemented Quantitative Easing, massively increasing the money supply while interest rates were near zero.</p>
-                    <p>What was the effect on the LM curve in this liquidity trap situation?</p>
+                    <p><strong>Case 1:</strong> During the 2009 financial crisis, the US implemented both fiscal stimulus (ARRA) and monetary expansion (QE). The Fed kept rates near zero while government increased spending.</p>
+                    <p>How did this policy mix affect the IS-LM equilibrium?</p>
                     <div class="options" id="case1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -480,8 +542,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 2:</strong> In 2018, the Federal Reserve was raising interest rates while simultaneously reducing its balance sheet (decreasing money supply).</p>
-                    <p>How did these conflicting monetary policies affect the LM curve?</p>
+                    <p><strong>Case 2:</strong> In the early 1980s, the Volcker Fed raised interest rates dramatically to combat inflation while Reagan implemented tax cuts. This created conflicting policy effects.</p>
+                    <p>What was the net effect on the IS-LM equilibrium?</p>
                     <div class="options" id="case2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -489,8 +551,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 3:</strong> During high inflation periods, central banks often raise reserve requirements to reduce money creation by commercial banks.</p>
-                    <p>How does this policy tool affect the LM curve position?</p>
+                    <p><strong>Case 3:</strong> Japan's experience in the 1990s showed that when interest rates hit zero, monetary policy becomes ineffective (liquidity trap), requiring heavy reliance on fiscal policy.</p>
+                    <p>How does this situation affect the IS-LM framework?</p>
                     <div class="options" id="case3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -500,10 +562,10 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how LM curve analysis impacts business decisions and financial strategy.</p>
+                <p>Understand how IS-LM equilibrium analysis impacts business decisions and strategy.</p>
                 
                 <div class="question">
-                    <p>1. How can businesses use LM curve analysis for financing decisions?</p>
+                    <p>1. How can businesses use IS-LM analysis for investment timing decisions?</p>
                     <div class="options" id="managerial1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -511,7 +573,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>2. Why should companies monitor monetary policy when the LM curve is flat?</p>
+                    <p>2. Why should companies monitor policy coordination between fiscal and monetary authorities?</p>
                     <div class="options" id="managerial2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -519,7 +581,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>3. How does the slope of the LM curve affect business sensitivity to interest rate changes?</p>
+                    <p>3. How does crowding out affect business investment decisions?</p>
                     <div class="options" id="managerial3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -527,7 +589,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>4. What cash management strategies work best during tight monetary policy?</p>
+                    <p>4. What strategic advantage comes from anticipating IS-LM equilibrium changes?</p>
                     <div class="options" id="managerial4Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -535,13 +597,13 @@
                 </div>
                 
                 <div class="economic-indicator">
-                    <h3>Key Financial Insights</h3>
+                    <h3>Key Strategic Insights</h3>
                     <ul>
-                        <li>Flatter LM curves mean money demand is more sensitive to interest rates</li>
-                        <li>Money supply changes directly shift the LM curve</li>
-                        <li>Income changes cause movements along the LM curve</li>
-                        <li>Liquidity traps make monetary policy less effective</li>
-                        <li>Expectations can influence money demand significantly</li>
+                        <li>Fiscal policy shifts IS curve, monetary policy shifts LM curve</li>
+                        <li>Policy coordination can achieve goals with smaller changes</li>
+                        <li>Crowding out occurs when fiscal expansion raises interest rates</li>
+                        <li>Liquidity traps limit monetary policy effectiveness</li>
+                        <li>Expectations influence both consumption and investment decisions</li>
                     </ul>
                 </div>
             </div>
@@ -550,197 +612,208 @@
 
     <script>
         // Password protection
-        const correctPassword = "LMCurve2023";
+        const correctPassword = "ISLM2023";
         let score = 0;
-        let attempts = 3;
-        let timePenalty = 0;
-        let clickPenalty = 0;
         let policyAttempts = 0;
-        const maxPossibleScore = 95; // Ensures no one can score 100%
-        let startTime = null;
-        let lastClickTime = null;
-        let quickClickCount = 0;
+        const maxPossibleScore = 95;
+        let currentEquilibrium = { output: 700, interest: 3 }; // Below potential
+        let targetEquilibrium = { output: 1000, interest: 4 }; // Full employment equilibrium
         let answeredQuestions = new Set();
         
         // Questions with randomized answer positions
         const questions = [
             {
                 id: 1,
-                text: "The LM curve shows combinations of interest rates and output where:",
+                text: "The IS-LM model shows simultaneous equilibrium in:",
                 options: [
-                    "Goods market is in equilibrium",
-                    "Money market is in equilibrium",
-                    "Both goods and money markets are in equilibrium",
-                    "Labor market is in equilibrium"
+                    "Goods and labor markets",
+                    "Money and foreign exchange markets",
+                    "Goods and money markets",
+                    "All major macroeconomic markets"
                 ],
-                correct: 1,
+                correct: 2,
                 feedback: {
-                    correct: "Correct! The LM curve represents money market equilibrium where money demand equals money supply.",
-                    incorrect: "Incorrect. The LM curve specifically shows money market equilibrium, not goods market or other conditions."
+                    correct: "Correct! The IS-LM model shows where goods market (IS) and money market (LM) are simultaneously in equilibrium.",
+                    incorrect: "Incorrect. The IS-LM model specifically shows goods and money market equilibrium."
                 }
             },
             {
                 id: 2,
-                text: "What happens to the LM curve when the central bank increases money supply?",
+                text: "What happens when fiscal policy increases government spending?",
                 options: [
-                    "It shifts to the left",
-                    "It becomes steeper",
-                    "It shifts to the right",
-                    "It becomes flatter"
+                    "LM curve shifts right",
+                    "IS curve shifts right",
+                    "Both curves shift right",
+                    "Movement along existing curves"
                 ],
-                correct: 2,
+                correct: 1,
                 feedback: {
-                    correct: "Right! Increased money supply creates excess money, requiring lower interest rates at each output level, shifting LM rightward.",
-                    incorrect: "Remember: Increases in money supply shift the LM curve to the right."
+                    correct: "Right! Increased government spending raises aggregate demand, shifting the IS curve rightward.",
+                    incorrect: "Fiscal policy primarily affects the IS curve, not the LM curve."
                 }
             },
             {
                 id: 3,
-                text: "If money demand becomes more sensitive to interest rates, the LM curve:",
+                text: "In a liquidity trap situation, monetary policy becomes ineffective because:",
                 options: [
-                    "Shifts to the right",
-                    "Shifts to the left",
-                    "Becomes steeper",
-                    "Becomes flatter"
+                    "The LM curve is vertical",
+                    "The IS curve is horizontal",
+                    "The LM curve is horizontal",
+                    "The IS curve is vertical"
                 ],
-                correct: 3,
+                correct: 2,
                 feedback: {
-                    correct: "Yes! Higher interest sensitivity means money demand changes more for a given rate change, making the LM curve flatter.",
-                    incorrect: "When money demand is more responsive to interest rates, the LM curve becomes flatter, not steeper."
+                    correct: "Yes! In liquidity traps, money demand is perfectly elastic, making the LM curve horizontal and monetary policy ineffective.",
+                    incorrect: "Liquidity traps create horizontal LM curves, not vertical ones."
                 }
             },
             {
                 id: 4,
-                text: "In Case 1, what was the QE effect in the liquidity trap?",
+                text: "In Case 1, the 2009 policy mix resulted in:",
                 options: [
-                    "LM shifted left significantly",
-                    "LM shifted right but with limited effect",
-                    "No LM shift occurred",
-                    "LM became vertical"
+                    "Rightward shift of both IS and LM curves",
+                    "Leftward shift of both curves",
+                    "IS shifted right, LM shifted left",
+                    "Only IS curve shifted significantly"
                 ],
-                correct: 1,
+                correct: 0,
                 feedback: {
-                    correct: "Exactly! In liquidity traps, money demand is perfectly elastic, so LM shifts have limited impact on interest rates.",
-                    incorrect: "In liquidity traps, LM shifts right but with limited effect due to perfectly elastic money demand."
+                    correct: "Exactly! Fiscal stimulus shifted IS right, while monetary expansion shifted LM right, moving equilibrium toward full employment.",
+                    incorrect: "Both expansionary fiscal and monetary policies shifted their respective curves rightward."
                 }
             },
             {
                 id: 5,
-                text: "In Case 2, what was the net effect on LM curve?",
+                text: "In Case 2, the Volcker-Reagan policies created:",
                 options: [
-                    "Definite rightward shift",
-                    "Definite leftward shift",
-                    "Uncertain net shift direction",
-                    "No shift - effects canceled perfectly"
+                    "Definite expansionary effect",
+                    "Definite contractionary effect",
+                    "Conflicting effects on equilibrium",
+                    "No net effect on the economy"
                 ],
-                correct: 1,
+                correct: 2,
                 feedback: {
-                    correct: "Right! Both raising rates and reducing money supply shift LM leftward, reinforcing each other.",
-                    incorrect: "Both policies (rate hikes and balance sheet reduction) shift LM leftward."
+                    correct: "Right! Tax cuts shifted IS right (expansionary) while high rates shifted LM left (contractionary), creating conflicting pressures.",
+                    incorrect: "The policies had opposing effects - fiscal expansion vs monetary contraction."
                 }
             },
             {
                 id: 6,
-                text: "In Case 3, how do higher reserve requirements affect LM?",
+                text: "In Case 3, Japan's liquidity trap meant:",
                 options: [
-                    "Shift LM right by increasing money multiplier",
-                    "Shift LM left by decreasing money supply",
-                    "No effect on LM position",
-                    "Make LM curve steeper"
+                    "Fiscal policy was completely ineffective",
+                    "Monetary policy could still stimulate effectively",
+                    "Fiscal policy became more important",
+                    "Both policies were equally effective"
                 ],
-                correct: 1,
+                correct: 2,
                 feedback: {
-                    correct: "Correct! Higher reserve requirements reduce the money multiplier, decreasing effective money supply and shifting LM left.",
-                    incorrect: "Higher reserve requirements reduce money creation, decreasing money supply and shifting LM left."
+                    correct: "Correct! With monetary policy constrained by zero lower bound, fiscal policy became the primary tool for stimulus.",
+                    incorrect: "Liquidity traps increase the importance of fiscal policy when monetary policy is ineffective."
                 }
             },
             {
                 id: 7,
-                text: "How can businesses use LM analysis for financing?",
+                text: "How can businesses use IS-LM for investment timing?",
                 options: [
-                    "Predict interest rate trends for debt issuance",
-                    "Time equity offerings strategically",
-                    "Manage working capital requirements",
+                    "Predict interest rate and output combinations",
+                    "Anticipate policy-induced economic shifts",
+                    "Time capital investments strategically",
                     "All of the above"
                 ],
                 correct: 3,
                 feedback: {
-                    correct: "Yes! All these applications help businesses make better financing decisions.",
-                    incorrect: "LM analysis helps with interest rate predictions, financing timing, and working capital management."
+                    correct: "Yes! All these applications help businesses make better investment timing decisions.",
+                    incorrect: "IS-LM analysis helps with interest rate/output predictions, policy anticipation, and investment timing."
                 }
             },
             {
                 id: 8,
-                text: "Why monitor monetary policy with flat LM curves?",
+                text: "Why monitor policy coordination?",
                 options: [
-                    "Monetary policy has larger output effects when LM is flat",
-                    "Fiscal policy is more effective",
-                    "Interest rates don't matter",
-                    "Money demand is always stable"
-                ],
-                correct: 0,
-                feedback: {
-                    correct: "Right! With flat LM curves (interest-sensitive money demand), monetary policy has stronger output effects.",
-                    incorrect: "Flat LM curves mean monetary policy has greater impact, making it more important to monitor."
-                }
-            },
-            {
-                id: 9,
-                text: "How does LM slope affect interest rate sensitivity?",
-                options: [
-                    "Steeper LM means less sensitivity to interest rates",
-                    "Flatter LM means more sensitivity to interest rates",
-                    "Both A and B",
-                    "LM slope doesn't affect business decisions"
-                ],
-                correct: 2,
-                feedback: {
-                    correct: "Correct! Both statements are true - slope indicates interest rate sensitivity in money market.",
-                    incorrect: "The LM slope directly indicates how sensitive the economy is to interest rate changes."
-                }
-            },
-            {
-                id: 10,
-                text: "What cash strategies during tight monetary policy?",
-                options: [
-                    "Build cash reserves in anticipation of higher rates",
-                    "Renegotiate debt terms before rates rise",
-                    "Extend accounts payable periods",
+                    "Coordinated policies have stronger effects",
+                    "Policy conflicts can create uncertainty",
+                    "Helps anticipate economic stability",
                     "All of the above"
                 ],
                 correct: 3,
                 feedback: {
-                    correct: "Yes! All these strategies help businesses manage during tight monetary policy.",
-                    incorrect: "Businesses should build reserves, renegotiate debt, and extend payables during tight money periods."
+                    correct: "Right! Policy coordination affects economic stability, policy effectiveness, and business certainty.",
+                    incorrect: "All these factors make policy coordination important for businesses to monitor."
+                }
+            },
+            {
+                id: 9,
+                text: "How does crowding out affect businesses?",
+                options: [
+                    "Reduces private investment opportunities",
+                    "Increases borrowing costs",
+                    "Both A and B",
+                    "Has no significant effect"
+                ],
+                correct: 2,
+                feedback: {
+                    correct: "Correct! Crowding out both reduces investment opportunities and increases borrowing costs for businesses.",
+                    incorrect: "Crowding out affects businesses through both reduced opportunities and higher costs."
+                }
+            },
+            {
+                id: 10,
+                text: "What advantage from anticipating equilibrium changes?",
+                options: [
+                    "First-mover advantage in strategy",
+                    "Better resource allocation",
+                    "Improved risk management",
+                    "All of the above"
+                ],
+                correct: 3,
+                feedback: {
+                    correct: "Yes! All these strategic advantages come from anticipating IS-LM equilibrium changes.",
+                    incorrect: "Anticipating equilibrium changes helps with strategy, allocation, and risk management."
                 }
             }
         ];
 
-        // LM shift scenarios for practice
-        const shiftScenarios = [
-            { scenario: "Central bank conducts open market purchases", correct: "right" },
-            { scenario: "Central bank sells government bonds", correct: "left" },
-            { scenario: "National income increases", correct: "nochange" },
-            { scenario: "Reserve requirements are lowered", correct: "right" },
-            { scenario: "Inflation expectations increase significantly", correct: "left" },
-            { scenario: "GDP growth slows down", correct: "nochange" }
+        // Policy scenarios for practice
+        const policyScenarios = [
+            { scenario: "Government increases infrastructure spending", effect: "is" },
+            { scenario: "Central bank conducts open market operations to increase money supply", effect: "lm" },
+            { scenario: "Both fiscal stimulus and monetary expansion implemented together", effect: "both" },
+            { scenario: "Economic growth increases income levels", effect: "movement" },
+            { scenario: "Central bank raises reserve requirements", effect: "lm" },
+            { scenario: "Government implements tax cuts for businesses", effect: "is" }
         ];
         
         let currentScenarioIndex = 0;
-        let currentMarketStatus = "excess_demand"; // excess money demand
+        let currentPolicyTab = 'fiscal';
         
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
             if (input === correctPassword) {
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('gameContent').style.display = 'block';
-                startTime = Date.now();
                 initializeGame();
-                drawLMCurve();
+                drawISLMGraph();
                 updateDisplay();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
+        }
+        
+        function switchPolicyTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.policy-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.policy-tab[onclick="switchPolicyTab('${tabName}')"]`).classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.policy-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Policy').classList.add('active');
+            
+            currentPolicyTab = tabName;
         }
         
         function initializeGame() {
@@ -768,7 +841,6 @@
                     const button = document.createElement('button');
                     button.textContent = option;
                     button.onclick = function() { 
-                        checkQuickClick();
                         if (!answeredQuestions.has(q.id)) {
                             answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
                             answeredQuestions.add(q.id);
@@ -790,7 +862,6 @@
                     const button = document.createElement('button');
                     button.textContent = option;
                     button.onclick = function() { 
-                        checkQuickClick();
                         if (!answeredQuestions.has(q.id)) {
                             answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
                             answeredQuestions.add(q.id);
@@ -812,7 +883,6 @@
                     const button = document.createElement('button');
                     button.textContent = option;
                     button.onclick = function() { 
-                        checkQuickClick();
                         if (!answeredQuestions.has(q.id)) {
                             answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
                             answeredQuestions.add(q.id);
@@ -823,21 +893,8 @@
             });
         }
         
-        function checkQuickClick() {
-            const now = Date.now();
-            if (lastClickTime && (now - lastClickTime) < 1000) { // Less than 1 second between clicks
-                quickClickCount++;
-                clickPenalty += quickClickCount * 2; // Increasing penalty for rapid clicks
-                document.getElementById('quickClickWarning').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('quickClickWarning').style.display = 'none';
-                }, 3000);
-            }
-            lastClickTime = now;
-        }
-        
-        function drawLMCurve() {
-            const graph = document.getElementById('lmCurveGraph');
+        function drawISLMGraph() {
+            const graph = document.getElementById('islmGraph');
             const width = graph.offsetWidth;
             const height = graph.offsetHeight;
             
@@ -861,17 +918,36 @@
             yAxis.style.bottom = '40px';
             graph.appendChild(yAxis);
             
-            // Draw LM curve (upward sloping)
-            for (let i = 0; i < width - 60; i += 2) {
+            // Draw IS curve (downward sloping)
+            for (let i = 0; i < width - 60; i += 3) {
                 const point = document.createElement('div');
                 point.className = 'graph-line';
                 point.style.width = '2px';
                 point.style.height = '2px';
                 point.style.left = (40 + i) + 'px';
-                point.style.bottom = (40 + i * 0.3) + 'px';
-                point.style.backgroundColor = '#9c27b0';
+                point.style.bottom = (40 + (width - 60 - i) * 0.25) + 'px';
+                point.style.backgroundColor = '#e74c3c';
                 graph.appendChild(point);
             }
+            
+            // Draw LM curve (upward sloping)
+            for (let i = 0; i < width - 60; i += 3) {
+                const point = document.createElement('div');
+                point.className = 'graph-line';
+                point.style.width = '2px';
+                point.style.height = '2px';
+                point.style.left = (40 + i) + 'px';
+                point.style.bottom = (40 + i * 0.2) + 'px';
+                point.style.backgroundColor = '#3498db';
+                graph.appendChild(point);
+            }
+            
+            // Add equilibrium point
+            const eqPoint = document.createElement('div');
+            eqPoint.className = 'equilibrium-point';
+            eqPoint.style.left = (width * 0.4) + 'px';
+            eqPoint.style.bottom = (height * 0.5) + 'px';
+            graph.appendChild(eqPoint);
             
             // Add labels
             const rLabel = document.createElement('div');
@@ -888,229 +964,227 @@
             yLabel.style.bottom = '20px';
             graph.appendChild(yLabel);
             
+            const isLabel = document.createElement('div');
+            isLabel.className = 'graph-label';
+            isLabel.textContent = 'IS';
+            isLabel.style.right = '30px';
+            isLabel.style.top = '30px';
+            isLabel.style.color = '#e74c3c';
+            graph.appendChild(isLabel);
+            
             const lmLabel = document.createElement('div');
             lmLabel.className = 'graph-label';
             lmLabel.textContent = 'LM';
-            lmLabel.style.right = '30px';
-            lmLabel.style.top = '30px';
-            lmLabel.style.color = '#9c27b0';
+            lmLabel.style.left = '100px';
+            lmLabel.style.bottom = '30px';
+            lmLabel.style.color = '#3498db';
             graph.appendChild(lmLabel);
-            
-            // Add equilibrium point
-            const eqPoint = document.createElement('div');
-            eqPoint.style.position = 'absolute';
-            eqPoint.style.width = '8px';
-            eqPoint.style.height = '8px';
-            eqPoint.style.backgroundColor = '#2ecc71';
-            eqPoint.style.borderRadius = '50%';
-            eqPoint.style.left = (width * 0.6 - 4) + 'px';
-            eqPoint.style.bottom = (40 + width * 0.6 * 0.3 - 4) + 'px';
-            graph.appendChild(eqPoint);
         }
         
-        function calculateLMEquilibrium() {
-            checkQuickClick();
-            
-            if (policyAttempts >= 3) {
+        function calculateISLMEquilibrium() {
+            if (policyAttempts >= 5) {
                 document.getElementById('policyResult').innerHTML = 
-                    "<strong>No more attempts!</strong> You've used all 3 policy attempts. Your final score has been calculated.";
+                    "<strong>No more attempts!</strong> You've used all 5 policy attempts. Your final score has been calculated.";
                 document.getElementById('policyResult').className = 'feedback incorrect';
                 return;
             }
             
-            const moneySupply = parseFloat(document.getElementById('moneySupply').value) || 0;
-            const reserveReq = parseFloat(document.getElementById('reserveReq').value) || 0;
-            const policyRate = parseFloat(document.getElementById('policyRate').value) || 0;
-            
             policyAttempts++;
+            document.getElementById('attemptsUsed').textContent = policyAttempts;
             document.getElementById('policyAttempts').textContent = policyAttempts;
             
-            // Calculate impacts
-            const k = 0.2; // Money demand sensitivity to income
-            const h = 50;  // Money demand sensitivity to interest rates
-            const currentOutput = 800; // $800 billion
-            const currentRate = 4; // 4%
+            // Get policy inputs based on current tab
+            let fiscalImpact = 0;
+            let monetaryImpact = 0;
             
-            // Money supply impact (direct LM shift)
-            const moneyMultiplier = 5; // Simplified money multiplier
-            const effectiveMoneyChange = moneySupply * moneyMultiplier;
-            
-            // Reserve requirement impact on money supply
-            const reserveImpact = reserveReq * (-100); // Each 1% change in reserves affects money supply
-            
-            // Policy rate impact (affects money demand)
-            const rateImpact = policyRate * (-h); // Higher rates reduce money demand
-            
-            const totalMoneyImpact = effectiveMoneyChange + reserveImpact;
-            const totalDemandImpact = rateImpact;
-            
-            // Determine new market status
-            let newStatus = currentMarketStatus;
-            let equilibriumAchieved = false;
-            
-            if (totalMoneyImpact > 0 && totalDemandImpact <= 0) {
-                newStatus = "excess_supply";
-            } else if (totalMoneyImpact < 0 && totalDemandImpact >= 0) {
-                newStatus = "excess_demand";
-            } else if (Math.abs(totalMoneyImpact + totalDemandImpact) < 50) {
-                newStatus = "equilibrium";
-                equilibriumAchieved = true;
+            if (currentPolicyTab === 'fiscal') {
+                const govSpending = parseFloat(document.getElementById('govSpending').value) || 0;
+                const taxChange = parseFloat(document.getElementById('taxChange').value) || 0;
+                
+                // Fiscal policy impacts (shifts IS curve)
+                const mpc = 0.8;
+                const spendingMultiplier = 1 / (1 - mpc); // 5
+                const taxMultiplier = -mpc / (1 - mpc); // -4
+                
+                fiscalImpact = (govSpending * spendingMultiplier) + (taxChange * taxMultiplier);
+                monetaryImpact = 0;
+                
+            } else if (currentPolicyTab === 'monetary') {
+                const moneySupply = parseFloat(document.getElementById('moneySupply').value) || 0;
+                const policyRate = parseFloat(document.getElementById('policyRate').value) || 0;
+                
+                // Monetary policy impacts (shifts LM curve)
+                const moneyMultiplier = 5;
+                fiscalImpact = 0;
+                monetaryImpact = (moneySupply * moneyMultiplier) + (policyRate * -50); // Simplified impact
+                
+            } else if (currentPolicyTab === 'coordinated') {
+                const fiscalStimulus = parseFloat(document.getElementById('fiscalStimulus').value) || 0;
+                const monetaryAccommodation = parseFloat(document.getElementById('monetaryAccommodation').value) || 0;
+                
+                // Coordinated policy impacts
+                const mpc = 0.8;
+                const spendingMultiplier = 1 / (1 - mpc);
+                const moneyMultiplier = 5;
+                
+                fiscalImpact = fiscalStimulus * spendingMultiplier;
+                monetaryImpact = monetaryAccommodation * moneyMultiplier;
             }
             
-            // Calculate score based on achieving equilibrium
-            const effectiveness = Math.min(100, (1 - Math.abs(totalMoneyImpact + totalDemandImpact) / 200) * 100);
+            // Calculate new equilibrium
+            const outputChange = fiscalImpact * 0.7 + monetaryImpact * 0.3; // Fiscal has larger output effect
+            const interestChange = fiscalImpact * 0.1 + monetaryImpact * -0.2; // Monetary has larger interest effect
+            
+            const newOutput = currentEquilibrium.output + outputChange;
+            const newInterest = Math.max(0, currentEquilibrium.interest + interestChange);
+            
+            // Calculate distance from target equilibrium
+            const outputDistance = Math.abs(newOutput - targetEquilibrium.output);
+            const interestDistance = Math.abs(newInterest - targetEquilibrium.interest);
+            const totalDistance = outputDistance + interestDistance;
+            
+            // Calculate effectiveness (closer to target = higher score)
+            const maxDistance = 500; // Maximum possible distance
+            const effectiveness = Math.max(0, 100 - (totalDistance / maxDistance * 100));
             
             // Strategy bonus for using appropriate policy mix
             let strategyBonus = 0;
-            if (currentMarketStatus === "excess_demand" && totalMoneyImpact > 0) strategyBonus = 10;
-            if (currentMarketStatus === "excess_supply" && totalMoneyImpact < 0) strategyBonus = 10;
+            if (currentEquilibrium.output < targetEquilibrium.output && outputChange > 0) {
+                strategyBonus += 10; // Expansionary policy during recession
+            }
+            if (currentPolicyTab === 'coordinated') {
+                strategyBonus += 5; // Bonus for coordinated approach
+            }
             
-            // Efficiency penalty for over-shooting
-            const efficiencyPenalty = Math.max(0, Math.abs(totalMoneyImpact + totalDemandImpact) - 50) * 0.5;
+            const pointsEarned = Math.floor(effectiveness / 3) + strategyBonus;
+            score += pointsEarned;
             
-            const pointsEarned = Math.floor(effectiveness / 5) + strategyBonus - efficiencyPenalty - clickPenalty;
-            score += Math.max(0, pointsEarned);
+            // Update current equilibrium
+            currentEquilibrium = { output: newOutput, interest: newInterest };
             
             updateDisplay();
             
+            // Determine equilibrium status
+            let equilibriumStatus = "Not Achieved";
+            if (totalDistance < 50) {
+                equilibriumStatus = "Full Equilibrium Achieved!";
+                score += 20; // Bonus for achieving equilibrium
+            } else if (totalDistance < 150) {
+                equilibriumStatus = "Near Equilibrium";
+            }
+            
+            document.getElementById('equilibriumStatus').textContent = equilibriumStatus;
+            document.getElementById('outputGap').textContent = `$${Math.round(targetEquilibrium.output - newOutput)}B ${newOutput < targetEquilibrium.output ? 'Recessionary' : 'Inflationary'} Gap`;
+            document.getElementById('interestRate').textContent = `Interest Rate: ${newInterest.toFixed(2)}%`;
+            
             document.getElementById('policyResult').innerHTML = `
                 <strong>Policy Impact Analysis:</strong><br>
-                Money Supply Impact: $${totalMoneyImpact.toFixed(1)}B<br>
-                Money Demand Impact: $${totalDemandImpact.toFixed(1)}B<br>
-                <strong>Net Money Market Effect: $${(totalMoneyImpact + totalDemandImpact).toFixed(1)}B</strong><br>
-                New Market Status: ${getMarketStatusText(newStatus)}<br>
-                Points Earned: ${pointsEarned.toFixed(1)}<br>
-                Quick Click Penalty: -${clickPenalty} points<br>
-                <em>${equilibriumAchieved ? 'Excellent! Money market equilibrium achieved!' : 
-                     Math.abs(totalMoneyImpact + totalDemandImpact) < 100 ? 'Good progress!' : 
-                     'Keep adjusting your policy mix.'}</em>
+                Output Change: $${outputChange.toFixed(1)}B<br>
+                Interest Rate Change: ${interestChange.toFixed(2)} percentage points<br>
+                <strong>New Equilibrium:</strong> Y = $${newOutput.toFixed(0)}B, r = ${newInterest.toFixed(2)}%<br>
+                Distance from Target: ${totalDistance.toFixed(1)} points<br>
+                Effectiveness: ${effectiveness.toFixed(1)}%<br>
+                Points Earned: ${pointsEarned}<br>
+                <em>${equilibriumStatus.includes("Full Equilibrium") ? 'Excellent! You achieved simultaneous equilibrium!' : 
+                     equilibriumStatus.includes("Near Equilibrium") ? 'Good progress! Getting closer to equilibrium.' : 
+                     'Keep adjusting your policy mix to reach equilibrium.'}</em>
             `;
             
-            if (equilibriumAchieved) {
+            if (equilibriumStatus.includes("Full Equilibrium")) {
                 document.getElementById('policyResult').className = 'feedback correct';
-                // Bonus for achieving equilibrium
-                score += 15;
-                updateDisplay();
-            } else if (Math.abs(totalMoneyImpact + totalDemandImpact) < 100) {
+            } else if (equilibriumStatus.includes("Near Equilibrium")) {
                 document.getElementById('policyResult').className = 'feedback correct';
             } else {
                 document.getElementById('policyResult').className = 'feedback incorrect';
             }
             
-            // Update current status for next iteration
-            currentMarketStatus = newStatus;
-            document.getElementById('moneyMarketStatus').textContent = getMarketStatusText(newStatus);
-            
-            // Reset click penalty after each policy decision
-            clickPenalty = 0;
-            quickClickCount = 0;
+            updateDisplay();
         }
         
-        function getMarketStatusText(status) {
-            const statusMap = {
-                "excess_demand": "Excess Money Demand",
-                "excess_supply": "Excess Money Supply", 
-                "equilibrium": "Money Market Equilibrium"
-            };
-            return statusMap[status];
-        }
-        
-        function checkLMShift(direction, button) {
-            checkQuickClick();
-            
-            if (answeredQuestions.has('shift' + currentScenarioIndex)) {
+        function checkPolicyEffect(effect, button) {
+            if (answeredQuestions.has('policy' + currentScenarioIndex)) {
                 return; // Already answered this scenario
             }
             
-            const resultElement = document.getElementById('shiftResult');
-            const correctDirection = shiftScenarios[currentScenarioIndex].correct;
+            const resultElement = document.getElementById('policyEffectResult');
+            const correctEffect = policyScenarios[currentScenarioIndex].effect;
             
-            if (direction === correctDirection) {
+            if (effect === correctEffect) {
                 resultElement.innerHTML = `
-                    <strong>Correct!</strong> ${getShiftExplanation(correctDirection)}
+                    <strong>Correct!</strong> ${getPolicyEffectExplanation(correctEffect)}
                 `;
                 resultElement.className = 'feedback correct';
                 
-                // Add to score for correct identification (with diminishing returns and click penalty)
-                const basePoints = Math.max(2, 10 - (answeredQuestions.size * 2));
-                const points = basePoints - clickPenalty;
-                score += Math.max(1, points);
-                answeredQuestions.add('shift' + currentScenarioIndex);
+                // Add to score for correct identification
+                const points = Math.max(5, 15 - (answeredQuestions.size * 2));
+                score += points;
+                answeredQuestions.add('policy' + currentScenarioIndex);
             } else {
                 resultElement.innerHTML = `
-                    <strong>Incorrect.</strong> ${getShiftExplanation(correctDirection)}
+                    <strong>Incorrect.</strong> ${getPolicyEffectExplanation(correctEffect)}
                 `;
                 resultElement.className = 'feedback incorrect';
-                
-                // Penalty for incorrect answers
-                attempts--;
-                score = Math.max(0, score - 3 - clickPenalty);
             }
             
             updateDisplay();
             
             // Move to next scenario after a delay
-            setTimeout(nextShiftScenario, 2500);
+            setTimeout(nextPolicyScenario, 2500);
         }
         
-        function getShiftExplanation(direction) {
+        function getPolicyEffectExplanation(effect) {
             const explanations = {
-                'right': 'This increases real money supply or decreases money demand, shifting LM rightward.',
-                'left': 'This decreases real money supply or increases money demand, shifting LM leftward.',
-                'nochange': 'This causes movement along the LM curve, not a shift of the curve itself.'
+                'is': 'This policy primarily affects aggregate demand and shifts the IS curve.',
+                'lm': 'This policy primarily affects money supply/demand and shifts the LM curve.',
+                'both': 'This coordinated approach affects both goods and money markets, shifting both curves.',
+                'movement': 'This represents a change in economic conditions that causes movement along existing curves.'
             };
-            return explanations[direction];
+            return explanations[effect];
         }
         
-        function nextShiftScenario() {
-            currentScenarioIndex = (currentScenarioIndex + 1) % shiftScenarios.length;
-            const scenarioElement = document.getElementById('currentShiftScenario');
+        function nextPolicyScenario() {
+            currentScenarioIndex = (currentScenarioIndex + 1) % policyScenarios.length;
+            const scenarioElement = document.getElementById('currentPolicyScenario');
             scenarioElement.innerHTML = `
-                <strong>Current Scenario:</strong> ${shiftScenarios[currentScenarioIndex].scenario}
+                <strong>Current Scenario:</strong> ${policyScenarios[currentScenarioIndex].scenario}
             `;
             
             // Clear the previous result
-            document.getElementById('shiftResult').innerHTML = '';
-            document.getElementById('shiftResult').className = 'feedback';
+            document.getElementById('policyEffectResult').innerHTML = '';
+            document.getElementById('policyEffectResult').className = 'feedback';
         }
         
         function updateDisplay() {
             // Update score display (capped at maxPossibleScore)
             const displayScore = Math.min(score, maxPossibleScore);
-            
-            // Calculate time penalty
-            if (startTime) {
-                const timeElapsed = Math.floor((Date.now() - startTime) / 60000); // minutes
-                timePenalty = Math.min(20, Math.floor(timeElapsed / 2)); // 1 point per 2 minutes, max 20
-            }
-            
-            // Apply penalties to final score display
-            const finalScore = Math.max(0, displayScore - timePenalty);
-            
-            document.getElementById('score').textContent = finalScore;
-            document.getElementById('attempts').textContent = attempts;
-            document.getElementById('timePenalty').textContent = timePenalty;
-            document.getElementById('clickPenalty').textContent = clickPenalty;
+            document.getElementById('score').textContent = displayScore;
             
             // Check if game should end
-            if (attempts <= 0 || policyAttempts >= 3) {
+            if (policyAttempts >= 5) {
                 endGame();
             }
         }
         
         function endGame() {
-            const finalScore = Math.min(maxPossibleScore, Math.max(0, score - timePenalty));
+            const finalScore = Math.min(maxPossibleScore, score);
             document.getElementById('score').textContent = finalScore;
             
             // Disable all interactive elements
             const allButtons = document.querySelectorAll('button');
-            allButtons.forEach(btn => btn.disabled = true);
+            allButtons.forEach(btn => {
+                if (!btn.onclick || !btn.onclick.toString().includes('checkPassword')) {
+                    btn.disabled = true;
+                }
+            });
             
             const allInputs = document.querySelectorAll('input');
             allInputs.forEach(input => input.disabled = true);
             
             document.getElementById('policyResult').innerHTML += 
-                `<br><br><strong>Game Over! Final Score: ${finalScore}%</strong>`;
+                `<br><br><strong>Game Over! Final Score: ${finalScore}%</strong><br>
+                 <em>${finalScore >= 80 ? 'Excellent understanding of IS-LM equilibrium!' : 
+                      finalScore >= 60 ? 'Good grasp of policy effects!' : 
+                      'Review the concepts and try again!'}</em>`;
         }
         
         function answerQuestion(questionId, isCorrect, button, feedback) {
@@ -1125,22 +1199,19 @@
                 feedbackElement.innerHTML = feedback.correct;
                 feedbackElement.className = 'feedback correct';
                 
-                // Points with diminishing returns and click penalties
+                // Points with diminishing returns
                 const basePoints = 10;
-                const timeSinceStart = Date.now() - startTime;
-                const speedBonus = timeSinceStart < 120000 ? 5 : 0; // Bonus if answered in first 2 minutes
-                const points = basePoints + speedBonus - (answeredQuestions.size * 2) - clickPenalty;
+                const points = basePoints - (answeredQuestions.size * 1.5);
                 
-                score += Math.max(2, points);
+                score += Math.max(5, points);
                 answeredQuestions.add(questionId);
             } else {
                 // Incorrect answer
                 feedbackElement.innerHTML = feedback.incorrect;
                 feedbackElement.className = 'feedback incorrect';
                 
-                // Penalty for incorrect answers
-                attempts--;
-                score = Math.max(0, score - 3 - clickPenalty);
+                // Small penalty for incorrect answers
+                score = Math.max(0, score - 2);
                 answeredQuestions.add(questionId); // Count attempt even if wrong
             }
             
@@ -1151,17 +1222,13 @@
             for (let btn of buttons) {
                 btn.disabled = true;
             }
-            
-            // Reset click penalty after answering question
-            clickPenalty = 0;
-            quickClickCount = 0;
         }
         
         // Initialize the first scenario
         window.onload = function() {
-            if (document.getElementById('currentShiftScenario')) {
-                document.getElementById('currentShiftScenario').innerHTML = `
-                    <strong>Current Scenario:</strong> ${shiftScenarios[0].scenario}
+            if (document.getElementById('currentPolicyScenario')) {
+                document.getElementById('currentPolicyScenario').innerHTML = `
+                    <strong>Current Scenario:</strong> ${policyScenarios[0].scenario}
                 `;
             }
         };
