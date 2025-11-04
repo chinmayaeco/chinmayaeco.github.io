@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IS-LM Curve Equilibrium Simulation</title>
+    <title>Exchange Rate & Currency Valuation Simulation</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a237e 0%, #4a148c 50%, #880e4f 100%);
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #4a69bd 100%);
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -191,14 +191,14 @@
             color: #2c3e50;
         }
         
-        .islm-cards {
+        .currency-cards {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin: 15px 0;
         }
         
-        .curve-card {
+        .currency-card {
             background-color: #e8f4fc;
             padding: 15px;
             border-radius: 5px;
@@ -293,9 +293,9 @@
             border-left: 4px solid #2196f3;
         }
         
-        .graph-container {
+        .currency-chart {
             width: 100%;
-            height: 300px;
+            height: 200px;
             background-color: #f8f9fa;
             margin: 15px 0;
             position: relative;
@@ -304,29 +304,20 @@
             padding: 10px;
         }
         
-        .graph-axis {
+        .chart-axis {
             position: absolute;
             background-color: #6c757d;
         }
         
-        .graph-line {
+        .chart-line {
             position: absolute;
             height: 2px;
         }
         
-        .graph-label {
+        .chart-label {
             position: absolute;
             font-size: 0.8rem;
             font-weight: bold;
-        }
-        
-        .equilibrium-point {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #e74c3c;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
         }
         
         .policy-tabs {
@@ -366,6 +357,20 @@
             display: inline-block;
         }
         
+        .currency-flag {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+        
+        .exchange-rate-display {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
         @media (max-width: 768px) {
             .game-container {
                 flex-direction: column;
@@ -388,7 +393,7 @@
 <body>
     <div class="password-screen" id="passwordScreen">
         <div class="password-box">
-            <h2>IS-LM Curve Equilibrium Simulation</h2>
+            <h2>Exchange Rate & Currency Valuation Simulation</h2>
             <p>Enter the password to access the simulation:</p>
             <input type="password" id="passwordInput" placeholder="Enter password">
             <button onclick="checkPassword()">Enter</button>
@@ -398,103 +403,110 @@
 
     <div class="container" id="gameContent" style="display: none;">
         <header>
-            <h1>IS-LM Curve Equilibrium Simulation</h1>
-            <p>Explore simultaneous equilibrium in goods and money markets through strategic policy decisions</p>
+            <h1>Exchange Rate & Currency Valuation Simulation</h1>
+            <p>Explore currency depreciation, devaluation, and strategic exchange rate management</p>
         </header>
         
         <div class="score-display">
             Your Score: <span id="score">0</span>% &nbsp; | &nbsp; 
             Policy Attempts: <span id="policyAttempts">0</span>/5 &nbsp; | &nbsp;
-            Equilibrium Status: <span id="equilibriumStatus">Not Achieved</span>
+            Trade Balance: $<span id="tradeBalance">-50</span> billion
         </div>
         
         <div class="game-container">
             <div class="panel simulation-panel">
                 <h2>Simulation Panel</h2>
-                <p>Make strategic fiscal and monetary policy decisions to achieve simultaneous equilibrium.</p>
+                <p>Make strategic currency and trade policy decisions to improve economic outcomes.</p>
                 
                 <div class="concept-definition">
-                    <span class="concept-type">IS-LM Model Fundamentals:</span>
-                    <div class="islm-cards">
-                        <div class="curve-card">
-                            <h4>IS Curve</h4>
-                            <p>Goods Market Equilibrium</p>
-                            <p>Y = C + I + G</p>
+                    <span class="concept-type">Exchange Rate Fundamentals:</span>
+                    <div class="currency-cards">
+                        <div class="currency-card">
+                            <h4>Depreciation</h4>
+                            <p>Market-driven decline in currency value</p>
+                            <div class="currency-flag">📉</div>
                         </div>
-                        <div class="curve-card">
-                            <h4>LM Curve</h4>
-                            <p>Money Market Equilibrium</p>
-                            <p>M/P = L(Y, r)</p>
+                        <div class="currency-card">
+                            <h4>Devaluation</h4>
+                            <p>Government-led currency value reduction</p>
+                            <div class="currency-flag">🏛️</div>
                         </div>
-                        <div class="curve-card">
-                            <h4>Equilibrium</h4>
-                            <p>Both Markets Clear</p>
-                            <p>IS = LM</p>
+                        <div class="currency-card">
+                            <h4>Appreciation</h4>
+                            <p>Currency value increase</p>
+                            <div class="currency-flag">📈</div>
                         </div>
                     </div>
                     <div class="formula-box">
-                        IS: Y = α(A - b·r) &nbsp;&nbsp; LM: r = (k/h)Y - (1/h)(M/P)
+                        Real Exchange Rate = (Nominal Rate × Domestic Price) / Foreign Price
                     </div>
                 </div>
                 
-                <div class="graph-container" id="islmGraph">
-                    <!-- IS-LM graph will be drawn here -->
+                <div class="exchange-rate-display">
+                    <h3>Current Exchange Rates</h3>
+                    <div class="indicator-value" id="exchangeRate">1 USD = 95 JPY</div>
+                    <div class="indicator-value" id="currencyStatus">Yen is OVERVALUED</div>
                 </div>
                 
                 <div class="strategy-game">
-                    <h3>Policy Coordination Challenge</h3>
-                    <p><strong>Scenario:</strong> The economy is in recession with high unemployment (8%) and excess money demand. Current equilibrium is below potential output.</p>
+                    <h3>Currency Management Challenge</h3>
+                    <p><strong>Scenario:</strong> Japan faces a large trade deficit and overvalued currency. Your goal: Achieve trade balance through strategic currency management.</p>
                     
                     <div class="economic-indicator">
                         <p><strong>Current Economic Status:</strong></p>
-                        <div class="indicator-value" id="outputGap">-$300B (Recessionary Gap)</div>
-                        <div class="indicator-value" id="interestRate">Interest Rate: 3%</div>
-                        <p>Unemployment: 8% | Inflation: 1.5% | MPC: 0.8 | Money Multiplier: 5</p>
+                        <div class="indicator-value" id="tradeStatus">Trade Deficit: -$50B</div>
+                        <div class="indicator-value" id="growthRate">GDP Growth: 1.2%</div>
+                        <p>Inflation: 0.8% | Unemployment: 3.8% | Foreign Reserves: $1.2T</p>
                     </div>
                     
                     <div class="policy-tabs">
-                        <button class="policy-tab active" onclick="switchPolicyTab('fiscal')">Fiscal Policy</button>
+                        <button class="policy-tab active" onclick="switchPolicyTab('market')">Market Intervention</button>
                         <button class="policy-tab" onclick="switchPolicyTab('monetary')">Monetary Policy</button>
-                        <button class="policy-tab" onclick="switchPolicyTab('coordinated')">Coordinated Policy</button>
+                        <button class="policy-tab" onclick="switchPolicyTab('fiscal')">Trade Policy</button>
                     </div>
                     
                     <div class="calculator-container">
-                        <div id="fiscalPolicy" class="policy-content active">
-                            <h4>Fiscal Policy Tools:</h4>
-                            <label>Government Spending Change (ΔG in billions):</label>
-                            <input type="number" id="govSpending" class="calculator-input" min="-200" max="200" value="0">
+                        <div id="marketPolicy" class="policy-content active">
+                            <h4>Market Intervention Tools:</h4>
+                            <label>Foreign Exchange Intervention (Buy/Sell USD in billions, positive to buy USD):</label>
+                            <input type="number" id="forexIntervention" class="calculator-input" min="-100" max="100" value="0">
                             
-                            <label>Tax Change (ΔT in billions, positive for increase):</label>
-                            <input type="number" id="taxChange" class="calculator-input" min="-200" max="200" value="0">
+                            <label>Capital Controls (restrictiveness level 0-10):</label>
+                            <input type="range" id="capitalControls" class="calculator-input" min="0" max="10" value="0">
+                            <div id="controlLevel">Current Level: 0 (No Controls)</div>
                             
                             <div class="policy-result">
-                                <strong>Fiscal Impact:</strong> Primarily shifts IS curve. Spending has larger multiplier than taxes.
+                                <strong>Market Impact:</strong> Directly affects currency supply/demand and exchange rates.
                             </div>
                         </div>
                         
                         <div id="monetaryPolicy" class="policy-content">
                             <h4>Monetary Policy Tools:</h4>
-                            <label>Change Money Supply (ΔM in billions):</label>
-                            <input type="number" id="moneySupply" class="calculator-input" min="-300" max="300" value="0">
+                            <label>Change Interest Rates (percentage points):</label>
+                            <input type="number" id="interestRates" class="calculator-input" min="-3" max="3" step="0.25" value="0">
                             
-                            <label>Change Policy Interest Rate (percentage points):</label>
-                            <input type="number" id="policyRate" class="calculator-input" min="-4" max="4" step="0.25" value="0">
+                            <label>Quantitative Easing (in billions, positive to increase money supply):</label>
+                            <input type="number" id="quantitativeEasing" class="calculator-input" min="-200" max="200" value="0">
                             
                             <div class="policy-result">
-                                <strong>Monetary Impact:</strong> Primarily shifts LM curve. Money supply changes have direct effect.
+                                <strong>Monetary Impact:</strong> Affects capital flows and currency attractiveness.
                             </div>
                         </div>
                         
-                        <div id="coordinatedPolicy" class="policy-content">
-                            <h4>Coordinated Policy Approach:</h4>
-                            <label>Fiscal Stimulus (combined G and T in billions):</label>
-                            <input type="number" id="fiscalStimulus" class="calculator-input" min="-200" max="200" value="0">
+                        <div id="fiscalPolicy" class="policy-content">
+                            <h4>Trade Policy Tools:</h4>
+                            <label>Export Subsidies (in billions):</label>
+                            <input type="number" id="exportSubsidies" class="calculator-input" min="0" max="50" value="0">
                             
-                            <label>Monetary Accommodation (money supply change in billions):</label>
-                            <input type="number" id="monetaryAccommodation" class="calculator-input" min="-300" max="300" value="0">
+                            <label>Import Tariffs (percentage):</label>
+                            <input type="number" id="importTariffs" class="calculator-input" min="0" max="25" value="0">
+                            
+                            <label>Trade Agreements (cooperation level 0-10):</label>
+                            <input type="range" id="tradeAgreements" class="calculator-input" min="0" max="10" value="5">
+                            <div id="agreementLevel">Current Level: 5 (Moderate Cooperation)</div>
                             
                             <div class="policy-result">
-                                <strong>Coordinated Impact:</strong> IS and LM shift together. Can achieve equilibrium with less crowding out.
+                                <strong>Trade Impact:</strong> Directly affects trade balance and currency demand.
                             </div>
                         </div>
                         
@@ -502,25 +514,25 @@
                             Policy Attempts Used: <span id="attemptsUsed">0</span>/5
                         </div>
                         
-                        <button onclick="calculateISLMEquilibrium()" style="width: auto;">Analyze Policy Impact</button>
+                        <button onclick="calculateCurrencyImpact()" style="width: auto;">Analyze Policy Impact</button>
                     </div>
                     
                     <div id="policyResult" class="feedback"></div>
                 </div>
                 
                 <div class="interactive-simulation">
-                    <h3>Policy Effect Identification</h3>
-                    <p>Identify which curve would be primarily affected by each policy:</p>
-                    <div id="currentPolicyScenario" class="formula-box">
-                        <strong>Current Scenario:</strong> Government increases infrastructure spending
+                    <h3>Currency Effect Identification</h3>
+                    <p>Identify the likely effect on exchange rates for each scenario:</p>
+                    <div id="currentCurrencyScenario" class="formula-box">
+                        <strong>Current Scenario:</strong> Central bank raises interest rates significantly
                     </div>
                     <div class="simulation-controls">
-                        <button class="policy-choice" onclick="checkPolicyEffect('is', this)">Shifts IS Curve</button>
-                        <button class="policy-choice" onclick="checkPolicyEffect('lm', this)">Shifts LM Curve</button>
-                        <button class="policy-choice" onclick="checkPolicyEffect('both', this)">Shifts Both Curves</button>
-                        <button class="policy-choice" onclick="checkPolicyEffect('movement', this)">Movement Along Curves</button>
+                        <button class="policy-choice" onclick="checkCurrencyEffect('appreciate', this)">Currency Appreciation</button>
+                        <button class="policy-choice" onclick="checkCurrencyEffect('depreciate', this)">Currency Depreciation</button>
+                        <button class="policy-choice" onclick="checkCurrencyEffect('devalue', this)">Currency Devaluation</button>
+                        <button class="policy-choice" onclick="checkCurrencyEffect('nochange', this)">No Significant Change</button>
                     </div>
-                    <div id="policyEffectResult" class="feedback"></div>
+                    <div id="currencyEffectResult" class="feedback"></div>
                 </div>
                 
                 <div id="simulationQuestions">
@@ -530,11 +542,11 @@
             
             <div class="panel case-studies">
                 <h2>Case Studies</h2>
-                <p>Examine real-world applications of IS-LM analysis.</p>
+                <p>Examine real-world examples of currency management and their outcomes.</p>
                 
                 <div class="question">
-                    <p><strong>Case 1:</strong> During the 2009 financial crisis, the US implemented both fiscal stimulus (ARRA) and monetary expansion (QE). The Fed kept rates near zero while government increased spending.</p>
-                    <p>How did this policy mix affect the IS-LM equilibrium?</p>
+                    <p><strong>Case 1:</strong> In 1992, George Soros "broke the Bank of England" by shorting the British pound, forcing the UK to withdraw from the European Exchange Rate Mechanism.</p>
+                    <p>What does this case demonstrate about fixed exchange rate systems?</p>
                     <div class="options" id="case1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -542,8 +554,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 2:</strong> In the early 1980s, the Volcker Fed raised interest rates dramatically to combat inflation while Reagan implemented tax cuts. This created conflicting policy effects.</p>
-                    <p>What was the net effect on the IS-LM equilibrium?</p>
+                    <p><strong>Case 2:</strong> China maintained a heavily managed exchange rate for decades, accumulating massive foreign reserves while promoting exports.</p>
+                    <p>What were the long-term consequences of this currency management strategy?</p>
                     <div class="options" id="case2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -551,8 +563,8 @@
                 </div>
                 
                 <div class="question">
-                    <p><strong>Case 3:</strong> Japan's experience in the 1990s showed that when interest rates hit zero, monetary policy becomes ineffective (liquidity trap), requiring heavy reliance on fiscal policy.</p>
-                    <p>How does this situation affect the IS-LM framework?</p>
+                    <p><strong>Case 3:</strong> In 1997, the Asian Financial Crisis saw massive currency depreciations across Southeast Asia after speculative attacks.</p>
+                    <p>What vulnerabilities did this crisis reveal in emerging market economies?</p>
                     <div class="options" id="case3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -562,10 +574,10 @@
             
             <div class="panel managerial-implications">
                 <h2>Managerial Implications</h2>
-                <p>Understand how IS-LM equilibrium analysis impacts business decisions and strategy.</p>
+                <p>Understand how exchange rate movements impact business decisions and international strategy.</p>
                 
                 <div class="question">
-                    <p>1. How can businesses use IS-LM analysis for investment timing decisions?</p>
+                    <p>1. How should multinational corporations manage currency risk in their operations?</p>
                     <div class="options" id="managerial1Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -573,7 +585,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>2. Why should companies monitor policy coordination between fiscal and monetary authorities?</p>
+                    <p>2. What sourcing strategies work best during currency appreciation periods?</p>
                     <div class="options" id="managerial2Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -581,7 +593,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>3. How does crowding out affect business investment decisions?</p>
+                    <p>3. How can companies use financial instruments to hedge against currency volatility?</p>
                     <div class="options" id="managerial3Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -589,7 +601,7 @@
                 </div>
                 
                 <div class="question">
-                    <p>4. What strategic advantage comes from anticipating IS-LM equilibrium changes?</p>
+                    <p>4. What competitive advantages can companies gain from anticipating currency movements?</p>
                     <div class="options" id="managerial4Options">
                         <!-- Options will be populated by JavaScript -->
                     </div>
@@ -597,13 +609,13 @@
                 </div>
                 
                 <div class="economic-indicator">
-                    <h3>Key Strategic Insights</h3>
+                    <h3>Key Business Strategies</h3>
                     <ul>
-                        <li>Fiscal policy shifts IS curve, monetary policy shifts LM curve</li>
-                        <li>Policy coordination can achieve goals with smaller changes</li>
-                        <li>Crowding out occurs when fiscal expansion raises interest rates</li>
-                        <li>Liquidity traps limit monetary policy effectiveness</li>
-                        <li>Expectations influence both consumption and investment decisions</li>
+                        <li>Hedging: Use forwards, options, and swaps to manage risk</li>
+                        <li>Diversification: Operate in multiple currency zones</li>
+                        <li>Pricing flexibility: Adjust prices based on currency movements</li>
+                        <li>Supply chain optimization: Source from favorable currency regions</li>
+                        <li>Financial planning: Incorporate currency scenarios into budgeting</li>
                     </ul>
                 </div>
             </div>
@@ -612,180 +624,181 @@
 
     <script>
         // Password protection
-        const correctPassword = "ISLM2023";
+        const correctPassword = "Forex2023";
         let score = 0;
         let policyAttempts = 0;
         const maxPossibleScore = 95;
-        let currentEquilibrium = { output: 700, interest: 3 }; // Below potential
-        let targetEquilibrium = { output: 1000, interest: 4 }; // Full employment equilibrium
+        let currentExchangeRate = 95; // JPY per USD
+        let tradeBalance = -50; // billion USD deficit
+        let isCurrencyOvervalued = true;
         let answeredQuestions = new Set();
         
         // Questions with randomized answer positions
         const questions = [
             {
                 id: 1,
-                text: "The IS-LM model shows simultaneous equilibrium in:",
+                text: "What is the key difference between depreciation and devaluation?",
                 options: [
-                    "Goods and labor markets",
-                    "Money and foreign exchange markets",
-                    "Goods and money markets",
-                    "All major macroeconomic markets"
+                    "Depreciation is government-led, devaluation is market-driven",
+                    "Devaluation is government-led, depreciation is market-driven",
+                    "They are identical concepts",
+                    "Depreciation only happens in developed countries"
                 ],
-                correct: 2,
+                correct: 1,
                 feedback: {
-                    correct: "Correct! The IS-LM model shows where goods market (IS) and money market (LM) are simultaneously in equilibrium.",
-                    incorrect: "Incorrect. The IS-LM model specifically shows goods and money market equilibrium."
+                    correct: "Correct! Devaluation is a deliberate government policy to reduce currency value, while depreciation occurs through market forces.",
+                    incorrect: "Incorrect. Devaluation is government policy, while depreciation happens through market mechanisms."
                 }
             },
             {
                 id: 2,
-                text: "What happens when fiscal policy increases government spending?",
+                text: "A currency appreciation typically leads to:",
                 options: [
-                    "LM curve shifts right",
-                    "IS curve shifts right",
-                    "Both curves shift right",
-                    "Movement along existing curves"
+                    "Improved trade balance",
+                    "Worsened trade balance",
+                    "No effect on trade",
+                    "Increased inflation immediately"
                 ],
                 correct: 1,
                 feedback: {
-                    correct: "Right! Increased government spending raises aggregate demand, shifting the IS curve rightward.",
-                    incorrect: "Fiscal policy primarily affects the IS curve, not the LM curve."
+                    correct: "Right! Currency appreciation makes exports more expensive and imports cheaper, worsening the trade balance.",
+                    incorrect: "Currency appreciation typically worsens the trade balance by making exports less competitive."
                 }
             },
             {
                 id: 3,
-                text: "In a liquidity trap situation, monetary policy becomes ineffective because:",
+                text: "The J-curve effect describes:",
                 options: [
-                    "The LM curve is vertical",
-                    "The IS curve is horizontal",
-                    "The LM curve is horizontal",
-                    "The IS curve is vertical"
+                    "Immediate improvement in trade balance after devaluation",
+                    "Worsening then improvement in trade balance after devaluation",
+                    "Continuous improvement in currency value",
+                    "The relationship between interest rates and exchange rates"
                 ],
-                correct: 2,
+                correct: 1,
                 feedback: {
-                    correct: "Yes! In liquidity traps, money demand is perfectly elastic, making the LM curve horizontal and monetary policy ineffective.",
-                    incorrect: "Liquidity traps create horizontal LM curves, not vertical ones."
+                    correct: "Yes! The J-curve shows trade balance worsening initially after devaluation (due to existing contracts) then improving later.",
+                    incorrect: "The J-curve describes the initial worsening then improvement in trade balance following devaluation."
                 }
             },
             {
                 id: 4,
-                text: "In Case 1, the 2009 policy mix resulted in:",
+                text: "In Case 1, the 1992 UK crisis demonstrated:",
                 options: [
-                    "Rightward shift of both IS and LM curves",
-                    "Leftward shift of both curves",
-                    "IS shifted right, LM shifted left",
-                    "Only IS curve shifted significantly"
+                    "The strength of fixed exchange rate systems",
+                    "The vulnerability of fixed rates to speculative attacks",
+                    "The effectiveness of capital controls",
+                    "The stability of the European monetary system"
                 ],
-                correct: 0,
+                correct: 1,
                 feedback: {
-                    correct: "Exactly! Fiscal stimulus shifted IS right, while monetary expansion shifted LM right, moving equilibrium toward full employment.",
-                    incorrect: "Both expansionary fiscal and monetary policies shifted their respective curves rightward."
+                    correct: "Exactly! The crisis showed how fixed exchange rates can be vulnerable to well-funded speculative attacks.",
+                    incorrect: "The UK crisis revealed the vulnerability of fixed exchange rate systems to market speculation."
                 }
             },
             {
                 id: 5,
-                text: "In Case 2, the Volcker-Reagan policies created:",
+                text: "In Case 2, China's currency management led to:",
                 options: [
-                    "Definite expansionary effect",
-                    "Definite contractionary effect",
-                    "Conflicting effects on equilibrium",
-                    "No net effect on the economy"
+                    "Massive trade deficits",
+                    "Huge foreign reserve accumulation",
+                    "Currency appreciation pressure",
+                    "Both B and C"
                 ],
-                correct: 2,
+                correct: 3,
                 feedback: {
-                    correct: "Right! Tax cuts shifted IS right (expansionary) while high rates shifted LM left (contractionary), creating conflicting pressures.",
-                    incorrect: "The policies had opposing effects - fiscal expansion vs monetary contraction."
+                    correct: "Right! China's managed currency and export focus led to huge reserves and persistent appreciation pressure.",
+                    incorrect: "China's strategy resulted in both massive foreign reserves and constant appreciation pressure."
                 }
             },
             {
                 id: 6,
-                text: "In Case 3, Japan's liquidity trap meant:",
+                text: "In Case 3, the Asian Financial Crisis revealed:",
                 options: [
-                    "Fiscal policy was completely ineffective",
-                    "Monetary policy could still stimulate effectively",
-                    "Fiscal policy became more important",
-                    "Both policies were equally effective"
+                    "The dangers of excessive foreign borrowing",
+                    "The stability of fixed exchange rate regimes",
+                    "The strength of Asian banking systems",
+                    "The benefits of rapid capital account liberalization"
                 ],
-                correct: 2,
+                correct: 0,
                 feedback: {
-                    correct: "Correct! With monetary policy constrained by zero lower bound, fiscal policy became the primary tool for stimulus.",
-                    incorrect: "Liquidity traps increase the importance of fiscal policy when monetary policy is ineffective."
+                    correct: "Correct! The crisis exposed vulnerabilities from excessive short-term foreign currency borrowing.",
+                    incorrect: "The Asian crisis revealed dangers of heavy foreign borrowing and weak financial regulation."
                 }
             },
             {
                 id: 7,
-                text: "How can businesses use IS-LM for investment timing?",
+                text: "How should multinationals manage currency risk?",
                 options: [
-                    "Predict interest rate and output combinations",
-                    "Anticipate policy-induced economic shifts",
-                    "Time capital investments strategically",
-                    "All of the above"
+                    "Ignore it as unpredictable",
+                    "Use only one currency for all operations",
+                    "Implement comprehensive hedging strategies",
+                    "Focus only on domestic markets"
                 ],
-                correct: 3,
+                correct: 2,
                 feedback: {
-                    correct: "Yes! All these applications help businesses make better investment timing decisions.",
-                    incorrect: "IS-LM analysis helps with interest rate/output predictions, policy anticipation, and investment timing."
+                    correct: "Yes! Multinationals should use hedging instruments and operational strategies to manage currency risk.",
+                    incorrect: "Comprehensive hedging and risk management are essential for multinational currency risk."
                 }
             },
             {
                 id: 8,
-                text: "Why monitor policy coordination?",
+                text: "During currency appreciation, companies should:",
                 options: [
-                    "Coordinated policies have stronger effects",
-                    "Policy conflicts can create uncertainty",
-                    "Helps anticipate economic stability",
-                    "All of the above"
+                    "Increase domestic sourcing",
+                    "Expand foreign sourcing",
+                    "Ignore sourcing decisions",
+                    "Only focus on pricing"
                 ],
-                correct: 3,
+                correct: 1,
                 feedback: {
-                    correct: "Right! Policy coordination affects economic stability, policy effectiveness, and business certainty.",
-                    incorrect: "All these factors make policy coordination important for businesses to monitor."
+                    correct: "Right! Currency appreciation makes foreign sourcing cheaper, providing cost advantages.",
+                    incorrect: "Appreciation makes foreign sourcing more attractive due to lower costs in foreign currency terms."
                 }
             },
             {
                 id: 9,
-                text: "How does crowding out affect businesses?",
+                text: "Common currency hedging instruments include:",
                 options: [
-                    "Reduces private investment opportunities",
-                    "Increases borrowing costs",
-                    "Both A and B",
-                    "Has no significant effect"
+                    "Forward contracts and options",
+                    "Only spot transactions",
+                    "Stock investments",
+                    "Real estate holdings"
                 ],
-                correct: 2,
+                correct: 0,
                 feedback: {
-                    correct: "Correct! Crowding out both reduces investment opportunities and increases borrowing costs for businesses.",
-                    incorrect: "Crowding out affects businesses through both reduced opportunities and higher costs."
+                    correct: "Correct! Forwards, options, and swaps are common instruments for currency risk management.",
+                    incorrect: "Forward contracts, options, and currency swaps are primary hedging instruments."
                 }
             },
             {
                 id: 10,
-                text: "What advantage from anticipating equilibrium changes?",
+                text: "Anticipating currency movements helps companies:",
                 options: [
-                    "First-mover advantage in strategy",
-                    "Better resource allocation",
-                    "Improved risk management",
+                    "Gain competitive pricing advantages",
+                    "Optimize supply chain decisions",
+                    "Make better investment timing",
                     "All of the above"
                 ],
                 correct: 3,
                 feedback: {
-                    correct: "Yes! All these strategic advantages come from anticipating IS-LM equilibrium changes.",
-                    incorrect: "Anticipating equilibrium changes helps with strategy, allocation, and risk management."
+                    correct: "Yes! All these strategic advantages come from anticipating currency movements.",
+                    incorrect: "Currency anticipation helps with pricing, sourcing, and investment timing decisions."
                 }
             }
         ];
 
-        // Policy scenarios for practice
-        const policyScenarios = [
-            { scenario: "Government increases infrastructure spending", effect: "is" },
-            { scenario: "Central bank conducts open market operations to increase money supply", effect: "lm" },
-            { scenario: "Both fiscal stimulus and monetary expansion implemented together", effect: "both" },
-            { scenario: "Economic growth increases income levels", effect: "movement" },
-            { scenario: "Central bank raises reserve requirements", effect: "lm" },
-            { scenario: "Government implements tax cuts for businesses", effect: "is" }
+        // Currency scenarios for practice
+        const currencyScenarios = [
+            { scenario: "Central bank raises interest rates significantly", effect: "appreciate" },
+            { scenario: "Government announces major devaluation to boost exports", effect: "devalue" },
+            { scenario: "Economic recession reduces demand for imports", effect: "appreciate" },
+            { scenario: "Massive capital flight from the country", effect: "depreciate" },
+            { scenario: "Trade deficit widens substantially", effect: "depreciate" },
+            { scenario: "Central bank intervenes to buy domestic currency", effect: "appreciate" }
         ];
         
         let currentScenarioIndex = 0;
-        let currentPolicyTab = 'fiscal';
+        let currentPolicyTab = 'market';
         
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
@@ -793,11 +806,29 @@
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('gameContent').style.display = 'block';
                 initializeGame();
-                drawISLMGraph();
                 updateDisplay();
+                setupSliders();
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
+        }
+        
+        function setupSliders() {
+            // Setup capital controls slider
+            const capitalSlider = document.getElementById('capitalControls');
+            const controlLevel = document.getElementById('controlLevel');
+            capitalSlider.addEventListener('input', function() {
+                const levels = ['No Controls', 'Light Monitoring', 'Moderate Controls', 'Heavy Restrictions', 'Near Closure'];
+                controlLevel.textContent = `Current Level: ${this.value} (${levels[Math.floor(this.value / 2)]})`;
+            });
+            
+            // Setup trade agreements slider
+            const tradeSlider = document.getElementById('tradeAgreements');
+            const agreementLevel = document.getElementById('agreementLevel');
+            tradeSlider.addEventListener('input', function() {
+                const levels = ['Hostile', 'Limited', 'Moderate', 'Strong', 'Full Integration'];
+                agreementLevel.textContent = `Current Level: ${this.value} (${levels[Math.floor(this.value / 2)]})`;
+            });
         }
         
         function switchPolicyTab(tabName) {
@@ -893,95 +924,7 @@
             });
         }
         
-        function drawISLMGraph() {
-            const graph = document.getElementById('islmGraph');
-            const width = graph.offsetWidth;
-            const height = graph.offsetHeight;
-            
-            // Clear previous graph
-            graph.innerHTML = '';
-            
-            // Draw axes
-            const xAxis = document.createElement('div');
-            xAxis.className = 'graph-axis';
-            xAxis.style.width = width - 40 + 'px';
-            xAxis.style.height = '2px';
-            xAxis.style.bottom = '40px';
-            xAxis.style.left = '40px';
-            graph.appendChild(xAxis);
-            
-            const yAxis = document.createElement('div');
-            yAxis.className = 'graph-axis';
-            yAxis.style.width = '2px';
-            yAxis.style.height = height - 40 + 'px';
-            yAxis.style.left = '40px';
-            yAxis.style.bottom = '40px';
-            graph.appendChild(yAxis);
-            
-            // Draw IS curve (downward sloping)
-            for (let i = 0; i < width - 60; i += 3) {
-                const point = document.createElement('div');
-                point.className = 'graph-line';
-                point.style.width = '2px';
-                point.style.height = '2px';
-                point.style.left = (40 + i) + 'px';
-                point.style.bottom = (40 + (width - 60 - i) * 0.25) + 'px';
-                point.style.backgroundColor = '#e74c3c';
-                graph.appendChild(point);
-            }
-            
-            // Draw LM curve (upward sloping)
-            for (let i = 0; i < width - 60; i += 3) {
-                const point = document.createElement('div');
-                point.className = 'graph-line';
-                point.style.width = '2px';
-                point.style.height = '2px';
-                point.style.left = (40 + i) + 'px';
-                point.style.bottom = (40 + i * 0.2) + 'px';
-                point.style.backgroundColor = '#3498db';
-                graph.appendChild(point);
-            }
-            
-            // Add equilibrium point
-            const eqPoint = document.createElement('div');
-            eqPoint.className = 'equilibrium-point';
-            eqPoint.style.left = (width * 0.4) + 'px';
-            eqPoint.style.bottom = (height * 0.5) + 'px';
-            graph.appendChild(eqPoint);
-            
-            // Add labels
-            const rLabel = document.createElement('div');
-            rLabel.className = 'graph-label';
-            rLabel.textContent = 'Interest Rate (r)';
-            rLabel.style.left = '20px';
-            rLabel.style.top = '10px';
-            graph.appendChild(rLabel);
-            
-            const yLabel = document.createElement('div');
-            yLabel.className = 'graph-label';
-            yLabel.textContent = 'Output (Y)';
-            yLabel.style.right = '10px';
-            yLabel.style.bottom = '20px';
-            graph.appendChild(yLabel);
-            
-            const isLabel = document.createElement('div');
-            isLabel.className = 'graph-label';
-            isLabel.textContent = 'IS';
-            isLabel.style.right = '30px';
-            isLabel.style.top = '30px';
-            isLabel.style.color = '#e74c3c';
-            graph.appendChild(isLabel);
-            
-            const lmLabel = document.createElement('div');
-            lmLabel.className = 'graph-label';
-            lmLabel.textContent = 'LM';
-            lmLabel.style.left = '100px';
-            lmLabel.style.bottom = '30px';
-            lmLabel.style.color = '#3498db';
-            graph.appendChild(lmLabel);
-        }
-        
-        function calculateISLMEquilibrium() {
+        function calculateCurrencyImpact() {
             if (policyAttempts >= 5) {
                 document.getElementById('policyResult').innerHTML = 
                     "<strong>No more attempts!</strong> You've used all 5 policy attempts. Your final score has been calculated.";
@@ -994,105 +937,99 @@
             document.getElementById('policyAttempts').textContent = policyAttempts;
             
             // Get policy inputs based on current tab
-            let fiscalImpact = 0;
-            let monetaryImpact = 0;
+            let exchangeRateImpact = 0;
+            let tradeBalanceImpact = 0;
             
-            if (currentPolicyTab === 'fiscal') {
-                const govSpending = parseFloat(document.getElementById('govSpending').value) || 0;
-                const taxChange = parseFloat(document.getElementById('taxChange').value) || 0;
+            if (currentPolicyTab === 'market') {
+                const forexIntervention = parseFloat(document.getElementById('forexIntervention').value) || 0;
+                const capitalControls = parseFloat(document.getElementById('capitalControls').value) || 0;
                 
-                // Fiscal policy impacts (shifts IS curve)
-                const mpc = 0.8;
-                const spendingMultiplier = 1 / (1 - mpc); // 5
-                const taxMultiplier = -mpc / (1 - mpc); // -4
+                // Market intervention impacts
+                // Buying USD strengthens USD (weakens JPY), selling USD weakens USD (strengthens JPY)
+                exchangeRateImpact = forexIntervention * -0.5; // Negative because we're managing JPY/USD rate
+                exchangeRateImpact += capitalControls * 0.3; // Capital controls can support currency
                 
-                fiscalImpact = (govSpending * spendingMultiplier) + (taxChange * taxMultiplier);
-                monetaryImpact = 0;
+                tradeBalanceImpact = forexIntervention * 0.2 + capitalControls * -0.1;
                 
             } else if (currentPolicyTab === 'monetary') {
-                const moneySupply = parseFloat(document.getElementById('moneySupply').value) || 0;
-                const policyRate = parseFloat(document.getElementById('policyRate').value) || 0;
+                const interestRates = parseFloat(document.getElementById('interestRates').value) || 0;
+                const quantitativeEasing = parseFloat(document.getElementById('quantitativeEasing').value) || 0;
                 
-                // Monetary policy impacts (shifts LM curve)
-                const moneyMultiplier = 5;
-                fiscalImpact = 0;
-                monetaryImpact = (moneySupply * moneyMultiplier) + (policyRate * -50); // Simplified impact
+                // Monetary policy impacts
+                // Higher rates attract capital, strengthening currency
+                exchangeRateImpact = interestRates * 2; // Higher rates strengthen JPY
+                exchangeRateImpact += quantitativeEasing * -0.8; // QE weakens currency
                 
-            } else if (currentPolicyTab === 'coordinated') {
-                const fiscalStimulus = parseFloat(document.getElementById('fiscalStimulus').value) || 0;
-                const monetaryAccommodation = parseFloat(document.getElementById('monetaryAccommodation').value) || 0;
+                tradeBalanceImpact = interestRates * -0.5 + quantitativeEasing * 0.3;
                 
-                // Coordinated policy impacts
-                const mpc = 0.8;
-                const spendingMultiplier = 1 / (1 - mpc);
-                const moneyMultiplier = 5;
+            } else if (currentPolicyTab === 'fiscal') {
+                const exportSubsidies = parseFloat(document.getElementById('exportSubsidies').value) || 0;
+                const importTariffs = parseFloat(document.getElementById('importTariffs').value) || 0;
+                const tradeAgreements = parseFloat(document.getElementById('tradeAgreements').value) || 5;
                 
-                fiscalImpact = fiscalStimulus * spendingMultiplier;
-                monetaryImpact = monetaryAccommodation * moneyMultiplier;
+                // Trade policy impacts
+                exchangeRateImpact = exportSubsidies * 0.1 + importTariffs * 0.05;
+                tradeBalanceImpact = exportSubsidies * 1.5 + importTariffs * 0.8 + (tradeAgreements - 5) * 0.5;
             }
             
-            // Calculate new equilibrium
-            const outputChange = fiscalImpact * 0.7 + monetaryImpact * 0.3; // Fiscal has larger output effect
-            const interestChange = fiscalImpact * 0.1 + monetaryImpact * -0.2; // Monetary has larger interest effect
+            // Apply impacts with some randomness for realism
+            const randomFactor = (Math.random() - 0.5) * 0.3; // ±15% randomness
+            const effectiveExchangeImpact = exchangeRateImpact * (1 + randomFactor);
+            const effectiveTradeImpact = tradeBalanceImpact * (1 + randomFactor);
             
-            const newOutput = currentEquilibrium.output + outputChange;
-            const newInterest = Math.max(0, currentEquilibrium.interest + interestChange);
+            // Calculate new values
+            const newExchangeRate = Math.max(70, Math.min(130, currentExchangeRate + effectiveExchangeImpact));
+            const newTradeBalance = tradeBalance + effectiveTradeImpact;
             
-            // Calculate distance from target equilibrium
-            const outputDistance = Math.abs(newOutput - targetEquilibrium.output);
-            const interestDistance = Math.abs(newInterest - targetEquilibrium.interest);
-            const totalDistance = outputDistance + interestDistance;
+            // Determine if currency is now properly valued (target: 105 JPY/USD for trade balance)
+            const equilibriumRate = 105;
+            const isNowProperlyValued = Math.abs(newExchangeRate - equilibriumRate) < 5;
+            const tradeBalanceHealthy = newTradeBalance >= -10 && newTradeBalance <= 10;
             
-            // Calculate effectiveness (closer to target = higher score)
-            const maxDistance = 500; // Maximum possible distance
-            const effectiveness = Math.max(0, 100 - (totalDistance / maxDistance * 100));
+            // Calculate effectiveness
+            const exchangeRateEffectiveness = 100 - Math.abs(newExchangeRate - equilibriumRate);
+            const tradeBalanceEffectiveness = 100 - Math.abs(newTradeBalance) * 2;
+            const totalEffectiveness = (exchangeRateEffectiveness + tradeBalanceEffectiveness) / 2;
             
-            // Strategy bonus for using appropriate policy mix
+            // Strategy bonus
             let strategyBonus = 0;
-            if (currentEquilibrium.output < targetEquilibrium.output && outputChange > 0) {
-                strategyBonus += 10; // Expansionary policy during recession
+            if (currentPolicyTab === 'market' && isCurrencyOvervalued && effectiveExchangeImpact > 0) {
+                strategyBonus += 10; // Correct intervention for overvalued currency
             }
-            if (currentPolicyTab === 'coordinated') {
-                strategyBonus += 5; // Bonus for coordinated approach
+            if (tradeBalanceHealthy) {
+                strategyBonus += 15; // Bonus for achieving healthy trade balance
+            }
+            if (isNowProperlyValued) {
+                strategyBonus += 20; // Bonus for achieving proper valuation
             }
             
-            const pointsEarned = Math.floor(effectiveness / 3) + strategyBonus;
-            score += pointsEarned;
+            const pointsEarned = Math.floor(totalEffectiveness / 4) + strategyBonus;
+            score += Math.max(0, pointsEarned);
             
-            // Update current equilibrium
-            currentEquilibrium = { output: newOutput, interest: newInterest };
+            // Update current values
+            currentExchangeRate = newExchangeRate;
+            tradeBalance = newTradeBalance;
+            isCurrencyOvervalued = newExchangeRate < equilibriumRate;
             
             updateDisplay();
             
-            // Determine equilibrium status
-            let equilibriumStatus = "Not Achieved";
-            if (totalDistance < 50) {
-                equilibriumStatus = "Full Equilibrium Achieved!";
-                score += 20; // Bonus for achieving equilibrium
-            } else if (totalDistance < 150) {
-                equilibriumStatus = "Near Equilibrium";
-            }
-            
-            document.getElementById('equilibriumStatus').textContent = equilibriumStatus;
-            document.getElementById('outputGap').textContent = `$${Math.round(targetEquilibrium.output - newOutput)}B ${newOutput < targetEquilibrium.output ? 'Recessionary' : 'Inflationary'} Gap`;
-            document.getElementById('interestRate').textContent = `Interest Rate: ${newInterest.toFixed(2)}%`;
-            
             document.getElementById('policyResult').innerHTML = `
                 <strong>Policy Impact Analysis:</strong><br>
-                Output Change: $${outputChange.toFixed(1)}B<br>
-                Interest Rate Change: ${interestChange.toFixed(2)} percentage points<br>
-                <strong>New Equilibrium:</strong> Y = $${newOutput.toFixed(0)}B, r = ${newInterest.toFixed(2)}%<br>
-                Distance from Target: ${totalDistance.toFixed(1)} points<br>
-                Effectiveness: ${effectiveness.toFixed(1)}%<br>
+                Exchange Rate Change: ${effectiveExchangeImpact > 0 ? '+' : ''}${effectiveExchangeImpact.toFixed(2)} JPY<br>
+                Trade Balance Change: ${effectiveTradeImpact > 0 ? '+' : ''}$${effectiveTradeImpact.toFixed(1)}B<br>
+                <strong>New Exchange Rate:</strong> 1 USD = ${newExchangeRate.toFixed(2)} JPY<br>
+                <strong>New Trade Balance:</strong> $${newTradeBalance.toFixed(1)}B<br>
+                Effectiveness: ${totalEffectiveness.toFixed(1)}%<br>
                 Points Earned: ${pointsEarned}<br>
-                <em>${equilibriumStatus.includes("Full Equilibrium") ? 'Excellent! You achieved simultaneous equilibrium!' : 
-                     equilibriumStatus.includes("Near Equilibrium") ? 'Good progress! Getting closer to equilibrium.' : 
-                     'Keep adjusting your policy mix to reach equilibrium.'}</em>
+                <em>${isNowProperlyValued && tradeBalanceHealthy ? 'Excellent! Optimal currency valuation achieved!' : 
+                     isNowProperlyValued ? 'Good! Currency properly valued but trade needs work.' : 
+                     tradeBalanceHealthy ? 'Trade balance healthy but currency misaligned.' : 
+                     'Keep adjusting your policy mix.'}</em>
             `;
             
-            if (equilibriumStatus.includes("Full Equilibrium")) {
+            if (isNowProperlyValued && tradeBalanceHealthy) {
                 document.getElementById('policyResult').className = 'feedback correct';
-            } else if (equilibriumStatus.includes("Near Equilibrium")) {
+            } else if (isNowProperlyValued || tradeBalanceHealthy) {
                 document.getElementById('policyResult').className = 'feedback correct';
             } else {
                 document.getElementById('policyResult').className = 'feedback incorrect';
@@ -1101,27 +1038,27 @@
             updateDisplay();
         }
         
-        function checkPolicyEffect(effect, button) {
-            if (answeredQuestions.has('policy' + currentScenarioIndex)) {
+        function checkCurrencyEffect(effect, button) {
+            if (answeredQuestions.has('currency' + currentScenarioIndex)) {
                 return; // Already answered this scenario
             }
             
-            const resultElement = document.getElementById('policyEffectResult');
-            const correctEffect = policyScenarios[currentScenarioIndex].effect;
+            const resultElement = document.getElementById('currencyEffectResult');
+            const correctEffect = currencyScenarios[currentScenarioIndex].effect;
             
             if (effect === correctEffect) {
                 resultElement.innerHTML = `
-                    <strong>Correct!</strong> ${getPolicyEffectExplanation(correctEffect)}
+                    <strong>Correct!</strong> ${getCurrencyEffectExplanation(correctEffect)}
                 `;
                 resultElement.className = 'feedback correct';
                 
                 // Add to score for correct identification
                 const points = Math.max(5, 15 - (answeredQuestions.size * 2));
                 score += points;
-                answeredQuestions.add('policy' + currentScenarioIndex);
+                answeredQuestions.add('currency' + currentScenarioIndex);
             } else {
                 resultElement.innerHTML = `
-                    <strong>Incorrect.</strong> ${getPolicyEffectExplanation(correctEffect)}
+                    <strong>Incorrect.</strong> ${getCurrencyEffectExplanation(correctEffect)}
                 `;
                 resultElement.className = 'feedback incorrect';
             }
@@ -1129,35 +1066,41 @@
             updateDisplay();
             
             // Move to next scenario after a delay
-            setTimeout(nextPolicyScenario, 2500);
+            setTimeout(nextCurrencyScenario, 2500);
         }
         
-        function getPolicyEffectExplanation(effect) {
+        function getCurrencyEffectExplanation(effect) {
             const explanations = {
-                'is': 'This policy primarily affects aggregate demand and shifts the IS curve.',
-                'lm': 'This policy primarily affects money supply/demand and shifts the LM curve.',
-                'both': 'This coordinated approach affects both goods and money markets, shifting both curves.',
-                'movement': 'This represents a change in economic conditions that causes movement along existing curves.'
+                'appreciate': 'This increases demand for the currency or reduces supply, causing appreciation.',
+                'depreciate': 'Market forces reduce demand or increase supply, causing depreciation.',
+                'devalue': 'Government policy deliberately reduces the currency value.',
+                'nochange': 'Conflicting forces or minor impact results in little net change.'
             };
             return explanations[effect];
         }
         
-        function nextPolicyScenario() {
-            currentScenarioIndex = (currentScenarioIndex + 1) % policyScenarios.length;
-            const scenarioElement = document.getElementById('currentPolicyScenario');
+        function nextCurrencyScenario() {
+            currentScenarioIndex = (currentScenarioIndex + 1) % currencyScenarios.length;
+            const scenarioElement = document.getElementById('currentCurrencyScenario');
             scenarioElement.innerHTML = `
-                <strong>Current Scenario:</strong> ${policyScenarios[currentScenarioIndex].scenario}
+                <strong>Current Scenario:</strong> ${currencyScenarios[currentScenarioIndex].scenario}
             `;
             
             // Clear the previous result
-            document.getElementById('policyEffectResult').innerHTML = '';
-            document.getElementById('policyEffectResult').className = 'feedback';
+            document.getElementById('currencyEffectResult').innerHTML = '';
+            document.getElementById('currencyEffectResult').className = 'feedback';
         }
         
         function updateDisplay() {
             // Update score display (capped at maxPossibleScore)
             const displayScore = Math.min(score, maxPossibleScore);
             document.getElementById('score').textContent = displayScore;
+            
+            // Update economic indicators
+            document.getElementById('exchangeRate').textContent = `1 USD = ${currentExchangeRate.toFixed(2)} JPY`;
+            document.getElementById('currencyStatus').textContent = `Yen is ${isCurrencyOvervalued ? 'OVERVALUED' : 'UNDERVALUED'}`;
+            document.getElementById('tradeBalance').textContent = tradeBalance.toFixed(1);
+            document.getElementById('tradeStatus').textContent = `Trade ${tradeBalance >= 0 ? 'Surplus' : 'Deficit'}: $${Math.abs(tradeBalance).toFixed(1)}B`;
             
             // Check if game should end
             if (policyAttempts >= 5) {
@@ -1180,11 +1123,13 @@
             const allInputs = document.querySelectorAll('input');
             allInputs.forEach(input => input.disabled = true);
             
+            const optimalAchieved = Math.abs(currentExchangeRate - 105) < 5 && Math.abs(tradeBalance) < 10;
+            
             document.getElementById('policyResult').innerHTML += 
                 `<br><br><strong>Game Over! Final Score: ${finalScore}%</strong><br>
-                 <em>${finalScore >= 80 ? 'Excellent understanding of IS-LM equilibrium!' : 
-                      finalScore >= 60 ? 'Good grasp of policy effects!' : 
-                      'Review the concepts and try again!'}</em>`;
+                 <em>${optimalAchieved ? 'Outstanding! You achieved both currency equilibrium and trade balance!' : 
+                      finalScore >= 70 ? 'Good performance! Review areas for improvement.' : 
+                      'Review exchange rate concepts and try different strategies!'}</em>`;
         }
         
         function answerQuestion(questionId, isCorrect, button, feedback) {
@@ -1226,9 +1171,9 @@
         
         // Initialize the first scenario
         window.onload = function() {
-            if (document.getElementById('currentPolicyScenario')) {
-                document.getElementById('currentPolicyScenario').innerHTML = `
-                    <strong>Current Scenario:</strong> ${policyScenarios[0].scenario}
+            if (document.getElementById('currentCurrencyScenario')) {
+                document.getElementById('currentCurrencyScenario').innerHTML = `
+                    <strong>Current Scenario:</strong> ${currencyScenarios[0].scenario}
                 `;
             }
         };
