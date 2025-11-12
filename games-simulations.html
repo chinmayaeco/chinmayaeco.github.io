@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IS-LM Model Simulation: Small Open Economy</title>
+    <title>IS-LM Model: Small Open Economy</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -102,7 +102,7 @@
         
         .dashboard {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 2fr 1fr;
             gap: 20px;
             margin-bottom: 20px;
         }
@@ -237,6 +237,13 @@
             border-bottom: none;
         }
         
+        .case-study {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
         .status-indicators {
             display: flex;
             gap: 15px;
@@ -267,6 +274,32 @@
             background-color: var(--warning-color);
         }
         
+        .economic-indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .indicator-card {
+            background-color: white;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .indicator-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .indicator-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -282,7 +315,7 @@
     <div class="container">
         <header>
             <h1>IS-LM Model Simulation: Small Open Economy</h1>
-            <p>Floating Exchange Rate Environment</p>
+            <p>Floating Exchange Rate Environment with Focus on Depreciation</p>
         </header>
         
         <!-- Password Screen -->
@@ -302,7 +335,7 @@
             <div class="score-panel">
                 <div>
                     <h3>Economic Performance Score</h3>
-                    <p>Your goal is to maintain stable economic conditions</p>
+                    <p>Your goal is to maintain stable economic conditions while managing exchange rate depreciation</p>
                 </div>
                 <div class="score-value" id="scoreValue">100</div>
             </div>
@@ -311,6 +344,29 @@
             <div class="panel simulation-panel">
                 <h2>Economic Simulation Panel</h2>
                 <p>Adjust the policy levers below to influence the economy. Your decisions will affect output, interest rates, and exchange rates.</p>
+                
+                <div class="economic-indicators">
+                    <div class="indicator-card">
+                        <div class="indicator-label">GDP Growth</div>
+                        <div class="indicator-value" id="gdpValue">2.5%</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-label">Inflation</div>
+                        <div class="indicator-value" id="inflationValue">2.0%</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-label">Exchange Rate</div>
+                        <div class="indicator-value" id="exchangeValue">1.00</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-label">Interest Rate</div>
+                        <div class="indicator-value" id="interestValue">3.0%</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-label">Unemployment</div>
+                        <div class="indicator-value" id="unemploymentValue">5.0%</div>
+                    </div>
+                </div>
                 
                 <div class="controls">
                     <div class="control-group">
@@ -335,6 +391,7 @@
                 <div class="buttons">
                     <button id="applyPolicy" class="primary-btn">Apply Policy Changes</button>
                     <button id="resetPolicy" class="secondary-btn">Reset to Baseline</button>
+                    <button id="nextPeriod" class="primary-btn">Advance to Next Period</button>
                 </div>
                 
                 <div class="status-indicators">
@@ -353,13 +410,76 @@
                 </div>
             </div>
             
+            <!-- Dashboard with Case Study and Managerial Implications -->
+            <div class="dashboard">
+                <!-- Case Study Panel -->
+                <div class="panel">
+                    <h2>Case Study: Managing Currency Depreciation</h2>
+                    <div class="case-study">
+                        <h3>Scenario: Rapid Currency Depreciation</h3>
+                        <p>Your economy is experiencing a 15% depreciation of its currency over the past quarter. This has led to:</p>
+                        <ul>
+                            <li>Increased import costs and inflationary pressures</li>
+                            <li>Improved export competitiveness</li>
+                            <li>Capital flight and reduced foreign investment</li>
+                            <li>Pressure on foreign currency reserves</li>
+                        </ul>
+                        <p><strong>Your Challenge:</strong> Implement policies to stabilize the currency while maintaining economic growth and controlling inflation.</p>
+                    </div>
+                    
+                    <h3>Policy Options Analysis</h3>
+                    <p>Consider the following policy responses to currency depreciation:</p>
+                    <ul>
+                        <li><strong>Monetary Tightening:</strong> Increase interest rates to attract capital inflows but risk slowing economic growth</li>
+                        <li><strong>Fiscal Contraction:</strong> Reduce government spending to lower aggregate demand and import dependence</li>
+                        <li><strong>Capital Controls:</strong> Restrict capital outflows but potentially discourage foreign investment</li>
+                        <li><strong>Foreign Exchange Intervention:</strong> Use reserves to support the currency but risk depleting reserves</li>
+                    </ul>
+                    
+                    <div class="case-study">
+                        <h3>Historical Example: Emerging Market Crisis</h3>
+                        <p>During the 1997 Asian Financial Crisis, countries like Thailand and Indonesia faced severe currency depreciation. Policy missteps included:</p>
+                        <ul>
+                            <li>Delayed interest rate hikes allowing further capital flight</li>
+                            <li>Insufficient fiscal adjustment leading to ballooning deficits</li>
+                            <li>Weak banking sectors exacerbating the crisis</li>
+                        </ul>
+                        <p>Successful responses included IMF-supported adjustment programs with tight monetary policy, fiscal consolidation, and structural reforms.</p>
+                    </div>
+                </div>
+                
+                <!-- Managerial Implications Panel -->
+                <div class="panel">
+                    <h2>Managerial Implications</h2>
+                    <p>Based on your policy decisions, here are the implications for business management:</p>
+                    
+                    <ul class="implications-list">
+                        <li id="implication1">Current policies support stable economic conditions.</li>
+                        <li id="implication2">Interest rates are at equilibrium levels.</li>
+                        <li id="implication3">Exchange rate stability supports international trade.</li>
+                        <li id="implication4">Investment climate remains favorable.</li>
+                        <li id="implication5">Consumer confidence is maintaining steady demand.</li>
+                    </ul>
+                    
+                    <h3>Strategic Business Responses</h3>
+                    <p>Based on current economic conditions:</p>
+                    <ul>
+                        <li id="strategy1">Consider hedging foreign exchange exposure</li>
+                        <li id="strategy2">Evaluate export market opportunities</li>
+                        <li id="strategy3">Review import substitution possibilities</li>
+                        <li id="strategy4">Assess supply chain resilience</li>
+                    </ul>
+                </div>
+            </div>
+            
             <!-- Charts Container -->
             <div class="charts-container">
                 <div class="panel">
                     <h3>IS-LM Equilibrium</h3>
                     <div class="chart">
                         <div class="chart-placeholder">
-                            IS-LM Chart Visualization
+                            IS-LM Chart Visualization<br>
+                            (Interest Rate vs. Output)
                         </div>
                     </div>
                 </div>
@@ -368,27 +488,10 @@
                     <h3>Exchange Rate Dynamics</h3>
                     <div class="chart">
                         <div class="chart-placeholder">
-                            Exchange Rate Chart Visualization
+                            Exchange Rate Chart Visualization<br>
+                            (Time vs. Exchange Rate)
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Managerial Implications Panel -->
-            <div class="panel">
-                <h2>Managerial Implications</h2>
-                <p>Based on your policy decisions, here are the implications for business management:</p>
-                
-                <ul class="implications-list">
-                    <li id="implication1">Current policies support stable economic conditions.</li>
-                    <li id="implication2">Interest rates are at equilibrium levels.</li>
-                    <li id="implication3">Exchange rate stability supports international trade.</li>
-                    <li id="implication4">Investment climate remains favorable.</li>
-                    <li id="implication5">Consumer confidence is maintaining steady demand.</li>
-                </ul>
-                
-                <div class="buttons">
-                    <button id="nextRound" class="primary-btn">Advance to Next Period</button>
                 </div>
             </div>
         </div>
@@ -422,6 +525,7 @@
         let inflation = 2.0;
         let exchangeRate = 1.0;
         let interestRate = 3.0;
+        let unemployment = 5.0;
         
         // Policy sliders
         const fiscalPolicy = document.getElementById('fiscalPolicy');
@@ -432,6 +536,13 @@
         const fiscalValue = document.getElementById('fiscalValue');
         const monetaryValue = document.getElementById('monetaryValue');
         const tradeValue = document.getElementById('tradeValue');
+        
+        // Economic indicator displays
+        const gdpValue = document.getElementById('gdpValue');
+        const inflationValue = document.getElementById('inflationValue');
+        const exchangeValue = document.getElementById('exchangeValue');
+        const interestValue = document.getElementById('interestValue');
+        const unemploymentValue = document.getElementById('unemploymentValue');
         
         // Update policy value displays
         fiscalPolicy.addEventListener('input', function() {
@@ -458,6 +569,10 @@
             inflation += fiscalChange * 0.1 + monetaryChange * 0.05 - tradeChange * 0.02;
             exchangeRate += fiscalChange * 0.01 - monetaryChange * 0.02 + tradeChange * 0.03;
             interestRate += monetaryChange * 0.5;
+            unemployment -= fiscalChange * 0.1 + monetaryChange * 0.05;
+            
+            // Update economic indicators
+            updateEconomicIndicators();
             
             // Update score based on economic performance
             updateScore(fiscalChange, monetaryChange, tradeChange);
@@ -481,12 +596,51 @@
             tradeValue.textContent = '0% change';
         });
         
-        // Next round button
-        document.getElementById('nextRound').addEventListener('click', function() {
-            // In a more advanced simulation, this would advance time
-            // and introduce new economic shocks or conditions
-            alert(`Advancing to period ${round + 1}. New economic conditions will be applied.`);
+        // Next period button
+        document.getElementById('nextPeriod').addEventListener('click', function() {
+            // Introduce random economic shocks
+            const shockType = Math.floor(Math.random() * 3);
+            let shockMessage = "Advancing to next period. ";
+            
+            switch(shockType) {
+                case 0:
+                    // Currency crisis shock
+                    exchangeRate -= 0.15;
+                    shockMessage += "Currency crisis! Exchange rate depreciated by 15%.";
+                    break;
+                case 1:
+                    // Inflation shock
+                    inflation += 2;
+                    shockMessage += "Inflation shock! Prices increased by 2%.";
+                    break;
+                case 2:
+                    // Growth shock
+                    gdpGrowth -= 1.5;
+                    shockMessage += "Growth shock! GDP growth decreased by 1.5%.";
+                    break;
+            }
+            
+            // Update economic indicators
+            updateEconomicIndicators();
+            
+            // Update status indicators
+            updateStatusIndicators();
+            
+            // Update implications
+            updateImplications();
+            
+            alert(shockMessage);
+            round++;
         });
+        
+        // Update economic indicators display
+        function updateEconomicIndicators() {
+            gdpValue.textContent = gdpGrowth.toFixed(1) + '%';
+            inflationValue.textContent = inflation.toFixed(1) + '%';
+            exchangeValue.textContent = exchangeRate.toFixed(2);
+            interestValue.textContent = interestRate.toFixed(1) + '%';
+            unemploymentValue.textContent = unemployment.toFixed(1) + '%';
+        }
         
         // Update score based on policy effectiveness
         function updateScore(fiscal, monetary, trade) {
@@ -512,6 +666,9 @@
             
             if (exchangeRate > 0.8 && exchangeRate < 1.2) scoreChange += 2;
             else scoreChange -= 3;
+            
+            if (unemployment > 3 && unemployment < 7) scoreChange += 1;
+            else scoreChange -= 2;
             
             // Update score with bounds
             score = Math.max(0, Math.min(200, score + scoreChange));
@@ -571,9 +728,20 @@
                 document.getElementById('implication5')
             ];
             
+            const strategies = [
+                document.getElementById('strategy1'),
+                document.getElementById('strategy2'),
+                document.getElementById('strategy3'),
+                document.getElementById('strategy4')
+            ];
+            
             // Clear previous implications
             implications.forEach(imp => {
                 imp.textContent = "";
+            });
+            
+            strategies.forEach(strat => {
+                strat.textContent = "";
             });
             
             // Generate new implications based on current economic conditions
@@ -620,9 +788,28 @@
             } else {
                 implications[implicationIndex].textContent = "Poor economic conditions necessitate defensive business strategies and contingency planning.";
             }
+            
+            // Update strategic responses
+            if (exchangeRate < 0.9) {
+                strategies[0].textContent = "Implement strong currency hedging strategies to mitigate depreciation risks";
+                strategies[1].textContent = "Aggressively expand export markets to capitalize on improved competitiveness";
+                strategies[2].textContent = "Accelerate import substitution initiatives to reduce foreign exchange exposure";
+                strategies[3].textContent = "Diversify supply chains to mitigate currency and trade disruption risks";
+            } else if (exchangeRate > 1.1) {
+                strategies[0].textContent = "Reduce hedging as appreciation reduces currency risk";
+                strategies[1].textContent = "Focus on domestic markets as exports become less competitive";
+                strategies[2].textContent = "Consider increasing imports as they become cheaper";
+                strategies[3].textContent = "Evaluate opportunities for foreign acquisitions with stronger currency";
+            } else {
+                strategies[0].textContent = "Maintain standard currency hedging practices";
+                strategies[1].textContent = "Continue balanced approach to domestic and export markets";
+                strategies[2].textContent = "Monitor import costs for optimization opportunities";
+                strategies[3].textContent = "Maintain diversified supply chain strategy";
+            }
         }
         
         // Initialize the simulation
+        updateEconomicIndicators();
         updateStatusIndicators();
         updateImplications();
     </script>
