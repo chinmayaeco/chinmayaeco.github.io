@@ -3,620 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exchange Rate & Currency Valuation Simulation</title>
+    <title>IS-LM Model Simulation: Small Open Economy</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+        
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #4a69bd 100%);
-            color: #333;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
             line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
         
         header {
-            text-align: center;
-            margin-bottom: 30px;
+            background-color: var(--primary-color);
             color: white;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
         }
         
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        h1, h2, h3 {
+            margin-bottom: 15px;
         }
         
-        .game-container {
+        .password-screen {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+        }
+        
+        .password-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .password-form input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .password-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .password-form button:hover {
+            background-color: #2980b9;
+        }
+        
+        .error-message {
+            color: var(--accent-color);
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .main-content {
+            display: none;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .panel {
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            flex: 1;
-            min-width: 300px;
+            margin-bottom: 20px;
         }
         
         .simulation-panel {
-            border-top: 5px solid #3498db;
+            grid-column: 1 / -1;
         }
         
-        .case-studies {
-            border-top: 5px solid #e74c3c;
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
-        .managerial-implications {
-            border-top: 5px solid #2ecc71;
-        }
-        
-        h2 {
-            color: #2c3e50;
+        .control-group {
             margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
         }
         
-        h3 {
-            color: #3498db;
-            margin: 15px 0 10px;
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .control-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
         
         button {
-            background-color: #3498db;
-            color: white;
-            border: none;
             padding: 10px 15px;
-            border-radius: 5px;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            margin: 5px 0;
-            transition: background-color 0.3s;
-            width: 100%;
-            text-align: left;
+            font-weight: 600;
+            transition: all 0.3s;
         }
         
-        button:hover {
+        .primary-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .primary-btn:hover {
             background-color: #2980b9;
         }
         
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
+        .secondary-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
         }
         
-        .question {
-            margin-bottom: 15px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-left: 4px solid #3498db;
-            border-radius: 5px;
+        .secondary-btn:hover {
+            background-color: #bdc3c7;
         }
         
-        .options {
-            margin-left: 0;
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
         }
         
-        .score-display {
-            text-align: center;
-            font-size: 1.2rem;
-            margin: 20px 0;
-            padding: 15px;
-            background-color: rgba(255, 255, 255, 0.9);
+        .chart {
+            background-color: white;
             border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
         
-        .password-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .chart-placeholder {
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
+            background-color: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            border-radius: 4px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 1000;
+            justify-content: center;
+            color: #6c757d;
+            font-style: italic;
         }
         
-        .password-box {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 400px;
-        }
-        
-        .password-box input {
-            padding: 12px;
-            margin: 15px 0;
-            width: 100%;
-            border: 2px solid #3498db;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .feedback {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
-        .correct {
-            background-color: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-        
-        .incorrect {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-        
-        .concept-definition {
-            background-color: #e8f4fc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .concept-type {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .currency-cards {
+        .score-panel {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .currency-card {
-            background-color: #e8f4fc;
-            padding: 15px;
-            border-radius: 5px;
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-            font-size: 0.9rem;
-            border: 1px solid #3498db;
-        }
-        
-        .interactive-simulation {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        
-        .simulation-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .policy-choice {
-            padding: 8px 12px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            flex: 1;
-        }
-        
-        .calculator-container {
-            background-color: #f0f8ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            border-left: 4px solid #2980b9;
-        }
-        
-        .calculator-input {
-            margin: 10px 0;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-        }
-        
-        .formula-box {
-            font-family: 'Courier New', monospace;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: 2px solid #3498db;
-        }
-        
-        .economic-indicator {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            border-left: 4px solid #ffc107;
-        }
-        
-        .indicator-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #e74c3c;
-            text-align: center;
-            margin: 10px 0;
-        }
-        
-        .strategy-game {
-            background-color: #e8f5e9;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            border-left: 4px solid #4caf50;
-        }
-        
-        .policy-result {
-            background-color: #e3f2fd;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            border-left: 4px solid #2196f3;
-        }
-        
-        .currency-chart {
-            width: 100%;
-            height: 200px;
-            background-color: #f8f9fa;
-            margin: 15px 0;
-            position: relative;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 10px;
-        }
-        
-        .chart-axis {
-            position: absolute;
-            background-color: #6c757d;
-        }
-        
-        .chart-line {
-            position: absolute;
-            height: 2px;
-        }
-        
-        .chart-label {
-            position: absolute;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        
-        .policy-tabs {
-            display: flex;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #3498db;
-        }
-        
-        .policy-tab {
-            padding: 10px 15px;
-            background-color: #e8f4fc;
-            border: none;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-        }
-        
-        .policy-tab.active {
-            background-color: #3498db;
-            color: white;
-        }
-        
-        .policy-content {
-            display: none;
-        }
-        
-        .policy-content.active {
-            display: block;
-        }
-        
-        .attempt-counter {
-            background-color: #f8d7da;
-            padding: 5px 10px;
-            border-radius: 4px;
-            margin: 5px 0;
-            font-size: 0.9rem;
-            display: inline-block;
-        }
-        
-        .currency-flag {
-            font-size: 2rem;
-            margin: 10px 0;
-        }
-        
-        .exchange-rate-display {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            color: white;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--light-color);
             padding: 15px;
             border-radius: 8px;
-            text-align: center;
-            margin: 15px 0;
+            margin-bottom: 20px;
+        }
+        
+        .score-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .implications-list {
+            list-style-type: none;
+        }
+        
+        .implications-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .implications-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .status-indicators {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .positive {
+            background-color: var(--success-color);
+        }
+        
+        .negative {
+            background-color: var(--accent-color);
+        }
+        
+        .neutral {
+            background-color: var(--warning-color);
         }
         
         @media (max-width: 768px) {
-            .game-container {
-                flex-direction: column;
+            .dashboard {
+                grid-template-columns: 1fr;
             }
             
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .simulation-controls {
-                flex-direction: column;
-            }
-            
-            .policy-tabs {
-                flex-direction: column;
+            .charts-container {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="password-screen" id="passwordScreen">
-        <div class="password-box">
-            <h2>Exchange Rate & Currency Valuation Simulation</h2>
-            <p>Enter the password to access the simulation:</p>
-            <input type="password" id="passwordInput" placeholder="Enter password">
-            <button onclick="checkPassword()">Enter</button>
-            <p id="passwordError" style="color: red; display: none; margin-top: 10px;">Incorrect password. Try again.</p>
-        </div>
-    </div>
-
-    <div class="container" id="gameContent" style="display: none;">
+    <div class="container">
         <header>
-            <h1>Exchange Rate & Currency Valuation Simulation</h1>
-            <p>Explore currency depreciation, devaluation, and strategic exchange rate management</p>
+            <h1>IS-LM Model Simulation: Small Open Economy</h1>
+            <p>Floating Exchange Rate Environment</p>
         </header>
         
-        <div class="score-display">
-            Your Score: <span id="score">0</span>% &nbsp; | &nbsp; 
-            Policy Attempts: <span id="policyAttempts">0</span>/5 &nbsp; | &nbsp;
-            Trade Balance: $<span id="tradeBalance">-50</span> billion
+        <!-- Password Screen -->
+        <div id="passwordScreen" class="password-screen">
+            <div class="password-form">
+                <h2>Enter Password to Access Simulation</h2>
+                <p>Please enter the password provided by your instructor.</p>
+                <input type="password" id="passwordInput" placeholder="Enter password">
+                <button id="submitPassword" class="primary-btn">Access Simulation</button>
+                <div id="passwordError" class="error-message">Incorrect password. Please try again.</div>
+            </div>
         </div>
         
-        <div class="game-container">
+        <!-- Main Content (Hidden until password is entered) -->
+        <div id="mainContent" class="main-content">
+            <!-- Score Panel -->
+            <div class="score-panel">
+                <div>
+                    <h3>Economic Performance Score</h3>
+                    <p>Your goal is to maintain stable economic conditions</p>
+                </div>
+                <div class="score-value" id="scoreValue">100</div>
+            </div>
+            
+            <!-- Simulation Panel -->
             <div class="panel simulation-panel">
-                <h2>Simulation Panel</h2>
-                <p>Make strategic currency and trade policy decisions to improve economic outcomes.</p>
+                <h2>Economic Simulation Panel</h2>
+                <p>Adjust the policy levers below to influence the economy. Your decisions will affect output, interest rates, and exchange rates.</p>
                 
-                <div class="concept-definition">
-                    <span class="concept-type">Exchange Rate Fundamentals:</span>
-                    <div class="currency-cards">
-                        <div class="currency-card">
-                            <h4>Depreciation</h4>
-                            <p>Market-driven decline in currency value</p>
-                            <div class="currency-flag">📉</div>
-                        </div>
-                        <div class="currency-card">
-                            <h4>Devaluation</h4>
-                            <p>Government-led currency value reduction</p>
-                            <div class="currency-flag">🏛️</div>
-                        </div>
-                        <div class="currency-card">
-                            <h4>Appreciation</h4>
-                            <p>Currency value increase</p>
-                            <div class="currency-flag">📈</div>
-                        </div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="fiscalPolicy">Fiscal Policy (Government Spending)</label>
+                        <input type="range" id="fiscalPolicy" min="-10" max="10" value="0" step="1">
+                        <div id="fiscalValue">0% change</div>
                     </div>
-                    <div class="formula-box">
-                        Real Exchange Rate = (Nominal Rate × Domestic Price) / Foreign Price
+                    
+                    <div class="control-group">
+                        <label for="monetaryPolicy">Monetary Policy (Interest Rates)</label>
+                        <input type="range" id="monetaryPolicy" min="-5" max="5" value="0" step="0.5">
+                        <div id="monetaryValue">0% change</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="tradePolicy">Trade Policy (Tariffs)</label>
+                        <input type="range" id="tradePolicy" min="-15" max="15" value="0" step="1">
+                        <div id="tradeValue">0% change</div>
                     </div>
                 </div>
                 
-                <div class="exchange-rate-display">
-                    <h3>Current Exchange Rates</h3>
-                    <div class="indicator-value" id="exchangeRate">1 USD = 95 JPY</div>
-                    <div class="indicator-value" id="currencyStatus">Yen is OVERVALUED</div>
+                <div class="buttons">
+                    <button id="applyPolicy" class="primary-btn">Apply Policy Changes</button>
+                    <button id="resetPolicy" class="secondary-btn">Reset to Baseline</button>
                 </div>
                 
-                <div class="strategy-game">
-                    <h3>Currency Management Challenge</h3>
-                    <p><strong>Scenario:</strong> Japan faces a large trade deficit and overvalued currency. Your goal: Achieve trade balance through strategic currency management.</p>
-                    
-                    <div class="economic-indicator">
-                        <p><strong>Current Economic Status:</strong></p>
-                        <div class="indicator-value" id="tradeStatus">Trade Deficit: -$50B</div>
-                        <div class="indicator-value" id="growthRate">GDP Growth: 1.2%</div>
-                        <p>Inflation: 0.8% | Unemployment: 3.8% | Foreign Reserves: $1.2T</p>
+                <div class="status-indicators">
+                    <div class="indicator">
+                        <div class="indicator-dot positive"></div>
+                        <span>GDP Growth: <span id="gdpStatus">Stable</span></span>
                     </div>
-                    
-                    <div class="policy-tabs">
-                        <button class="policy-tab active" onclick="switchPolicyTab('market')">Market Intervention</button>
-                        <button class="policy-tab" onclick="switchPolicyTab('monetary')">Monetary Policy</button>
-                        <button class="policy-tab" onclick="switchPolicyTab('fiscal')">Trade Policy</button>
+                    <div class="indicator">
+                        <div class="indicator-dot neutral"></div>
+                        <span>Inflation: <span id="inflationStatus">Controlled</span></span>
                     </div>
-                    
-                    <div class="calculator-container">
-                        <div id="marketPolicy" class="policy-content active">
-                            <h4>Market Intervention Tools:</h4>
-                            <label>Foreign Exchange Intervention (Buy/Sell USD in billions, positive to buy USD):</label>
-                            <input type="number" id="forexIntervention" class="calculator-input" min="-100" max="100" value="0">
-                            
-                            <label>Capital Controls (restrictiveness level 0-10):</label>
-                            <input type="range" id="capitalControls" class="calculator-input" min="0" max="10" value="0">
-                            <div id="controlLevel">Current Level: 0 (No Controls)</div>
-                            
-                            <div class="policy-result">
-                                <strong>Market Impact:</strong> Directly affects currency supply/demand and exchange rates.
-                            </div>
-                        </div>
-                        
-                        <div id="monetaryPolicy" class="policy-content">
-                            <h4>Monetary Policy Tools:</h4>
-                            <label>Change Interest Rates (percentage points):</label>
-                            <input type="number" id="interestRates" class="calculator-input" min="-3" max="3" step="0.25" value="0">
-                            
-                            <label>Quantitative Easing (in billions, positive to increase money supply):</label>
-                            <input type="number" id="quantitativeEasing" class="calculator-input" min="-200" max="200" value="0">
-                            
-                            <div class="policy-result">
-                                <strong>Monetary Impact:</strong> Affects capital flows and currency attractiveness.
-                            </div>
-                        </div>
-                        
-                        <div id="fiscalPolicy" class="policy-content">
-                            <h4>Trade Policy Tools:</h4>
-                            <label>Export Subsidies (in billions):</label>
-                            <input type="number" id="exportSubsidies" class="calculator-input" min="0" max="50" value="0">
-                            
-                            <label>Import Tariffs (percentage):</label>
-                            <input type="number" id="importTariffs" class="calculator-input" min="0" max="25" value="0">
-                            
-                            <label>Trade Agreements (cooperation level 0-10):</label>
-                            <input type="range" id="tradeAgreements" class="calculator-input" min="0" max="10" value="5">
-                            <div id="agreementLevel">Current Level: 5 (Moderate Cooperation)</div>
-                            
-                            <div class="policy-result">
-                                <strong>Trade Impact:</strong> Directly affects trade balance and currency demand.
-                            </div>
-                        </div>
-                        
-                        <div class="attempt-counter">
-                            Policy Attempts Used: <span id="attemptsUsed">0</span>/5
-                        </div>
-                        
-                        <button onclick="calculateCurrencyImpact()" style="width: auto;">Analyze Policy Impact</button>
+                    <div class="indicator">
+                        <div class="indicator-dot positive"></div>
+                        <span>Exchange Rate: <span id="exchangeStatus">Stable</span></span>
                     </div>
-                    
-                    <div id="policyResult" class="feedback"></div>
-                </div>
-                
-                <div class="interactive-simulation">
-                    <h3>Currency Effect Identification</h3>
-                    <p>Identify the likely effect on exchange rates for each scenario:</p>
-                    <div id="currentCurrencyScenario" class="formula-box">
-                        <strong>Current Scenario:</strong> Central bank raises interest rates significantly
-                    </div>
-                    <div class="simulation-controls">
-                        <button class="policy-choice" onclick="checkCurrencyEffect('appreciate', this)">Currency Appreciation</button>
-                        <button class="policy-choice" onclick="checkCurrencyEffect('depreciate', this)">Currency Depreciation</button>
-                        <button class="policy-choice" onclick="checkCurrencyEffect('devalue', this)">Currency Devaluation</button>
-                        <button class="policy-choice" onclick="checkCurrencyEffect('nochange', this)">No Significant Change</button>
-                    </div>
-                    <div id="currencyEffectResult" class="feedback"></div>
-                </div>
-                
-                <div id="simulationQuestions">
-                    <!-- Questions will be populated by JavaScript -->
                 </div>
             </div>
             
-            <div class="panel case-studies">
-                <h2>Case Studies</h2>
-                <p>Examine real-world examples of currency management and their outcomes.</p>
-                
-                <div class="question">
-                    <p><strong>Case 1:</strong> In 1992, George Soros "broke the Bank of England" by shorting the British pound, forcing the UK to withdraw from the European Exchange Rate Mechanism.</p>
-                    <p>What does this case demonstrate about fixed exchange rate systems?</p>
-                    <div class="options" id="case1Options">
-                        <!-- Options will be populated by JavaScript -->
+            <!-- Charts Container -->
+            <div class="charts-container">
+                <div class="panel">
+                    <h3>IS-LM Equilibrium</h3>
+                    <div class="chart">
+                        <div class="chart-placeholder">
+                            IS-LM Chart Visualization
+                        </div>
                     </div>
-                    <div id="feedback4" class="feedback"></div>
                 </div>
                 
-                <div class="question">
-                    <p><strong>Case 2:</strong> China maintained a heavily managed exchange rate for decades, accumulating massive foreign reserves while promoting exports.</p>
-                    <p>What were the long-term consequences of this currency management strategy?</p>
-                    <div class="options" id="case2Options">
-                        <!-- Options will be populated by JavaScript -->
+                <div class="panel">
+                    <h3>Exchange Rate Dynamics</h3>
+                    <div class="chart">
+                        <div class="chart-placeholder">
+                            Exchange Rate Chart Visualization
+                        </div>
                     </div>
-                    <div id="feedback5" class="feedback"></div>
-                </div>
-                
-                <div class="question">
-                    <p><strong>Case 3:</strong> In 1997, the Asian Financial Crisis saw massive currency depreciations across Southeast Asia after speculative attacks.</p>
-                    <p>What vulnerabilities did this crisis reveal in emerging market economies?</p>
-                    <div class="options" id="case3Options">
-                        <!-- Options will be populated by JavaScript -->
-                    </div>
-                    <div id="feedback6" class="feedback"></div>
                 </div>
             </div>
             
-            <div class="panel managerial-implications">
+            <!-- Managerial Implications Panel -->
+            <div class="panel">
                 <h2>Managerial Implications</h2>
-                <p>Understand how exchange rate movements impact business decisions and international strategy.</p>
+                <p>Based on your policy decisions, here are the implications for business management:</p>
                 
-                <div class="question">
-                    <p>1. How should multinational corporations manage currency risk in their operations?</p>
-                    <div class="options" id="managerial1Options">
-                        <!-- Options will be populated by JavaScript -->
-                    </div>
-                    <div id="feedback7" class="feedback"></div>
-                </div>
+                <ul class="implications-list">
+                    <li id="implication1">Current policies support stable economic conditions.</li>
+                    <li id="implication2">Interest rates are at equilibrium levels.</li>
+                    <li id="implication3">Exchange rate stability supports international trade.</li>
+                    <li id="implication4">Investment climate remains favorable.</li>
+                    <li id="implication5">Consumer confidence is maintaining steady demand.</li>
+                </ul>
                 
-                <div class="question">
-                    <p>2. What sourcing strategies work best during currency appreciation periods?</p>
-                    <div class="options" id="managerial2Options">
-                        <!-- Options will be populated by JavaScript -->
-                    </div>
-                    <div id="feedback8" class="feedback"></div>
-                </div>
-                
-                <div class="question">
-                    <p>3. How can companies use financial instruments to hedge against currency volatility?</p>
-                    <div class="options" id="managerial3Options">
-                        <!-- Options will be populated by JavaScript -->
-                    </div>
-                    <div id="feedback9" class="feedback"></div>
-                </div>
-                
-                <div class="question">
-                    <p>4. What competitive advantages can companies gain from anticipating currency movements?</p>
-                    <div class="options" id="managerial4Options">
-                        <!-- Options will be populated by JavaScript -->
-                    </div>
-                    <div id="feedback10" class="feedback"></div>
-                </div>
-                
-                <div class="economic-indicator">
-                    <h3>Key Business Strategies</h3>
-                    <ul>
-                        <li>Hedging: Use forwards, options, and swaps to manage risk</li>
-                        <li>Diversification: Operate in multiple currency zones</li>
-                        <li>Pricing flexibility: Adjust prices based on currency movements</li>
-                        <li>Supply chain optimization: Source from favorable currency regions</li>
-                        <li>Financial planning: Incorporate currency scenarios into budgeting</li>
-                    </ul>
+                <div class="buttons">
+                    <button id="nextRound" class="primary-btn">Advance to Next Period</button>
                 </div>
             </div>
         </div>
@@ -624,559 +396,235 @@
 
     <script>
         // Password protection
-        const correctPassword = "Forex2023";
-        let score = 0;
-        let policyAttempts = 0;
-        const maxPossibleScore = 95;
-        let currentExchangeRate = 95; // JPY per USD
-        let tradeBalance = -50; // billion USD deficit
-        let isCurrencyOvervalued = true;
-        let answeredQuestions = new Set();
-        
-        // Questions with randomized answer positions
-        const questions = [
-            {
-                id: 1,
-                text: "What is the key difference between depreciation and devaluation?",
-                options: [
-                    "Depreciation is government-led, devaluation is market-driven",
-                    "Devaluation is government-led, depreciation is market-driven",
-                    "They are identical concepts",
-                    "Depreciation only happens in developed countries"
-                ],
-                correct: 1,
-                feedback: {
-                    correct: "Correct! Devaluation is a deliberate government policy to reduce currency value, while depreciation occurs through market forces.",
-                    incorrect: "Incorrect. Devaluation is government policy, while depreciation happens through market mechanisms."
-                }
-            },
-            {
-                id: 2,
-                text: "A currency appreciation typically leads to:",
-                options: [
-                    "Improved trade balance",
-                    "Worsened trade balance",
-                    "No effect on trade",
-                    "Increased inflation immediately"
-                ],
-                correct: 1,
-                feedback: {
-                    correct: "Right! Currency appreciation makes exports more expensive and imports cheaper, worsening the trade balance.",
-                    incorrect: "Currency appreciation typically worsens the trade balance by making exports less competitive."
-                }
-            },
-            {
-                id: 3,
-                text: "The J-curve effect describes:",
-                options: [
-                    "Immediate improvement in trade balance after devaluation",
-                    "Worsening then improvement in trade balance after devaluation",
-                    "Continuous improvement in currency value",
-                    "The relationship between interest rates and exchange rates"
-                ],
-                correct: 1,
-                feedback: {
-                    correct: "Yes! The J-curve shows trade balance worsening initially after devaluation (due to existing contracts) then improving later.",
-                    incorrect: "The J-curve describes the initial worsening then improvement in trade balance following devaluation."
-                }
-            },
-            {
-                id: 4,
-                text: "In Case 1, the 1992 UK crisis demonstrated:",
-                options: [
-                    "The strength of fixed exchange rate systems",
-                    "The vulnerability of fixed rates to speculative attacks",
-                    "The effectiveness of capital controls",
-                    "The stability of the European monetary system"
-                ],
-                correct: 1,
-                feedback: {
-                    correct: "Exactly! The crisis showed how fixed exchange rates can be vulnerable to well-funded speculative attacks.",
-                    incorrect: "The UK crisis revealed the vulnerability of fixed exchange rate systems to market speculation."
-                }
-            },
-            {
-                id: 5,
-                text: "In Case 2, China's currency management led to:",
-                options: [
-                    "Massive trade deficits",
-                    "Huge foreign reserve accumulation",
-                    "Currency appreciation pressure",
-                    "Both B and C"
-                ],
-                correct: 3,
-                feedback: {
-                    correct: "Right! China's managed currency and export focus led to huge reserves and persistent appreciation pressure.",
-                    incorrect: "China's strategy resulted in both massive foreign reserves and constant appreciation pressure."
-                }
-            },
-            {
-                id: 6,
-                text: "In Case 3, the Asian Financial Crisis revealed:",
-                options: [
-                    "The dangers of excessive foreign borrowing",
-                    "The stability of fixed exchange rate regimes",
-                    "The strength of Asian banking systems",
-                    "The benefits of rapid capital account liberalization"
-                ],
-                correct: 0,
-                feedback: {
-                    correct: "Correct! The crisis exposed vulnerabilities from excessive short-term foreign currency borrowing.",
-                    incorrect: "The Asian crisis revealed dangers of heavy foreign borrowing and weak financial regulation."
-                }
-            },
-            {
-                id: 7,
-                text: "How should multinationals manage currency risk?",
-                options: [
-                    "Ignore it as unpredictable",
-                    "Use only one currency for all operations",
-                    "Implement comprehensive hedging strategies",
-                    "Focus only on domestic markets"
-                ],
-                correct: 2,
-                feedback: {
-                    correct: "Yes! Multinationals should use hedging instruments and operational strategies to manage currency risk.",
-                    incorrect: "Comprehensive hedging and risk management are essential for multinational currency risk."
-                }
-            },
-            {
-                id: 8,
-                text: "During currency appreciation, companies should:",
-                options: [
-                    "Increase domestic sourcing",
-                    "Expand foreign sourcing",
-                    "Ignore sourcing decisions",
-                    "Only focus on pricing"
-                ],
-                correct: 1,
-                feedback: {
-                    correct: "Right! Currency appreciation makes foreign sourcing cheaper, providing cost advantages.",
-                    incorrect: "Appreciation makes foreign sourcing more attractive due to lower costs in foreign currency terms."
-                }
-            },
-            {
-                id: 9,
-                text: "Common currency hedging instruments include:",
-                options: [
-                    "Forward contracts and options",
-                    "Only spot transactions",
-                    "Stock investments",
-                    "Real estate holdings"
-                ],
-                correct: 0,
-                feedback: {
-                    correct: "Correct! Forwards, options, and swaps are common instruments for currency risk management.",
-                    incorrect: "Forward contracts, options, and currency swaps are primary hedging instruments."
-                }
-            },
-            {
-                id: 10,
-                text: "Anticipating currency movements helps companies:",
-                options: [
-                    "Gain competitive pricing advantages",
-                    "Optimize supply chain decisions",
-                    "Make better investment timing",
-                    "All of the above"
-                ],
-                correct: 3,
-                feedback: {
-                    correct: "Yes! All these strategic advantages come from anticipating currency movements.",
-                    incorrect: "Currency anticipation helps with pricing, sourcing, and investment timing decisions."
-                }
-            }
-        ];
-
-        // Currency scenarios for practice
-        const currencyScenarios = [
-            { scenario: "Central bank raises interest rates significantly", effect: "appreciate" },
-            { scenario: "Government announces major devaluation to boost exports", effect: "devalue" },
-            { scenario: "Economic recession reduces demand for imports", effect: "appreciate" },
-            { scenario: "Massive capital flight from the country", effect: "depreciate" },
-            { scenario: "Trade deficit widens substantially", effect: "depreciate" },
-            { scenario: "Central bank intervenes to buy domestic currency", effect: "appreciate" }
-        ];
-        
-        let currentScenarioIndex = 0;
-        let currentPolicyTab = 'market';
-        
-        function checkPassword() {
-            const input = document.getElementById('passwordInput').value;
-            if (input === correctPassword) {
+        document.getElementById('submitPassword').addEventListener('click', function() {
+            const password = document.getElementById('passwordInput').value;
+            // In a real application, this would be securely validated on the server
+            // For this demo, we'll use a simple password
+            if (password === 'economics2024') {
                 document.getElementById('passwordScreen').style.display = 'none';
-                document.getElementById('gameContent').style.display = 'block';
-                initializeGame();
-                updateDisplay();
-                setupSliders();
+                document.getElementById('mainContent').style.display = 'block';
             } else {
                 document.getElementById('passwordError').style.display = 'block';
             }
+        });
+        
+        // Allow Enter key to submit password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('submitPassword').click();
+            }
+        });
+        
+        // Initialize simulation variables
+        let score = 100;
+        let round = 1;
+        let gdpGrowth = 2.5;
+        let inflation = 2.0;
+        let exchangeRate = 1.0;
+        let interestRate = 3.0;
+        
+        // Policy sliders
+        const fiscalPolicy = document.getElementById('fiscalPolicy');
+        const monetaryPolicy = document.getElementById('monetaryPolicy');
+        const tradePolicy = document.getElementById('tradePolicy');
+        
+        // Display values for policies
+        const fiscalValue = document.getElementById('fiscalValue');
+        const monetaryValue = document.getElementById('monetaryValue');
+        const tradeValue = document.getElementById('tradeValue');
+        
+        // Update policy value displays
+        fiscalPolicy.addEventListener('input', function() {
+            fiscalValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change`;
+        });
+        
+        monetaryPolicy.addEventListener('input', function() {
+            monetaryValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change`;
+        });
+        
+        tradePolicy.addEventListener('input', function() {
+            tradeValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change`;
+        });
+        
+        // Apply policy changes
+        document.getElementById('applyPolicy').addEventListener('click', function() {
+            const fiscalChange = parseFloat(fiscalPolicy.value);
+            const monetaryChange = parseFloat(monetaryPolicy.value);
+            const tradeChange = parseFloat(tradePolicy.value);
+            
+            // Simulate economic impacts
+            // In a real simulation, these would be calculated using the IS-LM model
+            gdpGrowth += fiscalChange * 0.2 - monetaryChange * 0.15 + tradeChange * 0.05;
+            inflation += fiscalChange * 0.1 + monetaryChange * 0.05 - tradeChange * 0.02;
+            exchangeRate += fiscalChange * 0.01 - monetaryChange * 0.02 + tradeChange * 0.03;
+            interestRate += monetaryChange * 0.5;
+            
+            // Update score based on economic performance
+            updateScore(fiscalChange, monetaryChange, tradeChange);
+            
+            // Update status indicators
+            updateStatusIndicators();
+            
+            // Update managerial implications
+            updateImplications();
+            
+            round++;
+        });
+        
+        // Reset policies
+        document.getElementById('resetPolicy').addEventListener('click', function() {
+            fiscalPolicy.value = 0;
+            monetaryPolicy.value = 0;
+            tradePolicy.value = 0;
+            fiscalValue.textContent = '0% change';
+            monetaryValue.textContent = '0% change';
+            tradeValue.textContent = '0% change';
+        });
+        
+        // Next round button
+        document.getElementById('nextRound').addEventListener('click', function() {
+            // In a more advanced simulation, this would advance time
+            // and introduce new economic shocks or conditions
+            alert(`Advancing to period ${round + 1}. New economic conditions will be applied.`);
+        });
+        
+        // Update score based on policy effectiveness
+        function updateScore(fiscal, monetary, trade) {
+            // Base score change
+            let scoreChange = 0;
+            
+            // Evaluate policy mix effectiveness
+            // Expansionary fiscal policy with tight monetary policy might be problematic
+            if (fiscal > 0 && monetary > 0) {
+                scoreChange -= 5; // Overheating risk
+            } else if (fiscal < 0 && monetary < 0) {
+                scoreChange -= 5; // Recession risk
+            } else if (Math.abs(fiscal) < 3 && Math.abs(monetary) < 2 && Math.abs(trade) < 5) {
+                scoreChange += 3; // Moderate policies are often good
+            }
+            
+            // Check if key indicators are within target ranges
+            if (gdpGrowth > 0 && gdpGrowth < 5) scoreChange += 2;
+            else scoreChange -= 5;
+            
+            if (inflation > 1 && inflation < 4) scoreChange += 2;
+            else scoreChange -= 5;
+            
+            if (exchangeRate > 0.8 && exchangeRate < 1.2) scoreChange += 2;
+            else scoreChange -= 3;
+            
+            // Update score with bounds
+            score = Math.max(0, Math.min(200, score + scoreChange));
+            document.getElementById('scoreValue').textContent = Math.round(score);
         }
         
-        function setupSliders() {
-            // Setup capital controls slider
-            const capitalSlider = document.getElementById('capitalControls');
-            const controlLevel = document.getElementById('controlLevel');
-            capitalSlider.addEventListener('input', function() {
-                const levels = ['No Controls', 'Light Monitoring', 'Moderate Controls', 'Heavy Restrictions', 'Near Closure'];
-                controlLevel.textContent = `Current Level: ${this.value} (${levels[Math.floor(this.value / 2)]})`;
-            });
+        // Update status indicators
+        function updateStatusIndicators() {
+            const gdpStatus = document.getElementById('gdpStatus');
+            const inflationStatus = document.getElementById('inflationStatus');
+            const exchangeStatus = document.getElementById('exchangeStatus');
             
-            // Setup trade agreements slider
-            const tradeSlider = document.getElementById('tradeAgreements');
-            const agreementLevel = document.getElementById('agreementLevel');
-            tradeSlider.addEventListener('input', function() {
-                const levels = ['Hostile', 'Limited', 'Moderate', 'Strong', 'Full Integration'];
-                agreementLevel.textContent = `Current Level: ${this.value} (${levels[Math.floor(this.value / 2)]})`;
-            });
-        }
-        
-        function switchPolicyTab(tabName) {
-            // Update tabs
-            document.querySelectorAll('.policy-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelector(`.policy-tab[onclick="switchPolicyTab('${tabName}')"]`).classList.add('active');
-            
-            // Update content
-            document.querySelectorAll('.policy-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabName + 'Policy').classList.add('active');
-            
-            currentPolicyTab = tabName;
-        }
-        
-        function initializeGame() {
-            // Shuffle questions and create HTML
-            const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
-            
-            // Populate simulation questions (first 3)
-            const simulationContainer = document.getElementById('simulationQuestions');
-            shuffledQuestions.slice(0, 3).forEach((q, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.innerHTML = `
-                    <p>${q.text}</p>
-                    <div class="options" id="options${q.id}"></div>
-                    <div id="feedback${q.id}" class="feedback"></div>
-                `;
-                simulationContainer.appendChild(questionDiv);
-                
-                // Shuffle and populate options
-                const optionsContainer = document.getElementById(`options${q.id}`);
-                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
-                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
-                
-                shuffledOptions.forEach((option, optIndex) => {
-                    const button = document.createElement('button');
-                    button.textContent = option;
-                    button.onclick = function() { 
-                        if (!answeredQuestions.has(q.id)) {
-                            answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
-                            answeredQuestions.add(q.id);
-                        }
-                    };
-                    optionsContainer.appendChild(button);
-                });
-            });
-            
-            // Populate case study questions (next 3)
-            const caseQuestions = shuffledQuestions.slice(3, 6);
-            caseQuestions.forEach((q, index) => {
-                const caseNum = index + 4;
-                const optionsContainer = document.getElementById(`case${caseNum-3}Options`);
-                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
-                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
-                
-                shuffledOptions.forEach((option, optIndex) => {
-                    const button = document.createElement('button');
-                    button.textContent = option;
-                    button.onclick = function() { 
-                        if (!answeredQuestions.has(q.id)) {
-                            answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
-                            answeredQuestions.add(q.id);
-                        }
-                    };
-                    optionsContainer.appendChild(button);
-                });
-            });
-            
-            // Populate managerial questions (last 4)
-            const managerialQuestions = shuffledQuestions.slice(6);
-            managerialQuestions.forEach((q, index) => {
-                const managerialNum = index + 7;
-                const optionsContainer = document.getElementById(`managerial${managerialNum-6}Options`);
-                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
-                const correctIndex = shuffledOptions.indexOf(q.options[q.correct]);
-                
-                shuffledOptions.forEach((option, optIndex) => {
-                    const button = document.createElement('button');
-                    button.textContent = option;
-                    button.onclick = function() { 
-                        if (!answeredQuestions.has(q.id)) {
-                            answerQuestion(q.id, optIndex === correctIndex, this, q.feedback);
-                            answeredQuestions.add(q.id);
-                        }
-                    };
-                    optionsContainer.appendChild(button);
-                });
-            });
-        }
-        
-        function calculateCurrencyImpact() {
-            if (policyAttempts >= 5) {
-                document.getElementById('policyResult').innerHTML = 
-                    "<strong>No more attempts!</strong> You've used all 5 policy attempts. Your final score has been calculated.";
-                document.getElementById('policyResult').className = 'feedback incorrect';
-                return;
-            }
-            
-            policyAttempts++;
-            document.getElementById('attemptsUsed').textContent = policyAttempts;
-            document.getElementById('policyAttempts').textContent = policyAttempts;
-            
-            // Get policy inputs based on current tab
-            let exchangeRateImpact = 0;
-            let tradeBalanceImpact = 0;
-            
-            if (currentPolicyTab === 'market') {
-                const forexIntervention = parseFloat(document.getElementById('forexIntervention').value) || 0;
-                const capitalControls = parseFloat(document.getElementById('capitalControls').value) || 0;
-                
-                // Market intervention impacts
-                // Buying USD strengthens USD (weakens JPY), selling USD weakens USD (strengthens JPY)
-                exchangeRateImpact = forexIntervention * -0.5; // Negative because we're managing JPY/USD rate
-                exchangeRateImpact += capitalControls * 0.3; // Capital controls can support currency
-                
-                tradeBalanceImpact = forexIntervention * 0.2 + capitalControls * -0.1;
-                
-            } else if (currentPolicyTab === 'monetary') {
-                const interestRates = parseFloat(document.getElementById('interestRates').value) || 0;
-                const quantitativeEasing = parseFloat(document.getElementById('quantitativeEasing').value) || 0;
-                
-                // Monetary policy impacts
-                // Higher rates attract capital, strengthening currency
-                exchangeRateImpact = interestRates * 2; // Higher rates strengthen JPY
-                exchangeRateImpact += quantitativeEasing * -0.8; // QE weakens currency
-                
-                tradeBalanceImpact = interestRates * -0.5 + quantitativeEasing * 0.3;
-                
-            } else if (currentPolicyTab === 'fiscal') {
-                const exportSubsidies = parseFloat(document.getElementById('exportSubsidies').value) || 0;
-                const importTariffs = parseFloat(document.getElementById('importTariffs').value) || 0;
-                const tradeAgreements = parseFloat(document.getElementById('tradeAgreements').value) || 5;
-                
-                // Trade policy impacts
-                exchangeRateImpact = exportSubsidies * 0.1 + importTariffs * 0.05;
-                tradeBalanceImpact = exportSubsidies * 1.5 + importTariffs * 0.8 + (tradeAgreements - 5) * 0.5;
-            }
-            
-            // Apply impacts with some randomness for realism
-            const randomFactor = (Math.random() - 0.5) * 0.3; // ±15% randomness
-            const effectiveExchangeImpact = exchangeRateImpact * (1 + randomFactor);
-            const effectiveTradeImpact = tradeBalanceImpact * (1 + randomFactor);
-            
-            // Calculate new values
-            const newExchangeRate = Math.max(70, Math.min(130, currentExchangeRate + effectiveExchangeImpact));
-            const newTradeBalance = tradeBalance + effectiveTradeImpact;
-            
-            // Determine if currency is now properly valued (target: 105 JPY/USD for trade balance)
-            const equilibriumRate = 105;
-            const isNowProperlyValued = Math.abs(newExchangeRate - equilibriumRate) < 5;
-            const tradeBalanceHealthy = newTradeBalance >= -10 && newTradeBalance <= 10;
-            
-            // Calculate effectiveness
-            const exchangeRateEffectiveness = 100 - Math.abs(newExchangeRate - equilibriumRate);
-            const tradeBalanceEffectiveness = 100 - Math.abs(newTradeBalance) * 2;
-            const totalEffectiveness = (exchangeRateEffectiveness + tradeBalanceEffectiveness) / 2;
-            
-            // Strategy bonus
-            let strategyBonus = 0;
-            if (currentPolicyTab === 'market' && isCurrencyOvervalued && effectiveExchangeImpact > 0) {
-                strategyBonus += 10; // Correct intervention for overvalued currency
-            }
-            if (tradeBalanceHealthy) {
-                strategyBonus += 15; // Bonus for achieving healthy trade balance
-            }
-            if (isNowProperlyValued) {
-                strategyBonus += 20; // Bonus for achieving proper valuation
-            }
-            
-            const pointsEarned = Math.floor(totalEffectiveness / 4) + strategyBonus;
-            score += Math.max(0, pointsEarned);
-            
-            // Update current values
-            currentExchangeRate = newExchangeRate;
-            tradeBalance = newTradeBalance;
-            isCurrencyOvervalued = newExchangeRate < equilibriumRate;
-            
-            updateDisplay();
-            
-            document.getElementById('policyResult').innerHTML = `
-                <strong>Policy Impact Analysis:</strong><br>
-                Exchange Rate Change: ${effectiveExchangeImpact > 0 ? '+' : ''}${effectiveExchangeImpact.toFixed(2)} JPY<br>
-                Trade Balance Change: ${effectiveTradeImpact > 0 ? '+' : ''}$${effectiveTradeImpact.toFixed(1)}B<br>
-                <strong>New Exchange Rate:</strong> 1 USD = ${newExchangeRate.toFixed(2)} JPY<br>
-                <strong>New Trade Balance:</strong> $${newTradeBalance.toFixed(1)}B<br>
-                Effectiveness: ${totalEffectiveness.toFixed(1)}%<br>
-                Points Earned: ${pointsEarned}<br>
-                <em>${isNowProperlyValued && tradeBalanceHealthy ? 'Excellent! Optimal currency valuation achieved!' : 
-                     isNowProperlyValued ? 'Good! Currency properly valued but trade needs work.' : 
-                     tradeBalanceHealthy ? 'Trade balance healthy but currency misaligned.' : 
-                     'Keep adjusting your policy mix.'}</em>
-            `;
-            
-            if (isNowProperlyValued && tradeBalanceHealthy) {
-                document.getElementById('policyResult').className = 'feedback correct';
-            } else if (isNowProperlyValued || tradeBalanceHealthy) {
-                document.getElementById('policyResult').className = 'feedback correct';
+            // GDP status
+            if (gdpGrowth > 3) {
+                gdpStatus.textContent = 'Strong';
+                gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+            } else if (gdpGrowth > 1) {
+                gdpStatus.textContent = 'Stable';
+                gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
             } else {
-                document.getElementById('policyResult').className = 'feedback incorrect';
+                gdpStatus.textContent = 'Weak';
+                gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
             }
             
-            updateDisplay();
-        }
-        
-        function checkCurrencyEffect(effect, button) {
-            if (answeredQuestions.has('currency' + currentScenarioIndex)) {
-                return; // Already answered this scenario
-            }
-            
-            const resultElement = document.getElementById('currencyEffectResult');
-            const correctEffect = currencyScenarios[currentScenarioIndex].effect;
-            
-            if (effect === correctEffect) {
-                resultElement.innerHTML = `
-                    <strong>Correct!</strong> ${getCurrencyEffectExplanation(correctEffect)}
-                `;
-                resultElement.className = 'feedback correct';
-                
-                // Add to score for correct identification
-                const points = Math.max(5, 15 - (answeredQuestions.size * 2));
-                score += points;
-                answeredQuestions.add('currency' + currentScenarioIndex);
+            // Inflation status
+            if (inflation > 3) {
+                inflationStatus.textContent = 'High';
+                inflationStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
+            } else if (inflation > 1.5) {
+                inflationStatus.textContent = 'Controlled';
+                inflationStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
             } else {
-                resultElement.innerHTML = `
-                    <strong>Incorrect.</strong> ${getCurrencyEffectExplanation(correctEffect)}
-                `;
-                resultElement.className = 'feedback incorrect';
+                inflationStatus.textContent = 'Low';
+                inflationStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
             }
             
-            updateDisplay();
-            
-            // Move to next scenario after a delay
-            setTimeout(nextCurrencyScenario, 2500);
-        }
-        
-        function getCurrencyEffectExplanation(effect) {
-            const explanations = {
-                'appreciate': 'This increases demand for the currency or reduces supply, causing appreciation.',
-                'depreciate': 'Market forces reduce demand or increase supply, causing depreciation.',
-                'devalue': 'Government policy deliberately reduces the currency value.',
-                'nochange': 'Conflicting forces or minor impact results in little net change.'
-            };
-            return explanations[effect];
-        }
-        
-        function nextCurrencyScenario() {
-            currentScenarioIndex = (currentScenarioIndex + 1) % currencyScenarios.length;
-            const scenarioElement = document.getElementById('currentCurrencyScenario');
-            scenarioElement.innerHTML = `
-                <strong>Current Scenario:</strong> ${currencyScenarios[currentScenarioIndex].scenario}
-            `;
-            
-            // Clear the previous result
-            document.getElementById('currencyEffectResult').innerHTML = '';
-            document.getElementById('currencyEffectResult').className = 'feedback';
-        }
-        
-        function updateDisplay() {
-            // Update score display (capped at maxPossibleScore)
-            const displayScore = Math.min(score, maxPossibleScore);
-            document.getElementById('score').textContent = displayScore;
-            
-            // Update economic indicators
-            document.getElementById('exchangeRate').textContent = `1 USD = ${currentExchangeRate.toFixed(2)} JPY`;
-            document.getElementById('currencyStatus').textContent = `Yen is ${isCurrencyOvervalued ? 'OVERVALUED' : 'UNDERVALUED'}`;
-            document.getElementById('tradeBalance').textContent = tradeBalance.toFixed(1);
-            document.getElementById('tradeStatus').textContent = `Trade ${tradeBalance >= 0 ? 'Surplus' : 'Deficit'}: $${Math.abs(tradeBalance).toFixed(1)}B`;
-            
-            // Check if game should end
-            if (policyAttempts >= 5) {
-                endGame();
+            // Exchange rate status
+            if (exchangeRate > 1.1) {
+                exchangeStatus.textContent = 'Appreciating';
+                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
+            } else if (exchangeRate > 0.9) {
+                exchangeStatus.textContent = 'Stable';
+                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+            } else {
+                exchangeStatus.textContent = 'Depreciating';
+                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
             }
         }
         
-        function endGame() {
-            const finalScore = Math.min(maxPossibleScore, score);
-            document.getElementById('score').textContent = finalScore;
+        // Update managerial implications
+        function updateImplications() {
+            const implications = [
+                document.getElementById('implication1'),
+                document.getElementById('implication2'),
+                document.getElementById('implication3'),
+                document.getElementById('implication4'),
+                document.getElementById('implication5')
+            ];
             
-            // Disable all interactive elements
-            const allButtons = document.querySelectorAll('button');
-            allButtons.forEach(btn => {
-                if (!btn.onclick || !btn.onclick.toString().includes('checkPassword')) {
-                    btn.disabled = true;
-                }
+            // Clear previous implications
+            implications.forEach(imp => {
+                imp.textContent = "";
             });
             
-            const allInputs = document.querySelectorAll('input');
-            allInputs.forEach(input => input.disabled = true);
+            // Generate new implications based on current economic conditions
+            let implicationIndex = 0;
             
-            const optimalAchieved = Math.abs(currentExchangeRate - 105) < 5 && Math.abs(tradeBalance) < 10;
-            
-            document.getElementById('policyResult').innerHTML += 
-                `<br><br><strong>Game Over! Final Score: ${finalScore}%</strong><br>
-                 <em>${optimalAchieved ? 'Outstanding! You achieved both currency equilibrium and trade balance!' : 
-                      finalScore >= 70 ? 'Good performance! Review areas for improvement.' : 
-                      'Review exchange rate concepts and try different strategies!'}</em>`;
-        }
-        
-        function answerQuestion(questionId, isCorrect, button, feedback) {
-            if (answeredQuestions.has(questionId)) {
-                return; // Already answered this question
-            }
-            
-            const feedbackElement = document.getElementById(`feedback${questionId}`);
-            
-            if (isCorrect) {
-                // Correct answer
-                feedbackElement.innerHTML = feedback.correct;
-                feedbackElement.className = 'feedback correct';
-                
-                // Points with diminishing returns
-                const basePoints = 10;
-                const points = basePoints - (answeredQuestions.size * 1.5);
-                
-                score += Math.max(5, points);
-                answeredQuestions.add(questionId);
+            if (gdpGrowth > 4) {
+                implications[implicationIndex++].textContent = "Strong GDP growth suggests expanding consumer markets and investment opportunities.";
+            } else if (gdpGrowth < 1) {
+                implications[implicationIndex++].textContent = "Weak GDP growth indicates potential market contraction; consider cost-saving measures.";
             } else {
-                // Incorrect answer
-                feedbackElement.innerHTML = feedback.incorrect;
-                feedbackElement.className = 'feedback incorrect';
-                
-                // Small penalty for incorrect answers
-                score = Math.max(0, score - 2);
-                answeredQuestions.add(questionId); // Count attempt even if wrong
+                implications[implicationIndex++].textContent = "Stable GDP growth supports predictable business planning and moderate expansion.";
             }
             
-            updateDisplay();
+            if (inflation > 3) {
+                implications[implicationIndex++].textContent = "High inflation may erode consumer purchasing power and increase input costs.";
+            } else if (inflation < 1) {
+                implications[implicationIndex++].textContent = "Low inflation environment supports stable pricing strategies but may indicate weak demand.";
+            } else {
+                implications[implicationIndex++].textContent = "Moderate inflation supports nominal revenue growth without significant cost pressures.";
+            }
             
-            // Disable all buttons for this question
-            const buttons = button.parentElement.getElementsByTagName('button');
-            for (let btn of buttons) {
-                btn.disabled = true;
+            if (exchangeRate > 1.1) {
+                implications[implicationIndex++].textContent = "Currency appreciation makes exports more expensive but reduces import costs.";
+            } else if (exchangeRate < 0.9) {
+                implications[implicationIndex++].textContent = "Currency depreciation supports export competitiveness but increases import costs.";
+            } else {
+                implications[implicationIndex++].textContent = "Stable exchange rates facilitate international trade planning and reduce currency risk.";
+            }
+            
+            if (interestRate > 4) {
+                implications[implicationIndex++].textContent = "High interest rates increase borrowing costs but may attract foreign capital inflows.";
+            } else if (interestRate < 2) {
+                implications[implicationIndex++].textContent = "Low interest rates reduce financing costs but may signal economic weakness.";
+            } else {
+                implications[implicationIndex++].textContent = "Moderate interest rates balance borrowing costs with economic stability.";
+            }
+            
+            if (score > 150) {
+                implications[implicationIndex].textContent = "Excellent economic management creates a highly favorable business environment.";
+            } else if (score > 100) {
+                implications[implicationIndex].textContent = "Good economic policies support business confidence and investment.";
+            } else if (score > 50) {
+                implications[implicationIndex].textContent = "Mixed economic performance requires careful strategic planning and risk management.";
+            } else {
+                implications[implicationIndex].textContent = "Poor economic conditions necessitate defensive business strategies and contingency planning.";
             }
         }
         
-        // Initialize the first scenario
-        window.onload = function() {
-            if (document.getElementById('currentCurrencyScenario')) {
-                document.getElementById('currentCurrencyScenario').innerHTML = `
-                    <strong>Current Scenario:</strong> ${currencyScenarios[0].scenario}
-                `;
-            }
-        };
+        // Initialize the simulation
+        updateStatusIndicators();
+        updateImplications();
     </script>
 </body>
 </html>
