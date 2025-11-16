@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IS-LM Model: Small Open Economy</title>
+    <title>IS-LM Model: Fixed Exchange Rate Economy</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -13,6 +13,7 @@
             --dark-color: #34495e;
             --success-color: #2ecc71;
             --warning-color: #f39c12;
+            --fixed-color: #9b59b6;
         }
         
         * {
@@ -35,12 +36,23 @@
         }
         
         header {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--fixed-color));
             color: white;
             padding: 20px 0;
             text-align: center;
             border-radius: 8px 8px 0 0;
             margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::after {
+            content: "FIXED EXCHANGE RATE REGIME";
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 12px;
+            opacity: 0.7;
         }
         
         h1, h2, h3 {
@@ -147,6 +159,7 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         button {
@@ -174,6 +187,15 @@
         
         .secondary-btn:hover {
             background-color: #bdc3c7;
+        }
+        
+        .fixed-btn {
+            background-color: var(--fixed-color);
+            color: white;
+        }
+        
+        .fixed-btn:hover {
+            background-color: #8e44ad;
         }
         
         .charts-container {
@@ -206,6 +228,8 @@
             justify-content: center;
             color: #6c757d;
             font-style: italic;
+            text-align: center;
+            padding: 20px;
         }
         
         .score-panel {
@@ -239,7 +263,7 @@
         
         .case-study {
             background-color: #f8f9fa;
-            border-left: 4px solid var(--secondary-color);
+            border-left: 4px solid var(--fixed-color);
             padding: 15px;
             margin: 15px 0;
         }
@@ -248,12 +272,17 @@
             display: flex;
             gap: 15px;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
         
         .indicator {
             display: flex;
             align-items: center;
             gap: 5px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         
         .indicator-dot {
@@ -300,6 +329,35 @@
             color: #7f8c8d;
         }
         
+        .reserve-warning {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .policy-explanation {
+            background-color: #e8f4fc;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .policy-explanation h4 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .fixed-rate-badge {
+            display: inline-block;
+            background-color: var(--fixed-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -315,7 +373,7 @@
     <div class="container">
         <header>
             <h1>IS-LM Model Simulation: Small Open Economy</h1>
-            <p>Floating Exchange Rate Environment with Focus on Depreciation</p>
+            <p>Fixed Exchange Rate Environment - Policy Constraints and Management</p>
         </header>
         
         <!-- Password Screen -->
@@ -335,15 +393,15 @@
             <div class="score-panel">
                 <div>
                     <h3>Economic Performance Score</h3>
-                    <p>Your goal is to maintain stable economic conditions while managing exchange rate depreciation</p>
+                    <p>Your goal is to maintain economic stability while defending the fixed exchange rate</p>
                 </div>
                 <div class="score-value" id="scoreValue">100</div>
             </div>
             
             <!-- Simulation Panel -->
             <div class="panel simulation-panel">
-                <h2>Economic Simulation Panel</h2>
-                <p>Adjust the policy levers below to influence the economy. Your decisions will affect output, interest rates, and exchange rates.</p>
+                <h2>Economic Simulation Panel <span class="fixed-rate-badge">FIXED EXCHANGE RATE: 1.0</span></h2>
+                <p>Under a fixed exchange rate regime, monetary policy is constrained. Adjust policy levers to influence the economy while maintaining the fixed rate.</p>
                 
                 <div class="economic-indicators">
                     <div class="indicator-card">
@@ -357,41 +415,55 @@
                     <div class="indicator-card">
                         <div class="indicator-label">Exchange Rate</div>
                         <div class="indicator-value" id="exchangeValue">1.00</div>
+                        <div class="indicator-label">Fixed Rate</div>
                     </div>
                     <div class="indicator-card">
                         <div class="indicator-label">Interest Rate</div>
                         <div class="indicator-value" id="interestValue">3.0%</div>
                     </div>
                     <div class="indicator-card">
-                        <div class="indicator-label">Unemployment</div>
-                        <div class="indicator-value" id="unemploymentValue">5.0%</div>
+                        <div class="indicator-label">Foreign Reserves</div>
+                        <div class="indicator-value" id="reservesValue">$50B</div>
+                        <div id="reserveWarning" class="reserve-warning" style="display: none;">LOW RESERVES!</div>
                     </div>
+                </div>
+                
+                <div class="policy-explanation">
+                    <h4>Policy Constraints Under Fixed Exchange Rates</h4>
+                    <p>In a fixed exchange rate system, the central bank must maintain the exchange rate peg. This means:</p>
+                    <ul>
+                        <li>Monetary policy is constrained - interest rates must align with the anchor currency</li>
+                        <li>Fiscal policy becomes the primary tool for demand management</li>
+                        <li>The central bank must use foreign reserves to defend the peg during pressure</li>
+                        <li>Loss of reserves may force devaluation or austerity measures</li>
+                    </ul>
                 </div>
                 
                 <div class="controls">
                     <div class="control-group">
-                        <label for="fiscalPolicy">Fiscal Policy (Government Spending)</label>
-                        <input type="range" id="fiscalPolicy" min="-10" max="10" value="0" step="1">
-                        <div id="fiscalValue">0% change</div>
+                        <label for="fiscalPolicy">Fiscal Policy (Government Spending % of GDP)</label>
+                        <input type="range" id="fiscalPolicy" min="-5" max="5" value="0" step="0.5">
+                        <div id="fiscalValue">0% change (Current: 20% of GDP)</div>
                     </div>
                     
                     <div class="control-group">
-                        <label for="monetaryPolicy">Monetary Policy (Interest Rates)</label>
-                        <input type="range" id="monetaryPolicy" min="-5" max="5" value="0" step="0.5">
-                        <div id="monetaryValue">0% change</div>
+                        <label for="monetaryPolicy">Monetary Policy (Interest Rate Adjustment)</label>
+                        <input type="range" id="monetaryPolicy" min="-2" max="2" value="0" step="0.25">
+                        <div id="monetaryValue">0% change (Limited by fixed rate constraint)</div>
                     </div>
                     
                     <div class="control-group">
-                        <label for="tradePolicy">Trade Policy (Tariffs)</label>
-                        <input type="range" id="tradePolicy" min="-15" max="15" value="0" step="1">
-                        <div id="tradeValue">0% change</div>
+                        <label for="reserveIntervention">Foreign Reserve Intervention</label>
+                        <input type="range" id="reserveIntervention" min="-10" max="10" value="0" step="1">
+                        <div id="reserveValue">$0B intervention</div>
                     </div>
                 </div>
                 
                 <div class="buttons">
                     <button id="applyPolicy" class="primary-btn">Apply Policy Changes</button>
                     <button id="resetPolicy" class="secondary-btn">Reset to Baseline</button>
-                    <button id="nextPeriod" class="primary-btn">Advance to Next Period</button>
+                    <button id="nextPeriod" class="fixed-btn">Advance to Next Period</button>
+                    <button id="devalueCurrency" class="secondary-btn">Devalue Currency (Last Resort)</button>
                 </div>
                 
                 <div class="status-indicators">
@@ -405,7 +477,11 @@
                     </div>
                     <div class="indicator">
                         <div class="indicator-dot positive"></div>
-                        <span>Exchange Rate: <span id="exchangeStatus">Stable</span></span>
+                        <span>Exchange Rate: <span id="exchangeStatus">Peg Maintained</span></span>
+                    </div>
+                    <div class="indicator">
+                        <div class="indicator-dot positive"></div>
+                        <span>Reserves: <span id="reservesStatus">Adequate</span></span>
                     </div>
                 </div>
             </div>
@@ -414,37 +490,37 @@
             <div class="dashboard">
                 <!-- Case Study Panel -->
                 <div class="panel">
-                    <h2>Case Study: Managing Currency Depreciation</h2>
+                    <h2>Case Study: Maintaining a Fixed Exchange Rate</h2>
                     <div class="case-study">
-                        <h3>Scenario: Rapid Currency Depreciation</h3>
-                        <p>Your economy is experiencing a 15% depreciation of its currency over the past quarter. This has led to:</p>
+                        <h3>Scenario: Pressure on Currency Peg</h3>
+                        <p>Your economy is experiencing capital outflows due to:</p>
                         <ul>
-                            <li>Increased import costs and inflationary pressures</li>
-                            <li>Improved export competitiveness</li>
-                            <li>Capital flight and reduced foreign investment</li>
-                            <li>Pressure on foreign currency reserves</li>
+                            <li>Higher interest rates in the anchor currency country</li>
+                            <li>Political uncertainty affecting investor confidence</li>
+                            <li>Weakening export competitiveness</li>
+                            <li>Growing current account deficit</li>
                         </ul>
-                        <p><strong>Your Challenge:</strong> Implement policies to stabilize the currency while maintaining economic growth and controlling inflation.</p>
+                        <p><strong>Your Challenge:</strong> Defend the fixed exchange rate while minimizing economic disruption.</p>
                     </div>
                     
-                    <h3>Policy Options Analysis</h3>
-                    <p>Consider the following policy responses to currency depreciation:</p>
+                    <h3>Policy Options Under Fixed Rates</h3>
+                    <p>With limited monetary autonomy, consider these responses:</p>
                     <ul>
-                        <li><strong>Monetary Tightening:</strong> Increase interest rates to attract capital inflows but risk slowing economic growth</li>
-                        <li><strong>Fiscal Contraction:</strong> Reduce government spending to lower aggregate demand and import dependence</li>
-                        <li><strong>Capital Controls:</strong> Restrict capital outflows but potentially discourage foreign investment</li>
-                        <li><strong>Foreign Exchange Intervention:</strong> Use reserves to support the currency but risk depleting reserves</li>
+                        <li><strong>Fiscal Contraction:</strong> Reduce government spending to lower imports and current account deficit</li>
+                        <li><strong>Reserve Intervention:</strong> Use foreign reserves to support the currency (temporary solution)</li>
+                        <li><strong>Capital Controls:</strong> Restrict capital outflows but risk long-term investment</li>
+                        <li><strong>Interest Rate Defense:</strong> Raise rates to attract capital (limited by economic impact)</li>
                     </ul>
                     
                     <div class="case-study">
-                        <h3>Historical Example: Emerging Market Crisis</h3>
-                        <p>During the 1997 Asian Financial Crisis, countries like Thailand and Indonesia faced severe currency depreciation. Policy missteps included:</p>
+                        <h3>Historical Example: Bretton Woods System</h3>
+                        <p>The Bretton Woods system (1944-1971) established fixed exchange rates pegged to the US dollar. Key lessons:</p>
                         <ul>
-                            <li>Delayed interest rate hikes allowing further capital flight</li>
-                            <li>Insufficient fiscal adjustment leading to ballooning deficits</li>
-                            <li>Weak banking sectors exacerbating the crisis</li>
+                            <li>Successful while US maintained gold convertibility and price stability</li>
+                            <li>Collapsed when US inflation undermined dollar credibility</li>
+                            <li>Countries faced "impossible trinity" - cannot have fixed rates, free capital flows, and independent monetary policy simultaneously</li>
+                            <li>Modern examples: China's managed rate, Gulf states' dollar pegs</li>
                         </ul>
-                        <p>Successful responses included IMF-supported adjustment programs with tight monetary policy, fiscal consolidation, and structural reforms.</p>
                     </div>
                 </div>
                 
@@ -455,41 +531,60 @@
                     
                     <ul class="implications-list">
                         <li id="implication1">Current policies support stable economic conditions.</li>
-                        <li id="implication2">Interest rates are at equilibrium levels.</li>
-                        <li id="implication3">Exchange rate stability supports international trade.</li>
-                        <li id="implication4">Investment climate remains favorable.</li>
-                        <li id="implication5">Consumer confidence is maintaining steady demand.</li>
+                        <li id="implication2">Fixed exchange rate reduces currency risk for international trade.</li>
+                        <li id="implication3">Interest rate stability supports long-term investment planning.</li>
+                        <li id="implication4">Fiscal policy adjustments affect public sector demand.</li>
+                        <li id="implication5">Reserve levels indicate capacity to maintain currency peg.</li>
                     </ul>
                     
                     <h3>Strategic Business Responses</h3>
                     <p>Based on current economic conditions:</p>
                     <ul>
-                        <li id="strategy1">Consider hedging foreign exchange exposure</li>
-                        <li id="strategy2">Evaluate export market opportunities</li>
-                        <li id="strategy3">Review import substitution possibilities</li>
-                        <li id="strategy4">Assess supply chain resilience</li>
+                        <li id="strategy1">Plan investments with stable exchange rate assumption</li>
+                        <li id="strategy2">Monitor fiscal policy for public spending impacts</li>
+                        <li id="strategy3">Assess competitiveness relative to trading partners</li>
+                        <li id="strategy4">Evaluate supply chain resilience to potential devaluation</li>
                     </ul>
+                    
+                    <div class="case-study">
+                        <h4>Impossible Trinity Constraint</h4>
+                        <p>Under fixed exchange rates with open capital markets, monetary policy loses effectiveness. Businesses should:</p>
+                        <ul>
+                            <li>Expect interest rates to follow anchor currency</li>
+                            <li>Anticipate fiscal policy as main stabilization tool</li>
+                            <li>Monitor foreign reserves for peg sustainability</li>
+                            <li>Prepare contingency plans for potential regime change</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             
             <!-- Charts Container -->
             <div class="charts-container">
                 <div class="panel">
-                    <h3>IS-LM Equilibrium</h3>
+                    <h3>IS-LM Equilibrium Under Fixed Rates</h3>
                     <div class="chart">
                         <div class="chart-placeholder">
-                            IS-LM Chart Visualization<br>
-                            (Interest Rate vs. Output)
+                            IS-LM-BP Diagram<br><br>
+                            Under fixed exchange rates:<br>
+                            - BP curve is horizontal at world interest rate<br>
+                            - LM curve shifts to maintain equilibrium<br>
+                            - Fiscal policy is effective<br>
+                            - Monetary policy is ineffective
                         </div>
                     </div>
                 </div>
                 
                 <div class="panel">
-                    <h3>Exchange Rate Dynamics</h3>
+                    <h3>Foreign Reserve Levels</h3>
                     <div class="chart">
                         <div class="chart-placeholder">
-                            Exchange Rate Chart Visualization<br>
-                            (Time vs. Exchange Rate)
+                            Reserve Adequacy Chart<br><br>
+                            Critical thresholds:<br>
+                            - Green: >6 months imports<br>
+                            - Yellow: 3-6 months imports<br>
+                            - Red: <3 months imports<br><br>
+                            Current: <span id="reserveMonths">8.2</span> months of import cover
                         </div>
                     </div>
                 </div>
@@ -503,7 +598,7 @@
             const password = document.getElementById('passwordInput').value;
             // In a real application, this would be securely validated on the server
             // For this demo, we'll use a simple password
-            if (password === 'economics2024') {
+            if (password === 'fixed2024') {
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             } else {
@@ -523,59 +618,78 @@
         let round = 1;
         let gdpGrowth = 2.5;
         let inflation = 2.0;
-        let exchangeRate = 1.0;
+        let exchangeRate = 1.0; // Fixed rate
         let interestRate = 3.0;
-        let unemployment = 5.0;
+        let foreignReserves = 50; // $50 billion
+        let pressureOnPeg = 0; // Pressure on fixed exchange rate
+        let fiscalSpending = 20; // % of GDP
         
         // Policy sliders
         const fiscalPolicy = document.getElementById('fiscalPolicy');
         const monetaryPolicy = document.getElementById('monetaryPolicy');
-        const tradePolicy = document.getElementById('tradePolicy');
+        const reserveIntervention = document.getElementById('reserveIntervention');
         
         // Display values for policies
         const fiscalValue = document.getElementById('fiscalValue');
         const monetaryValue = document.getElementById('monetaryValue');
-        const tradeValue = document.getElementById('tradeValue');
+        const reserveValue = document.getElementById('reserveValue');
         
         // Economic indicator displays
         const gdpValue = document.getElementById('gdpValue');
         const inflationValue = document.getElementById('inflationValue');
         const exchangeValue = document.getElementById('exchangeValue');
         const interestValue = document.getElementById('interestValue');
-        const unemploymentValue = document.getElementById('unemploymentValue');
+        const reservesValue = document.getElementById('reservesValue');
+        const reserveMonths = document.getElementById('reserveMonths');
+        const reserveWarning = document.getElementById('reserveWarning');
         
         // Update policy value displays
         fiscalPolicy.addEventListener('input', function() {
-            fiscalValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change`;
+            fiscalValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change (Current: ${(fiscalSpending + parseFloat(this.value)).toFixed(1)}% of GDP)`;
         });
         
         monetaryPolicy.addEventListener('input', function() {
-            monetaryValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change`;
+            monetaryValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change (Limited by fixed rate constraint)`;
         });
         
-        tradePolicy.addEventListener('input', function() {
-            tradeValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change`;
+        reserveIntervention.addEventListener('input', function() {
+            reserveValue.textContent = `$${this.value > 0 ? '+' : ''}${this.value}B intervention`;
         });
         
         // Apply policy changes
         document.getElementById('applyPolicy').addEventListener('click', function() {
             const fiscalChange = parseFloat(fiscalPolicy.value);
             const monetaryChange = parseFloat(monetaryPolicy.value);
-            const tradeChange = parseFloat(tradePolicy.value);
+            const reserveChange = parseFloat(reserveIntervention.value);
             
-            // Simulate economic impacts
-            // In a real simulation, these would be calculated using the IS-LM model
-            gdpGrowth += fiscalChange * 0.2 - monetaryChange * 0.15 + tradeChange * 0.05;
-            inflation += fiscalChange * 0.1 + monetaryChange * 0.05 - tradeChange * 0.02;
-            exchangeRate += fiscalChange * 0.01 - monetaryChange * 0.02 + tradeChange * 0.03;
-            interestRate += monetaryChange * 0.5;
-            unemployment -= fiscalChange * 0.1 + monetaryChange * 0.05;
+            // Update fiscal spending
+            fiscalSpending += fiscalChange;
+            
+            // Simulate economic impacts under fixed exchange rate
+            // Fiscal policy is effective under fixed rates
+            gdpGrowth += fiscalChange * 0.3;
+            inflation += fiscalChange * 0.15;
+            
+            // Monetary policy is constrained but has limited impact
+            interestRate += monetaryChange;
+            gdpGrowth -= monetaryChange * 0.2;
+            
+            // Reserve intervention affects pressure on peg
+            foreignReserves += reserveChange;
+            pressureOnPeg -= reserveChange * 0.5;
+            
+            // Pressure on peg affects economy
+            if (pressureOnPeg > 5) {
+                // High pressure on peg
+                gdpGrowth -= 0.5;
+                interestRate += 0.5;
+            }
             
             // Update economic indicators
             updateEconomicIndicators();
             
             // Update score based on economic performance
-            updateScore(fiscalChange, monetaryChange, tradeChange);
+            updateScore(fiscalChange, monetaryChange, reserveChange);
             
             // Update status indicators
             updateStatusIndicators();
@@ -590,33 +704,56 @@
         document.getElementById('resetPolicy').addEventListener('click', function() {
             fiscalPolicy.value = 0;
             monetaryPolicy.value = 0;
-            tradePolicy.value = 0;
-            fiscalValue.textContent = '0% change';
-            monetaryValue.textContent = '0% change';
-            tradeValue.textContent = '0% change';
+            reserveIntervention.value = 0;
+            fiscalValue.textContent = '0% change (Current: 20% of GDP)';
+            monetaryValue.textContent = '0% change (Limited by fixed rate constraint)';
+            reserveValue.textContent = '$0B intervention';
+        });
+        
+        // Devalue currency (last resort)
+        document.getElementById('devalueCurrency').addEventListener('click', function() {
+            if (confirm("Devaluing the currency is a drastic measure that will break the fixed exchange rate regime. This may cause inflation and loss of credibility. Are you sure?")) {
+                exchangeRate = 1.2; // 20% devaluation
+                pressureOnPeg = 0; // Reset pressure
+                score -= 30; // Penalty for devaluation
+                updateEconomicIndicators();
+                updateStatusIndicators();
+                updateImplications();
+                document.getElementById('scoreValue').textContent = Math.round(score);
+                alert("Currency devalued by 20%. Fixed exchange rate regime abandoned. Transitioning to floating rate system.");
+            }
         });
         
         // Next period button
         document.getElementById('nextPeriod').addEventListener('click', function() {
             // Introduce random economic shocks
-            const shockType = Math.floor(Math.random() * 3);
+            const shockType = Math.floor(Math.random() * 4);
             let shockMessage = "Advancing to next period. ";
             
             switch(shockType) {
                 case 0:
-                    // Currency crisis shock
-                    exchangeRate -= 0.15;
-                    shockMessage += "Currency crisis! Exchange rate depreciated by 15%.";
+                    // Capital flight shock
+                    pressureOnPeg += 8;
+                    foreignReserves -= 5;
+                    shockMessage += "Capital flight! Pressure on currency peg increased.";
                     break;
                 case 1:
-                    // Inflation shock
-                    inflation += 2;
-                    shockMessage += "Inflation shock! Prices increased by 2%.";
+                    // Anchor currency rate hike
+                    interestRate += 1;
+                    pressureOnPeg += 5;
+                    shockMessage += "Anchor currency raised rates! Must follow to maintain peg.";
                     break;
                 case 2:
-                    // Growth shock
-                    gdpGrowth -= 1.5;
-                    shockMessage += "Growth shock! GDP growth decreased by 1.5%.";
+                    // Export shock
+                    gdpGrowth -= 1;
+                    pressureOnPeg += 3;
+                    shockMessage += "Export demand declined! Current account weakened.";
+                    break;
+                case 3:
+                    // Positive shock
+                    gdpGrowth += 1;
+                    pressureOnPeg -= 2;
+                    shockMessage += "Positive economic news! Reduced pressure on currency.";
                     break;
             }
             
@@ -639,22 +776,41 @@
             inflationValue.textContent = inflation.toFixed(1) + '%';
             exchangeValue.textContent = exchangeRate.toFixed(2);
             interestValue.textContent = interestRate.toFixed(1) + '%';
-            unemploymentValue.textContent = unemployment.toFixed(1) + '%';
+            reservesValue.textContent = '$' + foreignReserves.toFixed(1) + 'B';
+            
+            // Calculate reserve adequacy (months of import cover)
+            const reserveMonthsValue = (foreignReserves / 6.1).toFixed(1);
+            reserveMonths.textContent = reserveMonthsValue;
+            
+            // Show warning if reserves are low
+            if (foreignReserves < 20) {
+                reserveWarning.style.display = 'block';
+            } else {
+                reserveWarning.style.display = 'none';
+            }
         }
         
         // Update score based on policy effectiveness
-        function updateScore(fiscal, monetary, trade) {
+        function updateScore(fiscal, monetary, reserve) {
             // Base score change
             let scoreChange = 0;
             
-            // Evaluate policy mix effectiveness
-            // Expansionary fiscal policy with tight monetary policy might be problematic
-            if (fiscal > 0 && monetary > 0) {
-                scoreChange -= 5; // Overheating risk
-            } else if (fiscal < 0 && monetary < 0) {
-                scoreChange -= 5; // Recession risk
-            } else if (Math.abs(fiscal) < 3 && Math.abs(monetary) < 2 && Math.abs(trade) < 5) {
-                scoreChange += 3; // Moderate policies are often good
+            // Evaluate policy effectiveness under fixed rates
+            // Fiscal policy is primary tool
+            if (Math.abs(fiscal) > 0 && Math.abs(fiscal) < 3) {
+                scoreChange += 2; // Moderate fiscal policy is good
+            } else if (Math.abs(fiscal) >= 3) {
+                scoreChange -= 3; // Extreme fiscal policy is risky
+            }
+            
+            // Monetary policy should be minimal under fixed rates
+            if (Math.abs(monetary) > 1) {
+                scoreChange -= 2; // Large monetary moves problematic under fixed rates
+            }
+            
+            // Reserve intervention should be judicious
+            if (Math.abs(reserve) > 5) {
+                scoreChange -= 2; // Large interventions signal problems
             }
             
             // Check if key indicators are within target ranges
@@ -664,11 +820,11 @@
             if (inflation > 1 && inflation < 4) scoreChange += 2;
             else scoreChange -= 5;
             
-            if (exchangeRate > 0.8 && exchangeRate < 1.2) scoreChange += 2;
-            else scoreChange -= 3;
+            if (foreignReserves > 25) scoreChange += 2;
+            else if (foreignReserves < 15) scoreChange -= 5;
             
-            if (unemployment > 3 && unemployment < 7) scoreChange += 1;
-            else scoreChange -= 2;
+            if (pressureOnPeg < 5) scoreChange += 2;
+            else if (pressureOnPeg > 10) scoreChange -= 5;
             
             // Update score with bounds
             score = Math.max(0, Math.min(200, score + scoreChange));
@@ -680,6 +836,7 @@
             const gdpStatus = document.getElementById('gdpStatus');
             const inflationStatus = document.getElementById('inflationStatus');
             const exchangeStatus = document.getElementById('exchangeStatus');
+            const reservesStatus = document.getElementById('reservesStatus');
             
             // GDP status
             if (gdpGrowth > 3) {
@@ -706,15 +863,27 @@
             }
             
             // Exchange rate status
-            if (exchangeRate > 1.1) {
-                exchangeStatus.textContent = 'Appreciating';
-                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
-            } else if (exchangeRate > 0.9) {
-                exchangeStatus.textContent = 'Stable';
-                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
-            } else {
-                exchangeStatus.textContent = 'Depreciating';
+            if (pressureOnPeg > 10) {
+                exchangeStatus.textContent = 'Under Severe Pressure';
                 exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
+            } else if (pressureOnPeg > 5) {
+                exchangeStatus.textContent = 'Under Pressure';
+                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
+            } else {
+                exchangeStatus.textContent = 'Peg Maintained';
+                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+            }
+            
+            // Reserves status
+            if (foreignReserves > 35) {
+                reservesStatus.textContent = 'Strong';
+                reservesStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+            } else if (foreignReserves > 20) {
+                reservesStatus.textContent = 'Adequate';
+                reservesStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
+            } else {
+                reservesStatus.textContent = 'Low';
+                reservesStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
             }
         }
         
@@ -755,56 +924,41 @@
                 implications[implicationIndex++].textContent = "Stable GDP growth supports predictable business planning and moderate expansion.";
             }
             
-            if (inflation > 3) {
-                implications[implicationIndex++].textContent = "High inflation may erode consumer purchasing power and increase input costs.";
-            } else if (inflation < 1) {
-                implications[implicationIndex++].textContent = "Low inflation environment supports stable pricing strategies but may indicate weak demand.";
+            implications[implicationIndex++].textContent = `Fixed exchange rate of ${exchangeRate} reduces currency risk for international trade.`;
+            
+            if (pressureOnPeg > 5) {
+                implications[implicationIndex++].textContent = "High pressure on currency peg may lead to interest rate volatility.";
             } else {
-                implications[implicationIndex++].textContent = "Moderate inflation supports nominal revenue growth without significant cost pressures.";
+                implications[implicationIndex++].textContent = "Interest rate stability supports long-term investment planning.";
             }
             
-            if (exchangeRate > 1.1) {
-                implications[implicationIndex++].textContent = "Currency appreciation makes exports more expensive but reduces import costs.";
-            } else if (exchangeRate < 0.9) {
-                implications[implicationIndex++].textContent = "Currency depreciation supports export competitiveness but increases import costs.";
+            if (fiscalSpending > 22) {
+                implications[implicationIndex++].textContent = "Expansionary fiscal policy may boost public sector demand for goods and services.";
+            } else if (fiscalSpending < 18) {
+                implications[implicationIndex++].textContent = "Fiscal contraction may reduce public sector demand and economic activity.";
             } else {
-                implications[implicationIndex++].textContent = "Stable exchange rates facilitate international trade planning and reduce currency risk.";
+                implications[implicationIndex++].textContent = "Neutral fiscal policy maintains current public sector demand levels.";
             }
             
-            if (interestRate > 4) {
-                implications[implicationIndex++].textContent = "High interest rates increase borrowing costs but may attract foreign capital inflows.";
-            } else if (interestRate < 2) {
-                implications[implicationIndex++].textContent = "Low interest rates reduce financing costs but may signal economic weakness.";
+            if (foreignReserves > 40) {
+                implications[implicationIndex].textContent = "Strong reserve levels provide confidence in currency peg sustainability.";
+            } else if (foreignReserves > 25) {
+                implications[implicationIndex].textContent = "Adequate reserve levels support currency peg maintenance.";
             } else {
-                implications[implicationIndex++].textContent = "Moderate interest rates balance borrowing costs with economic stability.";
-            }
-            
-            if (score > 150) {
-                implications[implicationIndex].textContent = "Excellent economic management creates a highly favorable business environment.";
-            } else if (score > 100) {
-                implications[implicationIndex].textContent = "Good economic policies support business confidence and investment.";
-            } else if (score > 50) {
-                implications[implicationIndex].textContent = "Mixed economic performance requires careful strategic planning and risk management.";
-            } else {
-                implications[implicationIndex].textContent = "Poor economic conditions necessitate defensive business strategies and contingency planning.";
+                implications[implicationIndex].textContent = "Low reserve levels raise concerns about ability to maintain currency peg.";
             }
             
             // Update strategic responses
-            if (exchangeRate < 0.9) {
-                strategies[0].textContent = "Implement strong currency hedging strategies to mitigate depreciation risks";
-                strategies[1].textContent = "Aggressively expand export markets to capitalize on improved competitiveness";
-                strategies[2].textContent = "Accelerate import substitution initiatives to reduce foreign exchange exposure";
-                strategies[3].textContent = "Diversify supply chains to mitigate currency and trade disruption risks";
-            } else if (exchangeRate > 1.1) {
-                strategies[0].textContent = "Reduce hedging as appreciation reduces currency risk";
-                strategies[1].textContent = "Focus on domestic markets as exports become less competitive";
-                strategies[2].textContent = "Consider increasing imports as they become cheaper";
-                strategies[3].textContent = "Evaluate opportunities for foreign acquisitions with stronger currency";
+            if (pressureOnPeg > 5) {
+                strategies[0].textContent = "Prepare contingency plans for potential currency regime change";
+                strategies[1].textContent = "Monitor central bank communications for policy signals";
+                strategies[2].textContent = "Assess competitiveness if currency were to devalue";
+                strategies[3].textContent = "Review hedging strategies for potential volatility";
             } else {
-                strategies[0].textContent = "Maintain standard currency hedging practices";
-                strategies[1].textContent = "Continue balanced approach to domestic and export markets";
-                strategies[2].textContent = "Monitor import costs for optimization opportunities";
-                strategies[3].textContent = "Maintain diversified supply chain strategy";
+                strategies[0].textContent = "Plan investments with stable exchange rate assumption";
+                strategies[1].textContent = "Monitor fiscal policy for public spending impacts";
+                strategies[2].textContent = "Assess competitiveness relative to trading partners";
+                strategies[3].textContent = "Evaluate supply chain resilience to potential shocks";
             }
         }
         
