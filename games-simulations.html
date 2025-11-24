@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IS-LM Model: Fixed Exchange Rate Economy</title>
+    <title>Climate Change Policy Simulation</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
+            --primary-color: #1a5276;
+            --secondary-color: #27ae60;
             --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --success-color: #2ecc71;
             --warning-color: #f39c12;
-            --fixed-color: #9b59b6;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --market-color: #3498db;
+            --nonmarket-color: #9b59b6;
         }
         
         * {
@@ -36,7 +36,7 @@
         }
         
         header {
-            background: linear-gradient(135deg, var(--primary-color), var(--fixed-color));
+            background: linear-gradient(135deg, var(--primary-color), #117a65);
             color: white;
             padding: 20px 0;
             text-align: center;
@@ -47,7 +47,7 @@
         }
         
         header::after {
-            content: "FIXED EXCHANGE RATE REGIME";
+            content: "CLIMATE POLICY SIMULATION";
             position: absolute;
             bottom: 5px;
             right: 10px;
@@ -99,7 +99,7 @@
         }
         
         .password-form button:hover {
-            background-color: #2980b9;
+            background-color: #219653;
         }
         
         .error-message {
@@ -177,7 +177,7 @@
         }
         
         .primary-btn:hover {
-            background-color: #2980b9;
+            background-color: #219653;
         }
         
         .secondary-btn {
@@ -189,12 +189,21 @@
             background-color: #bdc3c7;
         }
         
-        .fixed-btn {
-            background-color: var(--fixed-color);
+        .market-btn {
+            background-color: var(--market-color);
             color: white;
         }
         
-        .fixed-btn:hover {
+        .market-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .nonmarket-btn {
+            background-color: var(--nonmarket-color);
+            color: white;
+        }
+        
+        .nonmarket-btn:hover {
             background-color: #8e44ad;
         }
         
@@ -262,8 +271,22 @@
         }
         
         .case-study {
-            background-color: #f8f9fa;
-            border-left: 4px solid var(--fixed-color);
+            background-color: #e8f6f3;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .market-solution {
+            background-color: #e8f4fc;
+            border-left: 4px solid var(--market-color);
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .nonmarket-solution {
+            background-color: #f4ecf7;
+            border-left: 4px solid var(--nonmarket-color);
             padding: 15px;
             margin: 15px 0;
         }
@@ -292,7 +315,7 @@
         }
         
         .positive {
-            background-color: var(--success-color);
+            background-color: var(--secondary-color);
         }
         
         .negative {
@@ -329,33 +352,58 @@
             color: #7f8c8d;
         }
         
-        .reserve-warning {
+        .warning {
             color: var(--accent-color);
             font-weight: bold;
             margin-top: 5px;
         }
         
         .policy-explanation {
-            background-color: #e8f4fc;
+            background-color: #fff9e6;
             border-radius: 6px;
             padding: 15px;
             margin: 15px 0;
         }
         
         .policy-explanation h4 {
-            color: var(--secondary-color);
+            color: var(--warning-color);
             margin-bottom: 10px;
         }
         
-        .fixed-rate-badge {
+        .climate-badge {
             display: inline-block;
-            background-color: var(--fixed-color);
+            background-color: var(--secondary-color);
             color: white;
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: bold;
             margin-left: 5px;
+        }
+        
+        .policy-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .policy-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .policy-tab.active {
+            border-bottom: 3px solid var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .policy-content {
+            display: none;
+        }
+        
+        .policy-content.active {
+            display: block;
         }
         
         @media (max-width: 768px) {
@@ -372,8 +420,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>IS-LM Model Simulation: Small Open Economy</h1>
-            <p>Fixed Exchange Rate Environment - Policy Constraints and Management</p>
+            <h1>Climate Change Policy Simulation</h1>
+            <p>Balancing Economic Growth with Environmental Sustainability</p>
         </header>
         
         <!-- Password Screen -->
@@ -392,16 +440,16 @@
             <!-- Score Panel -->
             <div class="score-panel">
                 <div>
-                    <h3>Economic Performance Score</h3>
-                    <p>Your goal is to maintain economic stability while defending the fixed exchange rate</p>
+                    <h3>Sustainability Performance Score</h3>
+                    <p>Your goal is to balance economic growth with climate action</p>
                 </div>
                 <div class="score-value" id="scoreValue">100</div>
             </div>
             
             <!-- Simulation Panel -->
             <div class="panel simulation-panel">
-                <h2>Economic Simulation Panel <span class="fixed-rate-badge">FIXED EXCHANGE RATE: 1.0</span></h2>
-                <p>Under a fixed exchange rate regime, monetary policy is constrained. Adjust policy levers to influence the economy while maintaining the fixed rate.</p>
+                <h2>Climate Policy Simulation Panel <span class="climate-badge">NET ZERO BY 2050</span></h2>
+                <p>Implement market and non-market solutions to address climate change while maintaining economic growth.</p>
                 
                 <div class="economic-indicators">
                     <div class="indicator-card">
@@ -409,79 +457,174 @@
                         <div class="indicator-value" id="gdpValue">2.5%</div>
                     </div>
                     <div class="indicator-card">
-                        <div class="indicator-label">Inflation</div>
-                        <div class="indicator-value" id="inflationValue">2.0%</div>
+                        <div class="indicator-label">CO2 Emissions</div>
+                        <div class="indicator-value" id="emissionsValue">40 Gt</div>
+                        <div class="indicator-label">Annual</div>
                     </div>
                     <div class="indicator-card">
-                        <div class="indicator-label">Exchange Rate</div>
-                        <div class="indicator-value" id="exchangeValue">1.00</div>
-                        <div class="indicator-label">Fixed Rate</div>
+                        <div class="indicator-label">Temperature Rise</div>
+                        <div class="indicator-value" id="temperatureValue">1.2°C</div>
+                        <div class="indicator-label">Since 1900</div>
                     </div>
                     <div class="indicator-card">
-                        <div class="indicator-label">Interest Rate</div>
-                        <div class="indicator-value" id="interestValue">3.0%</div>
+                        <div class="indicator-label">Renewable Energy</div>
+                        <div class="indicator-value" id="renewableValue">28%</div>
+                        <div class="indicator-label">of Total Energy</div>
                     </div>
                     <div class="indicator-card">
-                        <div class="indicator-label">Foreign Reserves</div>
-                        <div class="indicator-value" id="reservesValue">$50B</div>
-                        <div id="reserveWarning" class="reserve-warning" style="display: none;">LOW RESERVES!</div>
+                        <div class="indicator-label">Carbon Price</div>
+                        <div class="indicator-value" id="carbonPriceValue">$40</div>
+                        <div class="indicator-label">per ton</div>
                     </div>
                 </div>
                 
                 <div class="policy-explanation">
-                    <h4>Policy Constraints Under Fixed Exchange Rates</h4>
-                    <p>In a fixed exchange rate system, the central bank must maintain the exchange rate peg. This means:</p>
+                    <h4>Climate Policy Approaches</h4>
+                    <p>Two main approaches to climate policy:</p>
                     <ul>
-                        <li>Monetary policy is constrained - interest rates must align with the anchor currency</li>
-                        <li>Fiscal policy becomes the primary tool for demand management</li>
-                        <li>The central bank must use foreign reserves to defend the peg during pressure</li>
-                        <li>Loss of reserves may force devaluation or austerity measures</li>
+                        <li><strong>Market Solutions:</strong> Use price signals and economic incentives (carbon taxes, cap-and-trade, subsidies)</li>
+                        <li><strong>Non-Market Solutions:</strong> Use regulations, standards, and direct government action (emissions standards, renewable mandates, public investment)</li>
                     </ul>
+                    <p>Effective climate policy often combines both approaches.</p>
                 </div>
                 
-                <div class="controls">
-                    <div class="control-group">
-                        <label for="fiscalPolicy">Fiscal Policy (Government Spending % of GDP)</label>
-                        <input type="range" id="fiscalPolicy" min="-5" max="5" value="0" step="0.5">
-                        <div id="fiscalValue">0% change (Current: 20% of GDP)</div>
+                <div class="policy-tabs">
+                    <div class="policy-tab active" data-tab="market">Market Solutions</div>
+                    <div class="policy-tab" data-tab="nonmarket">Non-Market Solutions</div>
+                    <div class="policy-tab" data-tab="combined">Combined Approach</div>
+                </div>
+                
+                <div class="policy-content active" id="market-content">
+                    <h3>Market-Based Climate Solutions</h3>
+                    <p>Use economic incentives to reduce emissions efficiently:</p>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="carbonTax">Carbon Tax ($ per ton)</label>
+                            <input type="range" id="carbonTax" min="0" max="200" value="40" step="10">
+                            <div id="carbonTaxValue">$40 per ton</div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="renewableSubsidies">Renewable Energy Subsidies (% of budget)</label>
+                            <input type="range" id="renewableSubsidies" min="0" max="20" value="5" step="1">
+                            <div id="subsidyValue">5% of budget</div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="emissionsTrading">Emissions Trading (Cap Stringency)</label>
+                            <input type="range" id="emissionsTrading" min="0" max="10" value="5" step="1">
+                            <div id="tradingValue">Medium stringency</div>
+                        </div>
                     </div>
                     
-                    <div class="control-group">
-                        <label for="monetaryPolicy">Monetary Policy (Interest Rate Adjustment)</label>
-                        <input type="range" id="monetaryPolicy" min="-2" max="2" value="0" step="0.25">
-                        <div id="monetaryValue">0% change (Limited by fixed rate constraint)</div>
+                    <div class="market-solution">
+                        <h4>Market Solution Benefits</h4>
+                        <p>Market mechanisms create economic incentives for emissions reduction while allowing flexibility:</p>
+                        <ul>
+                            <li>Carbon pricing internalizes the climate externality</li>
+                            <li>Subsidies accelerate clean technology adoption</li>
+                            <li>Emissions trading finds lowest-cost reduction opportunities</li>
+                            <li>Revenue can be used to offset economic impacts</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="policy-content" id="nonmarket-content">
+                    <h3>Non-Market Climate Solutions</h3>
+                    <p>Use regulations and direct government action:</p>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="emissionsStandards">Emissions Standards (Stringency)</label>
+                            <input type="range" id="emissionsStandards" min="0" max="10" value="5" step="1">
+                            <div id="standardsValue">Medium stringency</div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="renewableMandate">Renewable Portfolio Standard (% by 2030)</label>
+                            <input type="range" id="renewableMandate" min="0" max="100" value="50" step="5">
+                            <div id="mandateValue">50% by 2030</div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="publicInvestment">Public Green Investment (% of GDP)</label>
+                            <input type="range" id="publicInvestment" min="0" max="5" value="1" step="0.25">
+                            <div id="investmentValue">1% of GDP</div>
+                        </div>
                     </div>
                     
-                    <div class="control-group">
-                        <label for="reserveIntervention">Foreign Reserve Intervention</label>
-                        <input type="range" id="reserveIntervention" min="-10" max="10" value="0" step="1">
-                        <div id="reserveValue">$0B intervention</div>
+                    <div class="nonmarket-solution">
+                        <h4>Non-Market Solution Benefits</h4>
+                        <p>Regulations and direct action can achieve specific outcomes:</p>
+                        <ul>
+                            <li>Standards ensure minimum environmental performance</li>
+                            <li>Mandates create guaranteed markets for clean energy</li>
+                            <li>Public investment drives innovation and infrastructure</li>
+                            <li>Can target hard-to-reach sectors</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="policy-content" id="combined-content">
+                    <h3>Combined Policy Approach</h3>
+                    <p>Mix market and non-market solutions for comprehensive climate policy:</p>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="policyMix">Policy Mix Balance</label>
+                            <input type="range" id="policyMix" min="0" max="10" value="5" step="1">
+                            <div id="mixValue">Balanced approach</div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="climateSpending">Climate Spending (% of Budget)</label>
+                            <input type="range" id="climateSpending" min="0" max="15" value="5" step="1">
+                            <div id="spendingValue">5% of budget</div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="transitionSupport">Transition Support (% of GDP)</label>
+                            <input type="range" id="transitionSupport" min="0" max="3" value="1" step="0.25">
+                            <div id="transitionValue">1% of GDP</div>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <h4>Integrated Climate Strategy</h4>
+                        <p>Successful climate policy often combines multiple approaches:</p>
+                        <ul>
+                            <li>Carbon pricing creates economy-wide incentives</li>
+                            <li>Regulations address market failures and equity concerns</li>
+                            <li>Public investment builds necessary infrastructure</li>
+                            <li>Transition support maintains political feasibility</li>
+                        </ul>
                     </div>
                 </div>
                 
                 <div class="buttons">
                     <button id="applyPolicy" class="primary-btn">Apply Policy Changes</button>
                     <button id="resetPolicy" class="secondary-btn">Reset to Baseline</button>
-                    <button id="nextPeriod" class="fixed-btn">Advance to Next Period</button>
-                    <button id="devalueCurrency" class="secondary-btn">Devalue Currency (Last Resort)</button>
+                    <button id="nextPeriod" class="market-btn">Advance 5 Years</button>
+                    <button id="assessImpact" class="nonmarket-btn">Assess Climate Impact</button>
                 </div>
                 
                 <div class="status-indicators">
                     <div class="indicator">
-                        <div class="indicator-dot positive"></div>
+                        <div class="indicator-dot neutral"></div>
                         <span>GDP Growth: <span id="gdpStatus">Stable</span></span>
                     </div>
                     <div class="indicator">
+                        <div class="indicator-dot negative"></div>
+                        <span>Emissions: <span id="emissionsStatus">High</span></span>
+                    </div>
+                    <div class="indicator">
                         <div class="indicator-dot neutral"></div>
-                        <span>Inflation: <span id="inflationStatus">Controlled</span></span>
+                        <span>Temperature: <span id="temperatureStatus">Moderate Rise</span></span>
                     </div>
                     <div class="indicator">
-                        <div class="indicator-dot positive"></div>
-                        <span>Exchange Rate: <span id="exchangeStatus">Peg Maintained</span></span>
-                    </div>
-                    <div class="indicator">
-                        <div class="indicator-dot positive"></div>
-                        <span>Reserves: <span id="reservesStatus">Adequate</span></span>
+                        <div class="indicator-dot neutral"></div>
+                        <span>Clean Energy: <span id="energyStatus">Growing</span></span>
                     </div>
                 </div>
             </div>
@@ -490,36 +633,46 @@
             <div class="dashboard">
                 <!-- Case Study Panel -->
                 <div class="panel">
-                    <h2>Case Study: Maintaining a Fixed Exchange Rate</h2>
+                    <h2>Case Study: Climate Policy in Practice</h2>
                     <div class="case-study">
-                        <h3>Scenario: Pressure on Currency Peg</h3>
-                        <p>Your economy is experiencing capital outflows due to:</p>
+                        <h3>Scenario: Achieving Net Zero by 2050</h3>
+                        <p>Your economy needs to transform while maintaining growth:</p>
                         <ul>
-                            <li>Higher interest rates in the anchor currency country</li>
-                            <li>Political uncertainty affecting investor confidence</li>
-                            <li>Weakening export competitiveness</li>
-                            <li>Growing current account deficit</li>
+                            <li>Current emissions trajectory leads to 3°C warming</li>
+                            <li>Energy system heavily dependent on fossil fuels</li>
+                            <li>Significant economic costs of climate inaction</li>
+                            <li>Opportunities in green technology and innovation</li>
                         </ul>
-                        <p><strong>Your Challenge:</strong> Defend the fixed exchange rate while minimizing economic disruption.</p>
+                        <p><strong>Your Challenge:</strong> Design policies to decarbonize the economy while maintaining prosperity.</p>
                     </div>
                     
-                    <h3>Policy Options Under Fixed Rates</h3>
-                    <p>With limited monetary autonomy, consider these responses:</p>
-                    <ul>
-                        <li><strong>Fiscal Contraction:</strong> Reduce government spending to lower imports and current account deficit</li>
-                        <li><strong>Reserve Intervention:</strong> Use foreign reserves to support the currency (temporary solution)</li>
-                        <li><strong>Capital Controls:</strong> Restrict capital outflows but risk long-term investment</li>
-                        <li><strong>Interest Rate Defense:</strong> Raise rates to attract capital (limited by economic impact)</li>
-                    </ul>
+                    <h3>Real-World Policy Examples</h3>
+                    <div class="market-solution">
+                        <h4>Market Solutions in Practice</h4>
+                        <ul>
+                            <li><strong>European Emissions Trading System:</strong> Largest carbon market, covers 45% of EU emissions</li>
+                            <li><strong>British Columbia Carbon Tax:</strong> Revenue-neutral tax with proven emissions reductions</li>
+                            <li><strong>Renewable Energy Tax Credits:</strong> Accelerated solar and wind deployment in US</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="nonmarket-solution">
+                        <h4>Non-Market Solutions in Practice</h4>
+                        <ul>
+                            <li><strong>EU Vehicle Emissions Standards:</strong> Mandated progressive reduction in fleet emissions</li>
+                            <li><strong>China's Renewable Mandates:</strong> Required utilities to source specific renewable percentages</li>
+                            <li><strong>California Building Codes:</strong> Progressive energy efficiency requirements</li>
+                        </ul>
+                    </div>
                     
                     <div class="case-study">
-                        <h3>Historical Example: Bretton Woods System</h3>
-                        <p>The Bretton Woods system (1944-1971) established fixed exchange rates pegged to the US dollar. Key lessons:</p>
+                        <h3>Economic Impacts of Climate Policy</h3>
+                        <p>Well-designed climate policy can have multiple benefits:</p>
                         <ul>
-                            <li>Successful while US maintained gold convertibility and price stability</li>
-                            <li>Collapsed when US inflation undermined dollar credibility</li>
-                            <li>Countries faced "impossible trinity" - cannot have fixed rates, free capital flows, and independent monetary policy simultaneously</li>
-                            <li>Modern examples: China's managed rate, Gulf states' dollar pegs</li>
+                            <li>Short-term GDP impact typically 1-2% by 2050 for 2°C pathways</li>
+                            <li>Co-benefits include reduced air pollution, energy security, innovation</li>
+                            <li>Costs of inaction far exceed costs of action (2-20% of GDP by 2100)</li>
+                            <li>Just transition policies critical for political feasibility</li>
                         </ul>
                     </div>
                 </div>
@@ -530,31 +683,30 @@
                     <p>Based on your policy decisions, here are the implications for business management:</p>
                     
                     <ul class="implications-list">
-                        <li id="implication1">Current policies support stable economic conditions.</li>
-                        <li id="implication2">Fixed exchange rate reduces currency risk for international trade.</li>
-                        <li id="implication3">Interest rate stability supports long-term investment planning.</li>
-                        <li id="implication4">Fiscal policy adjustments affect public sector demand.</li>
-                        <li id="implication5">Reserve levels indicate capacity to maintain currency peg.</li>
+                        <li id="implication1">Current policies maintain business-as-usual conditions.</li>
+                        <li id="implication2">Carbon pricing affects production costs and competitiveness.</li>
+                        <li id="implication3">Regulatory changes require operational adjustments.</li>
+                        <li id="implication4">Green investment creates new market opportunities.</li>
+                        <li id="implication5">Climate risks affect long-term strategic planning.</li>
                     </ul>
                     
                     <h3>Strategic Business Responses</h3>
-                    <p>Based on current economic conditions:</p>
+                    <p>Based on current policy environment:</p>
                     <ul>
-                        <li id="strategy1">Plan investments with stable exchange rate assumption</li>
-                        <li id="strategy2">Monitor fiscal policy for public spending impacts</li>
-                        <li id="strategy3">Assess competitiveness relative to trading partners</li>
-                        <li id="strategy4">Evaluate supply chain resilience to potential devaluation</li>
+                        <li id="strategy1">Assess carbon footprint and exposure to climate policies</li>
+                        <li id="strategy2">Evaluate energy efficiency and transition opportunities</li>
+                        <li id="strategy3">Develop products/services for low-carbon economy</li>
+                        <li id="strategy4">Engage in policy development and climate disclosure</li>
                     </ul>
                     
                     <div class="case-study">
-                        <h4>Impossible Trinity Constraint</h4>
-                        <p>Under fixed exchange rates with open capital markets, monetary policy loses effectiveness. Businesses should:</p>
+                        <h4>Climate Risk Management</h4>
+                        <p>Businesses face two types of climate risk:</p>
                         <ul>
-                            <li>Expect interest rates to follow anchor currency</li>
-                            <li>Anticipate fiscal policy as main stabilization tool</li>
-                            <li>Monitor foreign reserves for peg sustainability</li>
-                            <li>Prepare contingency plans for potential regime change</li>
+                            <li><strong>Physical Risks:</strong> Direct impacts of climate change (extreme weather, supply chain disruption)</li>
+                            <li><strong>Transition Risks:</strong> Policy, technology, and market changes during low-carbon transition</li>
                         </ul>
+                        <p>Forward-looking companies are integrating climate into core strategy.</p>
                     </div>
                 </div>
             </div>
@@ -562,29 +714,28 @@
             <!-- Charts Container -->
             <div class="charts-container">
                 <div class="panel">
-                    <h3>IS-LM Equilibrium Under Fixed Rates</h3>
+                    <h3>Emissions Reduction Pathways</h3>
                     <div class="chart">
                         <div class="chart-placeholder">
-                            IS-LM-BP Diagram<br><br>
-                            Under fixed exchange rates:<br>
-                            - BP curve is horizontal at world interest rate<br>
-                            - LM curve shifts to maintain equilibrium<br>
-                            - Fiscal policy is effective<br>
-                            - Monetary policy is ineffective
+                            CO2 Emissions Trajectory<br><br>
+                            Current Path: 3°C warming<br>
+                            2°C Path: 40-60% reduction by 2030<br>
+                            1.5°C Path: 45-65% reduction by 2030<br><br>
+                            Your Policy: <span id="pathwayValue">3°C path</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="panel">
-                    <h3>Foreign Reserve Levels</h3>
+                    <h3>Economic and Climate Trade-offs</h3>
                     <div class="chart">
                         <div class="chart-placeholder">
-                            Reserve Adequacy Chart<br><br>
-                            Critical thresholds:<br>
-                            - Green: >6 months imports<br>
-                            - Yellow: 3-6 months imports<br>
-                            - Red: <3 months imports<br><br>
-                            Current: <span id="reserveMonths">8.2</span> months of import cover
+                            GDP vs Emissions Reduction<br><br>
+                            Strong correlation between:<br>
+                            - Early action and lower costs<br>
+                            - Policy certainty and investment<br>
+                            - Innovation and competitiveness<br><br>
+                            Your Balance: <span id="balanceValue">Moderate</span>
                         </div>
                     </div>
                 </div>
@@ -598,7 +749,7 @@
             const password = document.getElementById('passwordInput').value;
             // In a real application, this would be securely validated on the server
             // For this demo, we'll use a simple password
-            if (password === 'fixed2024') {
+            if (password === 'climate2024') {
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             } else {
@@ -613,149 +764,236 @@
             }
         });
         
+        // Tab functionality
+        document.querySelectorAll('.policy-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.policy-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.policy-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+        
         // Initialize simulation variables
         let score = 100;
-        let round = 1;
+        let year = 2024;
         let gdpGrowth = 2.5;
-        let inflation = 2.0;
-        let exchangeRate = 1.0; // Fixed rate
-        let interestRate = 3.0;
-        let foreignReserves = 50; // $50 billion
-        let pressureOnPeg = 0; // Pressure on fixed exchange rate
-        let fiscalSpending = 20; // % of GDP
+        let emissions = 40; // Gigatons CO2 per year
+        let temperatureRise = 1.2; // Degrees Celsius since 1900
+        let renewableShare = 28; // Percentage of energy from renewables
+        let carbonPrice = 40; // Dollars per ton
         
         // Policy sliders
-        const fiscalPolicy = document.getElementById('fiscalPolicy');
-        const monetaryPolicy = document.getElementById('monetaryPolicy');
-        const reserveIntervention = document.getElementById('reserveIntervention');
+        const carbonTax = document.getElementById('carbonTax');
+        const renewableSubsidies = document.getElementById('renewableSubsidies');
+        const emissionsTrading = document.getElementById('emissionsTrading');
+        const emissionsStandards = document.getElementById('emissionsStandards');
+        const renewableMandate = document.getElementById('renewableMandate');
+        const publicInvestment = document.getElementById('publicInvestment');
+        const policyMix = document.getElementById('policyMix');
+        const climateSpending = document.getElementById('climateSpending');
+        const transitionSupport = document.getElementById('transitionSupport');
         
         // Display values for policies
-        const fiscalValue = document.getElementById('fiscalValue');
-        const monetaryValue = document.getElementById('monetaryValue');
-        const reserveValue = document.getElementById('reserveValue');
+        const carbonTaxValue = document.getElementById('carbonTaxValue');
+        const subsidyValue = document.getElementById('subsidyValue');
+        const tradingValue = document.getElementById('tradingValue');
+        const standardsValue = document.getElementById('standardsValue');
+        const mandateValue = document.getElementById('mandateValue');
+        const investmentValue = document.getElementById('investmentValue');
+        const mixValue = document.getElementById('mixValue');
+        const spendingValue = document.getElementById('spendingValue');
+        const transitionValue = document.getElementById('transitionValue');
         
         // Economic indicator displays
         const gdpValue = document.getElementById('gdpValue');
-        const inflationValue = document.getElementById('inflationValue');
-        const exchangeValue = document.getElementById('exchangeValue');
-        const interestValue = document.getElementById('interestValue');
-        const reservesValue = document.getElementById('reservesValue');
-        const reserveMonths = document.getElementById('reserveMonths');
-        const reserveWarning = document.getElementById('reserveWarning');
+        const emissionsValue = document.getElementById('emissionsValue');
+        const temperatureValue = document.getElementById('temperatureValue');
+        const renewableValue = document.getElementById('renewableValue');
+        const carbonPriceValue = document.getElementById('carbonPriceValue');
+        const pathwayValue = document.getElementById('pathwayValue');
+        const balanceValue = document.getElementById('balanceValue');
         
         // Update policy value displays
-        fiscalPolicy.addEventListener('input', function() {
-            fiscalValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change (Current: ${(fiscalSpending + parseFloat(this.value)).toFixed(1)}% of GDP)`;
+        carbonTax.addEventListener('input', function() {
+            carbonTaxValue.textContent = `$${this.value} per ton`;
         });
         
-        monetaryPolicy.addEventListener('input', function() {
-            monetaryValue.textContent = `${this.value > 0 ? '+' : ''}${this.value}% change (Limited by fixed rate constraint)`;
+        renewableSubsidies.addEventListener('input', function() {
+            subsidyValue.textContent = `${this.value}% of budget`;
         });
         
-        reserveIntervention.addEventListener('input', function() {
-            reserveValue.textContent = `$${this.value > 0 ? '+' : ''}${this.value}B intervention`;
+        emissionsTrading.addEventListener('input', function() {
+            const val = parseInt(this.value);
+            tradingValue.textContent = val < 3 ? 'Low stringency' : val < 7 ? 'Medium stringency' : 'High stringency';
+        });
+        
+        emissionsStandards.addEventListener('input', function() {
+            const val = parseInt(this.value);
+            standardsValue.textContent = val < 3 ? 'Low stringency' : val < 7 ? 'Medium stringency' : 'High stringency';
+        });
+        
+        renewableMandate.addEventListener('input', function() {
+            mandateValue.textContent = `${this.value}% by 2030`;
+        });
+        
+        publicInvestment.addEventListener('input', function() {
+            investmentValue.textContent = `${this.value}% of GDP`;
+        });
+        
+        policyMix.addEventListener('input', function() {
+            const val = parseInt(this.value);
+            mixValue.textContent = val < 3 ? 'Market-focused' : val < 7 ? 'Balanced approach' : 'Regulation-focused';
+        });
+        
+        climateSpending.addEventListener('input', function() {
+            spendingValue.textContent = `${this.value}% of budget`;
+        });
+        
+        transitionSupport.addEventListener('input', function() {
+            transitionValue.textContent = `${this.value}% of GDP`;
         });
         
         // Apply policy changes
         document.getElementById('applyPolicy').addEventListener('click', function() {
-            const fiscalChange = parseFloat(fiscalPolicy.value);
-            const monetaryChange = parseFloat(monetaryPolicy.value);
-            const reserveChange = parseFloat(reserveIntervention.value);
+            // Get active tab to determine which policies to apply
+            const activeTab = document.querySelector('.policy-tab.active').getAttribute('data-tab');
             
-            // Update fiscal spending
-            fiscalSpending += fiscalChange;
+            let policyImpact = 0;
             
-            // Simulate economic impacts under fixed exchange rate
-            // Fiscal policy is effective under fixed rates
-            gdpGrowth += fiscalChange * 0.3;
-            inflation += fiscalChange * 0.15;
-            
-            // Monetary policy is constrained but has limited impact
-            interestRate += monetaryChange;
-            gdpGrowth -= monetaryChange * 0.2;
-            
-            // Reserve intervention affects pressure on peg
-            foreignReserves += reserveChange;
-            pressureOnPeg -= reserveChange * 0.5;
-            
-            // Pressure on peg affects economy
-            if (pressureOnPeg > 5) {
-                // High pressure on peg
-                gdpGrowth -= 0.5;
-                interestRate += 0.5;
+            if (activeTab === 'market') {
+                // Apply market policies
+                const taxLevel = parseFloat(carbonTax.value);
+                const subsidyLevel = parseFloat(renewableSubsidies.value);
+                const tradingLevel = parseFloat(emissionsTrading.value);
+                
+                // Update carbon price
+                carbonPrice = taxLevel;
+                
+                // Calculate impacts
+                policyImpact = (taxLevel/40) * 0.5 + (subsidyLevel/10) * 0.3 + (tradingLevel/10) * 0.2;
+                
+                // Apply effects
+                emissions -= policyImpact * 5;
+                renewableShare += subsidyLevel * 0.8;
+                gdpGrowth -= taxLevel * 0.01; // Small GDP impact from carbon tax
+                
+            } else if (activeTab === 'nonmarket') {
+                // Apply non-market policies
+                const standardsLevel = parseFloat(emissionsStandards.value);
+                const mandateLevel = parseFloat(renewableMandate.value);
+                const investmentLevel = parseFloat(publicInvestment.value);
+                
+                // Calculate impacts
+                policyImpact = (standardsLevel/10) * 0.4 + (mandateLevel/100) * 0.4 + (investmentLevel/5) * 0.2;
+                
+                // Apply effects
+                emissions -= policyImpact * 6;
+                renewableShare += mandateLevel * 0.3;
+                gdpGrowth -= standardsLevel * 0.02; // Potential GDP impact from regulations
+                
+            } else if (activeTab === 'combined') {
+                // Apply combined policies
+                const mixLevel = parseFloat(policyMix.value);
+                const spendingLevel = parseFloat(climateSpending.value);
+                const transitionLevel = parseFloat(transitionSupport.value);
+                
+                // Calculate impacts - balanced approach
+                policyImpact = (mixLevel/10) * 0.3 + (spendingLevel/15) * 0.4 + (transitionLevel/3) * 0.3;
+                
+                // Apply effects - more balanced economic impact
+                emissions -= policyImpact * 5.5;
+                renewableShare += spendingLevel * 1.2;
+                gdpGrowth -= (10 - Math.abs(mixLevel - 5)) * 0.01; // Minimal GDP impact with balanced approach
             }
+            
+            // Ensure values stay within reasonable bounds
+            emissions = Math.max(5, emissions);
+            renewableShare = Math.min(100, Math.max(10, renewableShare));
+            gdpGrowth = Math.max(0.5, gdpGrowth);
             
             // Update economic indicators
             updateEconomicIndicators();
             
-            // Update score based on economic performance
-            updateScore(fiscalChange, monetaryChange, reserveChange);
+            // Update score based on policy effectiveness
+            updateScore(policyImpact);
             
             // Update status indicators
             updateStatusIndicators();
             
             // Update managerial implications
             updateImplications();
-            
-            round++;
         });
         
         // Reset policies
         document.getElementById('resetPolicy').addEventListener('click', function() {
-            fiscalPolicy.value = 0;
-            monetaryPolicy.value = 0;
-            reserveIntervention.value = 0;
-            fiscalValue.textContent = '0% change (Current: 20% of GDP)';
-            monetaryValue.textContent = '0% change (Limited by fixed rate constraint)';
-            reserveValue.textContent = '$0B intervention';
+            // Reset all sliders to default values
+            carbonTax.value = 40;
+            renewableSubsidies.value = 5;
+            emissionsTrading.value = 5;
+            emissionsStandards.value = 5;
+            renewableMandate.value = 50;
+            publicInvestment.value = 1;
+            policyMix.value = 5;
+            climateSpending.value = 5;
+            transitionSupport.value = 1;
+            
+            // Update displays
+            carbonTaxValue.textContent = '$40 per ton';
+            subsidyValue.textContent = '5% of budget';
+            tradingValue.textContent = 'Medium stringency';
+            standardsValue.textContent = 'Medium stringency';
+            mandateValue.textContent = '50% by 2030';
+            investmentValue.textContent = '1% of GDP';
+            mixValue.textContent = 'Balanced approach';
+            spendingValue.textContent = '5% of budget';
+            transitionValue.textContent = '1% of GDP';
         });
         
-        // Devalue currency (last resort)
-        document.getElementById('devalueCurrency').addEventListener('click', function() {
-            if (confirm("Devaluing the currency is a drastic measure that will break the fixed exchange rate regime. This may cause inflation and loss of credibility. Are you sure?")) {
-                exchangeRate = 1.2; // 20% devaluation
-                pressureOnPeg = 0; // Reset pressure
-                score -= 30; // Penalty for devaluation
-                updateEconomicIndicators();
-                updateStatusIndicators();
-                updateImplications();
-                document.getElementById('scoreValue').textContent = Math.round(score);
-                alert("Currency devalued by 20%. Fixed exchange rate regime abandoned. Transitioning to floating rate system.");
+        // Assess climate impact
+        document.getElementById('assessImpact').addEventListener('click', function() {
+            // Calculate temperature pathway based on current emissions
+            let pathway;
+            let temperatureProjection;
+            
+            if (emissions > 35) {
+                pathway = "3°C+ path";
+                temperatureProjection = "3.2°C by 2100";
+            } else if (emissions > 25) {
+                pathway = "2.5°C path";
+                temperatureProjection = "2.5°C by 2100";
+            } else if (emissions > 15) {
+                pathway = "2°C path";
+                temperatureProjection = "2.0°C by 2100";
+            } else {
+                pathway = "1.5°C path";
+                temperatureProjection = "1.7°C by 2100";
             }
+            
+            pathwayValue.textContent = pathway;
+            
+            alert(`Climate Impact Assessment:\n\nCurrent Trajectory: ${pathway}\nProjected Warming: ${temperatureProjection}\n\nEmissions need to reach net zero by ${emissions > 25 ? 2070 : 2050} to stay on this path.`);
         });
         
         // Next period button
         document.getElementById('nextPeriod').addEventListener('click', function() {
-            // Introduce random economic shocks
-            const shockType = Math.floor(Math.random() * 4);
-            let shockMessage = "Advancing to next period. ";
+            // Advance 5 years
+            year += 5;
             
-            switch(shockType) {
-                case 0:
-                    // Capital flight shock
-                    pressureOnPeg += 8;
-                    foreignReserves -= 5;
-                    shockMessage += "Capital flight! Pressure on currency peg increased.";
-                    break;
-                case 1:
-                    // Anchor currency rate hike
-                    interestRate += 1;
-                    pressureOnPeg += 5;
-                    shockMessage += "Anchor currency raised rates! Must follow to maintain peg.";
-                    break;
-                case 2:
-                    // Export shock
-                    gdpGrowth -= 1;
-                    pressureOnPeg += 3;
-                    shockMessage += "Export demand declined! Current account weakened.";
-                    break;
-                case 3:
-                    // Positive shock
-                    gdpGrowth += 1;
-                    pressureOnPeg -= 2;
-                    shockMessage += "Positive economic news! Reduced pressure on currency.";
-                    break;
-            }
+            // Apply baseline trends (without policy)
+            emissions += 0.5; // Slight increase without strong policy
+            temperatureRise += 0.15; // Continued warming
+            renewableShare += 2; // Natural technology progress
+            
+            // Small random economic shock
+            const shock = (Math.random() - 0.5) * 0.5;
+            gdpGrowth += shock;
             
             // Update economic indicators
             updateEconomicIndicators();
@@ -766,65 +1004,61 @@
             // Update implications
             updateImplications();
             
-            alert(shockMessage);
-            round++;
+            alert(`Advanced to ${year}. Baseline trends applied.\n\nWithout stronger climate policy, emissions continue to rise and temperature increases accelerate.`);
         });
         
         // Update economic indicators display
         function updateEconomicIndicators() {
             gdpValue.textContent = gdpGrowth.toFixed(1) + '%';
-            inflationValue.textContent = inflation.toFixed(1) + '%';
-            exchangeValue.textContent = exchangeRate.toFixed(2);
-            interestValue.textContent = interestRate.toFixed(1) + '%';
-            reservesValue.textContent = '$' + foreignReserves.toFixed(1) + 'B';
+            emissionsValue.textContent = emissions.toFixed(1) + ' Gt';
+            temperatureValue.textContent = temperatureRise.toFixed(1) + '°C';
+            renewableValue.textContent = renewableShare.toFixed(0) + '%';
+            carbonPriceValue.textContent = '$' + carbonPrice.toFixed(0);
             
-            // Calculate reserve adequacy (months of import cover)
-            const reserveMonthsValue = (foreignReserves / 6.1).toFixed(1);
-            reserveMonths.textContent = reserveMonthsValue;
-            
-            // Show warning if reserves are low
-            if (foreignReserves < 20) {
-                reserveWarning.style.display = 'block';
+            // Update pathway based on emissions
+            if (emissions > 35) {
+                pathwayValue.textContent = "3°C+ path";
+            } else if (emissions > 25) {
+                pathwayValue.textContent = "2.5°C path";
+            } else if (emissions > 15) {
+                pathwayValue.textContent = "2°C path";
             } else {
-                reserveWarning.style.display = 'none';
+                pathwayValue.textContent = "1.5°C path";
+            }
+            
+            // Update balance indicator
+            const balance = (gdpGrowth / 2.5) * 0.5 + ((40 - emissions) / 35) * 0.5;
+            if (balance > 0.7) {
+                balanceValue.textContent = "Strong";
+            } else if (balance > 0.5) {
+                balanceValue.textContent = "Good";
+            } else if (balance > 0.3) {
+                balanceValue.textContent = "Moderate";
+            } else {
+                balanceValue.textContent = "Poor";
             }
         }
         
         // Update score based on policy effectiveness
-        function updateScore(fiscal, monetary, reserve) {
+        function updateScore(policyImpact) {
             // Base score change
             let scoreChange = 0;
             
-            // Evaluate policy effectiveness under fixed rates
-            // Fiscal policy is primary tool
-            if (Math.abs(fiscal) > 0 && Math.abs(fiscal) < 3) {
-                scoreChange += 2; // Moderate fiscal policy is good
-            } else if (Math.abs(fiscal) >= 3) {
-                scoreChange -= 3; // Extreme fiscal policy is risky
-            }
+            // Reward emissions reduction
+            if (emissions < 35) scoreChange += 5;
+            if (emissions < 25) scoreChange += 10;
+            if (emissions < 15) scoreChange += 15;
             
-            // Monetary policy should be minimal under fixed rates
-            if (Math.abs(monetary) > 1) {
-                scoreChange -= 2; // Large monetary moves problematic under fixed rates
-            }
+            // Reward renewable energy growth
+            if (renewableShare > 40) scoreChange += 5;
+            if (renewableShare > 60) scoreChange += 10;
             
-            // Reserve intervention should be judicious
-            if (Math.abs(reserve) > 5) {
-                scoreChange -= 2; // Large interventions signal problems
-            }
+            // Penalize severe GDP impact
+            if (gdpGrowth < 1) scoreChange -= 10;
+            if (gdpGrowth < 0.5) scoreChange -= 15;
             
-            // Check if key indicators are within target ranges
-            if (gdpGrowth > 0 && gdpGrowth < 5) scoreChange += 2;
-            else scoreChange -= 5;
-            
-            if (inflation > 1 && inflation < 4) scoreChange += 2;
-            else scoreChange -= 5;
-            
-            if (foreignReserves > 25) scoreChange += 2;
-            else if (foreignReserves < 15) scoreChange -= 5;
-            
-            if (pressureOnPeg < 5) scoreChange += 2;
-            else if (pressureOnPeg > 10) scoreChange -= 5;
+            // Reward policy ambition
+            scoreChange += policyImpact * 10;
             
             // Update score with bounds
             score = Math.max(0, Math.min(200, score + scoreChange));
@@ -834,15 +1068,15 @@
         // Update status indicators
         function updateStatusIndicators() {
             const gdpStatus = document.getElementById('gdpStatus');
-            const inflationStatus = document.getElementById('inflationStatus');
-            const exchangeStatus = document.getElementById('exchangeStatus');
-            const reservesStatus = document.getElementById('reservesStatus');
+            const emissionsStatus = document.getElementById('emissionsStatus');
+            const temperatureStatus = document.getElementById('temperatureStatus');
+            const energyStatus = document.getElementById('energyStatus');
             
             // GDP status
             if (gdpGrowth > 3) {
                 gdpStatus.textContent = 'Strong';
                 gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
-            } else if (gdpGrowth > 1) {
+            } else if (gdpGrowth > 1.5) {
                 gdpStatus.textContent = 'Stable';
                 gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
             } else {
@@ -850,40 +1084,40 @@
                 gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
             }
             
-            // Inflation status
-            if (inflation > 3) {
-                inflationStatus.textContent = 'High';
-                inflationStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
-            } else if (inflation > 1.5) {
-                inflationStatus.textContent = 'Controlled';
-                inflationStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
+            // Emissions status
+            if (emissions < 20) {
+                emissionsStatus.textContent = 'Low';
+                emissionsStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+            } else if (emissions < 30) {
+                emissionsStatus.textContent = 'Moderate';
+                emissionsStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
             } else {
-                inflationStatus.textContent = 'Low';
-                inflationStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+                emissionsStatus.textContent = 'High';
+                emissionsStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
             }
             
-            // Exchange rate status
-            if (pressureOnPeg > 10) {
-                exchangeStatus.textContent = 'Under Severe Pressure';
-                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
-            } else if (pressureOnPeg > 5) {
-                exchangeStatus.textContent = 'Under Pressure';
-                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
+            // Temperature status
+            if (temperatureRise < 1.5) {
+                temperatureStatus.textContent = 'Limited Rise';
+                temperatureStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+            } else if (temperatureRise < 2) {
+                temperatureStatus.textContent = 'Moderate Rise';
+                temperatureStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
             } else {
-                exchangeStatus.textContent = 'Peg Maintained';
-                exchangeStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+                temperatureStatus.textContent = 'Significant Rise';
+                temperatureStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
             }
             
-            // Reserves status
-            if (foreignReserves > 35) {
-                reservesStatus.textContent = 'Strong';
-                reservesStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
-            } else if (foreignReserves > 20) {
-                reservesStatus.textContent = 'Adequate';
-                reservesStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
+            // Energy status
+            if (renewableShare > 50) {
+                energyStatus.textContent = 'Advanced';
+                energyStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
+            } else if (renewableShare > 30) {
+                energyStatus.textContent = 'Growing';
+                energyStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
             } else {
-                reservesStatus.textContent = 'Low';
-                reservesStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
+                energyStatus.textContent = 'Early Stage';
+                energyStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
             }
         }
         
@@ -913,52 +1147,50 @@
                 strat.textContent = "";
             });
             
-            // Generate new implications based on current economic conditions
+            // Generate new implications based on current conditions
             let implicationIndex = 0;
             
-            if (gdpGrowth > 4) {
-                implications[implicationIndex++].textContent = "Strong GDP growth suggests expanding consumer markets and investment opportunities.";
-            } else if (gdpGrowth < 1) {
-                implications[implicationIndex++].textContent = "Weak GDP growth indicates potential market contraction; consider cost-saving measures.";
+            if (carbonPrice > 60) {
+                implications[implicationIndex++].textContent = "High carbon price significantly affects production costs and competitiveness.";
+            } else if (carbonPrice > 30) {
+                implications[implicationIndex++].textContent = "Moderate carbon pricing creates incentives for efficiency and innovation.";
             } else {
-                implications[implicationIndex++].textContent = "Stable GDP growth supports predictable business planning and moderate expansion.";
+                implications[implicationIndex++].textContent = "Low carbon price maintains current cost structures with limited climate incentive.";
             }
             
-            implications[implicationIndex++].textContent = `Fixed exchange rate of ${exchangeRate} reduces currency risk for international trade.`;
+            implications[implicationIndex++].textContent = `Carbon price of $${carbonPrice} affects production costs and competitiveness.`;
             
-            if (pressureOnPeg > 5) {
-                implications[implicationIndex++].textContent = "High pressure on currency peg may lead to interest rate volatility.";
+            if (emissions < 25) {
+                implications[implicationIndex++].textContent = "Stringent emissions regulations require significant operational adjustments.";
             } else {
-                implications[implicationIndex++].textContent = "Interest rate stability supports long-term investment planning.";
+                implications[implicationIndex++].textContent = "Current regulatory environment allows gradual operational adaptation.";
             }
             
-            if (fiscalSpending > 22) {
-                implications[implicationIndex++].textContent = "Expansionary fiscal policy may boost public sector demand for goods and services.";
-            } else if (fiscalSpending < 18) {
-                implications[implicationIndex++].textContent = "Fiscal contraction may reduce public sector demand and economic activity.";
+            if (renewableShare > 40) {
+                implications[implicationIndex++].textContent = "Rapid clean energy transition creates new market opportunities and disruptions.";
             } else {
-                implications[implicationIndex++].textContent = "Neutral fiscal policy maintains current public sector demand levels.";
+                implications[implicationIndex++].textContent = "Gradual energy transition maintains current business models with emerging opportunities.";
             }
             
-            if (foreignReserves > 40) {
-                implications[implicationIndex].textContent = "Strong reserve levels provide confidence in currency peg sustainability.";
-            } else if (foreignReserves > 25) {
-                implications[implicationIndex].textContent = "Adequate reserve levels support currency peg maintenance.";
+            if (temperatureRise > 2) {
+                implications[implicationIndex].textContent = "Significant climate change affects long-term strategic planning and risk management.";
+            } else if (temperatureRise > 1.5) {
+                implications[implicationIndex].textContent = "Moderate climate change requires adaptation in long-term strategic planning.";
             } else {
-                implications[implicationIndex].textContent = "Low reserve levels raise concerns about ability to maintain currency peg.";
+                implications[implicationIndex].textContent = "Limited climate change allows stable long-term strategic planning.";
             }
             
             // Update strategic responses
-            if (pressureOnPeg > 5) {
-                strategies[0].textContent = "Prepare contingency plans for potential currency regime change";
-                strategies[1].textContent = "Monitor central bank communications for policy signals";
-                strategies[2].textContent = "Assess competitiveness if currency were to devalue";
-                strategies[3].textContent = "Review hedging strategies for potential volatility";
+            if (carbonPrice > 50) {
+                strategies[0].textContent = "Conduct detailed carbon footprint analysis and implement reduction strategies";
+                strategies[1].textContent = "Accelerate energy efficiency investments and transition planning";
+                strategies[2].textContent = "Develop low-carbon products and services for emerging markets";
+                strategies[3].textContent = "Engage actively in climate policy development and carbon market participation";
             } else {
-                strategies[0].textContent = "Plan investments with stable exchange rate assumption";
-                strategies[1].textContent = "Monitor fiscal policy for public spending impacts";
-                strategies[2].textContent = "Assess competitiveness relative to trading partners";
-                strategies[3].textContent = "Evaluate supply chain resilience to potential shocks";
+                strategies[0].textContent = "Assess carbon footprint and exposure to climate policies";
+                strategies[1].textContent = "Evaluate energy efficiency and transition opportunities";
+                strategies[2].textContent = "Develop products/services for low-carbon economy";
+                strategies[3].textContent = "Monitor policy development and prepare climate disclosures";
             }
         }
         
