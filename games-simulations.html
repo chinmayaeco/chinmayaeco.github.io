@@ -1,1203 +1,148 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Climate Change Policy Simulation</title>
-    <style>
-        :root {
-            --primary-color: #1a5276;
-            --secondary-color: #27ae60;
-            --accent-color: #e74c3c;
-            --warning-color: #f39c12;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --market-color: #3498db;
-            --nonmarket-color: #9b59b6;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: var(--dark-color);
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary-color), #117a65);
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::after {
-            content: "CLIMATE POLICY SIMULATION";
-            position: absolute;
-            bottom: 5px;
-            right: 10px;
-            font-size: 12px;
-            opacity: 0.7;
-        }
-        
-        h1, h2, h3 {
-            margin-bottom: 15px;
-        }
-        
-        .password-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 80vh;
-            text-align: center;
-        }
-        
-        .password-form {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .password-form input {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        
-        .password-form button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        
-        .password-form button:hover {
-            background-color: #219653;
-        }
-        
-        .error-message {
-            color: var(--accent-color);
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .main-content {
-            display: none;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .panel {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .simulation-panel {
-            grid-column: 1 / -1;
-        }
-        
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .control-group {
-            margin-bottom: 15px;
-        }
-        
-        .control-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .control-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .primary-btn {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        .primary-btn:hover {
-            background-color: #219653;
-        }
-        
-        .secondary-btn {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-        }
-        
-        .secondary-btn:hover {
-            background-color: #bdc3c7;
-        }
-        
-        .market-btn {
-            background-color: var(--market-color);
-            color: white;
-        }
-        
-        .market-btn:hover {
-            background-color: #2980b9;
-        }
-        
-        .nonmarket-btn {
-            background-color: var(--nonmarket-color);
-            color: white;
-        }
-        
-        .nonmarket-btn:hover {
-            background-color: #8e44ad;
-        }
-        
-        .charts-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .chart {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        
-        .chart-placeholder {
-            width: 100%;
-            height: 100%;
-            background-color: #f8f9fa;
-            border: 1px dashed #dee2e6;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-style: italic;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .score-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--light-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .score-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .implications-list {
-            list-style-type: none;
-        }
-        
-        .implications-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .implications-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .case-study {
-            background-color: #e8f6f3;
-            border-left: 4px solid var(--secondary-color);
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .market-solution {
-            background-color: #e8f4fc;
-            border-left: 4px solid var(--market-color);
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .nonmarket-solution {
-            background-color: #f4ecf7;
-            border-left: 4px solid var(--nonmarket-color);
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .status-indicators {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .indicator {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        .indicator-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .positive {
-            background-color: var(--secondary-color);
-        }
-        
-        .negative {
-            background-color: var(--accent-color);
-        }
-        
-        .neutral {
-            background-color: var(--warning-color);
-        }
-        
-        .economic-indicators {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .indicator-card {
-            background-color: white;
-            border-radius: 6px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        .indicator-value {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-        
-        .indicator-label {
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-        
-        .warning {
-            color: var(--accent-color);
-            font-weight: bold;
-            margin-top: 5px;
-        }
-        
-        .policy-explanation {
-            background-color: #fff9e6;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .policy-explanation h4 {
-            color: var(--warning-color);
-            margin-bottom: 10px;
-        }
-        
-        .climate-badge {
-            display: inline-block;
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-        
-        .policy-tabs {
-            display: flex;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .policy-tab {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .policy-tab.active {
-            border-bottom: 3px solid var(--secondary-color);
-            font-weight: bold;
-        }
-        
-        .policy-content {
-            display: none;
-        }
-        
-        .policy-content.active {
-            display: block;
-        }
-        
-        @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .charts-container {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Climate Change Policy Simulation</h1>
-            <p>Balancing Economic Growth with Environmental Sustainability</p>
-        </header>
-        
-        <!-- Password Screen -->
-        <div id="passwordScreen" class="password-screen">
-            <div class="password-form">
-                <h2>Enter Password to Access Simulation</h2>
-                <p>Please enter the password provided by your instructor.</p>
-                <input type="password" id="passwordInput" placeholder="Enter password">
-                <button id="submitPassword" class="primary-btn">Access Simulation</button>
-                <div id="passwordError" class="error-message">Incorrect password. Please try again.</div>
-            </div>
-        </div>
-        
-        <!-- Main Content (Hidden until password is entered) -->
-        <div id="mainContent" class="main-content">
-            <!-- Score Panel -->
-            <div class="score-panel">
-                <div>
-                    <h3>Sustainability Performance Score</h3>
-                    <p>Your goal is to balance economic growth with climate action</p>
-                </div>
-                <div class="score-value" id="scoreValue">100</div>
-            </div>
-            
-            <!-- Simulation Panel -->
-            <div class="panel simulation-panel">
-                <h2>Climate Policy Simulation Panel <span class="climate-badge">NET ZERO BY 2050</span></h2>
-                <p>Implement market and non-market solutions to address climate change while maintaining economic growth.</p>
-                
-                <div class="economic-indicators">
-                    <div class="indicator-card">
-                        <div class="indicator-label">GDP Growth</div>
-                        <div class="indicator-value" id="gdpValue">2.5%</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-label">CO2 Emissions</div>
-                        <div class="indicator-value" id="emissionsValue">40 Gt</div>
-                        <div class="indicator-label">Annual</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-label">Temperature Rise</div>
-                        <div class="indicator-value" id="temperatureValue">1.2°C</div>
-                        <div class="indicator-label">Since 1900</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-label">Renewable Energy</div>
-                        <div class="indicator-value" id="renewableValue">28%</div>
-                        <div class="indicator-label">of Total Energy</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-label">Carbon Price</div>
-                        <div class="indicator-value" id="carbonPriceValue">$40</div>
-                        <div class="indicator-label">per ton</div>
-                    </div>
-                </div>
-                
-                <div class="policy-explanation">
-                    <h4>Climate Policy Approaches</h4>
-                    <p>Two main approaches to climate policy:</p>
-                    <ul>
-                        <li><strong>Market Solutions:</strong> Use price signals and economic incentives (carbon taxes, cap-and-trade, subsidies)</li>
-                        <li><strong>Non-Market Solutions:</strong> Use regulations, standards, and direct government action (emissions standards, renewable mandates, public investment)</li>
-                    </ul>
-                    <p>Effective climate policy often combines both approaches.</p>
-                </div>
-                
-                <div class="policy-tabs">
-                    <div class="policy-tab active" data-tab="market">Market Solutions</div>
-                    <div class="policy-tab" data-tab="nonmarket">Non-Market Solutions</div>
-                    <div class="policy-tab" data-tab="combined">Combined Approach</div>
-                </div>
-                
-                <div class="policy-content active" id="market-content">
-                    <h3>Market-Based Climate Solutions</h3>
-                    <p>Use economic incentives to reduce emissions efficiently:</p>
-                    
-                    <div class="controls">
-                        <div class="control-group">
-                            <label for="carbonTax">Carbon Tax ($ per ton)</label>
-                            <input type="range" id="carbonTax" min="0" max="200" value="40" step="10">
-                            <div id="carbonTaxValue">$40 per ton</div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label for="renewableSubsidies">Renewable Energy Subsidies (% of budget)</label>
-                            <input type="range" id="renewableSubsidies" min="0" max="20" value="5" step="1">
-                            <div id="subsidyValue">5% of budget</div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label for="emissionsTrading">Emissions Trading (Cap Stringency)</label>
-                            <input type="range" id="emissionsTrading" min="0" max="10" value="5" step="1">
-                            <div id="tradingValue">Medium stringency</div>
-                        </div>
-                    </div>
-                    
-                    <div class="market-solution">
-                        <h4>Market Solution Benefits</h4>
-                        <p>Market mechanisms create economic incentives for emissions reduction while allowing flexibility:</p>
-                        <ul>
-                            <li>Carbon pricing internalizes the climate externality</li>
-                            <li>Subsidies accelerate clean technology adoption</li>
-                            <li>Emissions trading finds lowest-cost reduction opportunities</li>
-                            <li>Revenue can be used to offset economic impacts</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="policy-content" id="nonmarket-content">
-                    <h3>Non-Market Climate Solutions</h3>
-                    <p>Use regulations and direct government action:</p>
-                    
-                    <div class="controls">
-                        <div class="control-group">
-                            <label for="emissionsStandards">Emissions Standards (Stringency)</label>
-                            <input type="range" id="emissionsStandards" min="0" max="10" value="5" step="1">
-                            <div id="standardsValue">Medium stringency</div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label for="renewableMandate">Renewable Portfolio Standard (% by 2030)</label>
-                            <input type="range" id="renewableMandate" min="0" max="100" value="50" step="5">
-                            <div id="mandateValue">50% by 2030</div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label for="publicInvestment">Public Green Investment (% of GDP)</label>
-                            <input type="range" id="publicInvestment" min="0" max="5" value="1" step="0.25">
-                            <div id="investmentValue">1% of GDP</div>
-                        </div>
-                    </div>
-                    
-                    <div class="nonmarket-solution">
-                        <h4>Non-Market Solution Benefits</h4>
-                        <p>Regulations and direct action can achieve specific outcomes:</p>
-                        <ul>
-                            <li>Standards ensure minimum environmental performance</li>
-                            <li>Mandates create guaranteed markets for clean energy</li>
-                            <li>Public investment drives innovation and infrastructure</li>
-                            <li>Can target hard-to-reach sectors</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="policy-content" id="combined-content">
-                    <h3>Combined Policy Approach</h3>
-                    <p>Mix market and non-market solutions for comprehensive climate policy:</p>
-                    
-                    <div class="controls">
-                        <div class="control-group">
-                            <label for="policyMix">Policy Mix Balance</label>
-                            <input type="range" id="policyMix" min="0" max="10" value="5" step="1">
-                            <div id="mixValue">Balanced approach</div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label for="climateSpending">Climate Spending (% of Budget)</label>
-                            <input type="range" id="climateSpending" min="0" max="15" value="5" step="1">
-                            <div id="spendingValue">5% of budget</div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label for="transitionSupport">Transition Support (% of GDP)</label>
-                            <input type="range" id="transitionSupport" min="0" max="3" value="1" step="0.25">
-                            <div id="transitionValue">1% of GDP</div>
-                        </div>
-                    </div>
-                    
-                    <div class="case-study">
-                        <h4>Integrated Climate Strategy</h4>
-                        <p>Successful climate policy often combines multiple approaches:</p>
-                        <ul>
-                            <li>Carbon pricing creates economy-wide incentives</li>
-                            <li>Regulations address market failures and equity concerns</li>
-                            <li>Public investment builds necessary infrastructure</li>
-                            <li>Transition support maintains political feasibility</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="buttons">
-                    <button id="applyPolicy" class="primary-btn">Apply Policy Changes</button>
-                    <button id="resetPolicy" class="secondary-btn">Reset to Baseline</button>
-                    <button id="nextPeriod" class="market-btn">Advance 5 Years</button>
-                    <button id="assessImpact" class="nonmarket-btn">Assess Climate Impact</button>
-                </div>
-                
-                <div class="status-indicators">
-                    <div class="indicator">
-                        <div class="indicator-dot neutral"></div>
-                        <span>GDP Growth: <span id="gdpStatus">Stable</span></span>
-                    </div>
-                    <div class="indicator">
-                        <div class="indicator-dot negative"></div>
-                        <span>Emissions: <span id="emissionsStatus">High</span></span>
-                    </div>
-                    <div class="indicator">
-                        <div class="indicator-dot neutral"></div>
-                        <span>Temperature: <span id="temperatureStatus">Moderate Rise</span></span>
-                    </div>
-                    <div class="indicator">
-                        <div class="indicator-dot neutral"></div>
-                        <span>Clean Energy: <span id="energyStatus">Growing</span></span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Dashboard with Case Study and Managerial Implications -->
-            <div class="dashboard">
-                <!-- Case Study Panel -->
-                <div class="panel">
-                    <h2>Case Study: Climate Policy in Practice</h2>
-                    <div class="case-study">
-                        <h3>Scenario: Achieving Net Zero by 2050</h3>
-                        <p>Your economy needs to transform while maintaining growth:</p>
-                        <ul>
-                            <li>Current emissions trajectory leads to 3°C warming</li>
-                            <li>Energy system heavily dependent on fossil fuels</li>
-                            <li>Significant economic costs of climate inaction</li>
-                            <li>Opportunities in green technology and innovation</li>
-                        </ul>
-                        <p><strong>Your Challenge:</strong> Design policies to decarbonize the economy while maintaining prosperity.</p>
-                    </div>
-                    
-                    <h3>Real-World Policy Examples</h3>
-                    <div class="market-solution">
-                        <h4>Market Solutions in Practice</h4>
-                        <ul>
-                            <li><strong>European Emissions Trading System:</strong> Largest carbon market, covers 45% of EU emissions</li>
-                            <li><strong>British Columbia Carbon Tax:</strong> Revenue-neutral tax with proven emissions reductions</li>
-                            <li><strong>Renewable Energy Tax Credits:</strong> Accelerated solar and wind deployment in US</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="nonmarket-solution">
-                        <h4>Non-Market Solutions in Practice</h4>
-                        <ul>
-                            <li><strong>EU Vehicle Emissions Standards:</strong> Mandated progressive reduction in fleet emissions</li>
-                            <li><strong>China's Renewable Mandates:</strong> Required utilities to source specific renewable percentages</li>
-                            <li><strong>California Building Codes:</strong> Progressive energy efficiency requirements</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="case-study">
-                        <h3>Economic Impacts of Climate Policy</h3>
-                        <p>Well-designed climate policy can have multiple benefits:</p>
-                        <ul>
-                            <li>Short-term GDP impact typically 1-2% by 2050 for 2°C pathways</li>
-                            <li>Co-benefits include reduced air pollution, energy security, innovation</li>
-                            <li>Costs of inaction far exceed costs of action (2-20% of GDP by 2100)</li>
-                            <li>Just transition policies critical for political feasibility</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <!-- Managerial Implications Panel -->
-                <div class="panel">
-                    <h2>Managerial Implications</h2>
-                    <p>Based on your policy decisions, here are the implications for business management:</p>
-                    
-                    <ul class="implications-list">
-                        <li id="implication1">Current policies maintain business-as-usual conditions.</li>
-                        <li id="implication2">Carbon pricing affects production costs and competitiveness.</li>
-                        <li id="implication3">Regulatory changes require operational adjustments.</li>
-                        <li id="implication4">Green investment creates new market opportunities.</li>
-                        <li id="implication5">Climate risks affect long-term strategic planning.</li>
-                    </ul>
-                    
-                    <h3>Strategic Business Responses</h3>
-                    <p>Based on current policy environment:</p>
-                    <ul>
-                        <li id="strategy1">Assess carbon footprint and exposure to climate policies</li>
-                        <li id="strategy2">Evaluate energy efficiency and transition opportunities</li>
-                        <li id="strategy3">Develop products/services for low-carbon economy</li>
-                        <li id="strategy4">Engage in policy development and climate disclosure</li>
-                    </ul>
-                    
-                    <div class="case-study">
-                        <h4>Climate Risk Management</h4>
-                        <p>Businesses face two types of climate risk:</p>
-                        <ul>
-                            <li><strong>Physical Risks:</strong> Direct impacts of climate change (extreme weather, supply chain disruption)</li>
-                            <li><strong>Transition Risks:</strong> Policy, technology, and market changes during low-carbon transition</li>
-                        </ul>
-                        <p>Forward-looking companies are integrating climate into core strategy.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Charts Container -->
-            <div class="charts-container">
-                <div class="panel">
-                    <h3>Emissions Reduction Pathways</h3>
-                    <div class="chart">
-                        <div class="chart-placeholder">
-                            CO2 Emissions Trajectory<br><br>
-                            Current Path: 3°C warming<br>
-                            2°C Path: 40-60% reduction by 2030<br>
-                            1.5°C Path: 45-65% reduction by 2030<br><br>
-                            Your Policy: <span id="pathwayValue">3°C path</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="panel">
-                    <h3>Economic and Climate Trade-offs</h3>
-                    <div class="chart">
-                        <div class="chart-placeholder">
-                            GDP vs Emissions Reduction<br><br>
-                            Strong correlation between:<br>
-                            - Early action and lower costs<br>
-                            - Policy certainty and investment<br>
-                            - Innovation and competitiveness<br><br>
-                            Your Balance: <span id="balanceValue">Moderate</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+#!/usr/bin/env node
+(function() {
 
-    <script>
-        // Password protection
-        document.getElementById('submitPassword').addEventListener('click', function() {
-            const password = document.getElementById('passwordInput').value;
-            // In a real application, this would be securely validated on the server
-            // For this demo, we'll use a simple password
-            if (password === 'climate2024') {
-                document.getElementById('passwordScreen').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-            } else {
-                document.getElementById('passwordError').style.display = 'block';
-            }
-        });
-        
-        // Allow Enter key to submit password
-        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('submitPassword').click();
-            }
-        });
-        
-        // Tab functionality
-        document.querySelectorAll('.policy-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs and contents
-                document.querySelectorAll('.policy-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.policy-content').forEach(c => c.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                this.classList.add('active');
-                
-                // Show corresponding content
-                const tabId = this.getAttribute('data-tab');
-                document.getElementById(`${tabId}-content`).classList.add('active');
-            });
-        });
-        
-        // Initialize simulation variables
-        let score = 100;
-        let year = 2024;
-        let gdpGrowth = 2.5;
-        let emissions = 40; // Gigatons CO2 per year
-        let temperatureRise = 1.2; // Degrees Celsius since 1900
-        let renewableShare = 28; // Percentage of energy from renewables
-        let carbonPrice = 40; // Dollars per ton
-        
-        // Policy sliders
-        const carbonTax = document.getElementById('carbonTax');
-        const renewableSubsidies = document.getElementById('renewableSubsidies');
-        const emissionsTrading = document.getElementById('emissionsTrading');
-        const emissionsStandards = document.getElementById('emissionsStandards');
-        const renewableMandate = document.getElementById('renewableMandate');
-        const publicInvestment = document.getElementById('publicInvestment');
-        const policyMix = document.getElementById('policyMix');
-        const climateSpending = document.getElementById('climateSpending');
-        const transitionSupport = document.getElementById('transitionSupport');
-        
-        // Display values for policies
-        const carbonTaxValue = document.getElementById('carbonTaxValue');
-        const subsidyValue = document.getElementById('subsidyValue');
-        const tradingValue = document.getElementById('tradingValue');
-        const standardsValue = document.getElementById('standardsValue');
-        const mandateValue = document.getElementById('mandateValue');
-        const investmentValue = document.getElementById('investmentValue');
-        const mixValue = document.getElementById('mixValue');
-        const spendingValue = document.getElementById('spendingValue');
-        const transitionValue = document.getElementById('transitionValue');
-        
-        // Economic indicator displays
-        const gdpValue = document.getElementById('gdpValue');
-        const emissionsValue = document.getElementById('emissionsValue');
-        const temperatureValue = document.getElementById('temperatureValue');
-        const renewableValue = document.getElementById('renewableValue');
-        const carbonPriceValue = document.getElementById('carbonPriceValue');
-        const pathwayValue = document.getElementById('pathwayValue');
-        const balanceValue = document.getElementById('balanceValue');
-        
-        // Update policy value displays
-        carbonTax.addEventListener('input', function() {
-            carbonTaxValue.textContent = `$${this.value} per ton`;
-        });
-        
-        renewableSubsidies.addEventListener('input', function() {
-            subsidyValue.textContent = `${this.value}% of budget`;
-        });
-        
-        emissionsTrading.addEventListener('input', function() {
-            const val = parseInt(this.value);
-            tradingValue.textContent = val < 3 ? 'Low stringency' : val < 7 ? 'Medium stringency' : 'High stringency';
-        });
-        
-        emissionsStandards.addEventListener('input', function() {
-            const val = parseInt(this.value);
-            standardsValue.textContent = val < 3 ? 'Low stringency' : val < 7 ? 'Medium stringency' : 'High stringency';
-        });
-        
-        renewableMandate.addEventListener('input', function() {
-            mandateValue.textContent = `${this.value}% by 2030`;
-        });
-        
-        publicInvestment.addEventListener('input', function() {
-            investmentValue.textContent = `${this.value}% of GDP`;
-        });
-        
-        policyMix.addEventListener('input', function() {
-            const val = parseInt(this.value);
-            mixValue.textContent = val < 3 ? 'Market-focused' : val < 7 ? 'Balanced approach' : 'Regulation-focused';
-        });
-        
-        climateSpending.addEventListener('input', function() {
-            spendingValue.textContent = `${this.value}% of budget`;
-        });
-        
-        transitionSupport.addEventListener('input', function() {
-            transitionValue.textContent = `${this.value}% of GDP`;
-        });
-        
-        // Apply policy changes
-        document.getElementById('applyPolicy').addEventListener('click', function() {
-            // Get active tab to determine which policies to apply
-            const activeTab = document.querySelector('.policy-tab.active').getAttribute('data-tab');
-            
-            let policyImpact = 0;
-            
-            if (activeTab === 'market') {
-                // Apply market policies
-                const taxLevel = parseFloat(carbonTax.value);
-                const subsidyLevel = parseFloat(renewableSubsidies.value);
-                const tradingLevel = parseFloat(emissionsTrading.value);
-                
-                // Update carbon price
-                carbonPrice = taxLevel;
-                
-                // Calculate impacts
-                policyImpact = (taxLevel/40) * 0.5 + (subsidyLevel/10) * 0.3 + (tradingLevel/10) * 0.2;
-                
-                // Apply effects
-                emissions -= policyImpact * 5;
-                renewableShare += subsidyLevel * 0.8;
-                gdpGrowth -= taxLevel * 0.01; // Small GDP impact from carbon tax
-                
-            } else if (activeTab === 'nonmarket') {
-                // Apply non-market policies
-                const standardsLevel = parseFloat(emissionsStandards.value);
-                const mandateLevel = parseFloat(renewableMandate.value);
-                const investmentLevel = parseFloat(publicInvestment.value);
-                
-                // Calculate impacts
-                policyImpact = (standardsLevel/10) * 0.4 + (mandateLevel/100) * 0.4 + (investmentLevel/5) * 0.2;
-                
-                // Apply effects
-                emissions -= policyImpact * 6;
-                renewableShare += mandateLevel * 0.3;
-                gdpGrowth -= standardsLevel * 0.02; // Potential GDP impact from regulations
-                
-            } else if (activeTab === 'combined') {
-                // Apply combined policies
-                const mixLevel = parseFloat(policyMix.value);
-                const spendingLevel = parseFloat(climateSpending.value);
-                const transitionLevel = parseFloat(transitionSupport.value);
-                
-                // Calculate impacts - balanced approach
-                policyImpact = (mixLevel/10) * 0.3 + (spendingLevel/15) * 0.4 + (transitionLevel/3) * 0.3;
-                
-                // Apply effects - more balanced economic impact
-                emissions -= policyImpact * 5.5;
-                renewableShare += spendingLevel * 1.2;
-                gdpGrowth -= (10 - Math.abs(mixLevel - 5)) * 0.01; // Minimal GDP impact with balanced approach
-            }
-            
-            // Ensure values stay within reasonable bounds
-            emissions = Math.max(5, emissions);
-            renewableShare = Math.min(100, Math.max(10, renewableShare));
-            gdpGrowth = Math.max(0.5, gdpGrowth);
-            
-            // Update economic indicators
-            updateEconomicIndicators();
-            
-            // Update score based on policy effectiveness
-            updateScore(policyImpact);
-            
-            // Update status indicators
-            updateStatusIndicators();
-            
-            // Update managerial implications
-            updateImplications();
-        });
-        
-        // Reset policies
-        document.getElementById('resetPolicy').addEventListener('click', function() {
-            // Reset all sliders to default values
-            carbonTax.value = 40;
-            renewableSubsidies.value = 5;
-            emissionsTrading.value = 5;
-            emissionsStandards.value = 5;
-            renewableMandate.value = 50;
-            publicInvestment.value = 1;
-            policyMix.value = 5;
-            climateSpending.value = 5;
-            transitionSupport.value = 1;
-            
-            // Update displays
-            carbonTaxValue.textContent = '$40 per ton';
-            subsidyValue.textContent = '5% of budget';
-            tradingValue.textContent = 'Medium stringency';
-            standardsValue.textContent = 'Medium stringency';
-            mandateValue.textContent = '50% by 2030';
-            investmentValue.textContent = '1% of GDP';
-            mixValue.textContent = 'Balanced approach';
-            spendingValue.textContent = '5% of budget';
-            transitionValue.textContent = '1% of GDP';
-        });
-        
-        // Assess climate impact
-        document.getElementById('assessImpact').addEventListener('click', function() {
-            // Calculate temperature pathway based on current emissions
-            let pathway;
-            let temperatureProjection;
-            
-            if (emissions > 35) {
-                pathway = "3°C+ path";
-                temperatureProjection = "3.2°C by 2100";
-            } else if (emissions > 25) {
-                pathway = "2.5°C path";
-                temperatureProjection = "2.5°C by 2100";
-            } else if (emissions > 15) {
-                pathway = "2°C path";
-                temperatureProjection = "2.0°C by 2100";
-            } else {
-                pathway = "1.5°C path";
-                temperatureProjection = "1.7°C by 2100";
-            }
-            
-            pathwayValue.textContent = pathway;
-            
-            alert(`Climate Impact Assessment:\n\nCurrent Trajectory: ${pathway}\nProjected Warming: ${temperatureProjection}\n\nEmissions need to reach net zero by ${emissions > 25 ? 2070 : 2050} to stay on this path.`);
-        });
-        
-        // Next period button
-        document.getElementById('nextPeriod').addEventListener('click', function() {
-            // Advance 5 years
-            year += 5;
-            
-            // Apply baseline trends (without policy)
-            emissions += 0.5; // Slight increase without strong policy
-            temperatureRise += 0.15; // Continued warming
-            renewableShare += 2; // Natural technology progress
-            
-            // Small random economic shock
-            const shock = (Math.random() - 0.5) * 0.5;
-            gdpGrowth += shock;
-            
-            // Update economic indicators
-            updateEconomicIndicators();
-            
-            // Update status indicators
-            updateStatusIndicators();
-            
-            // Update implications
-            updateImplications();
-            
-            alert(`Advanced to ${year}. Baseline trends applied.\n\nWithout stronger climate policy, emissions continue to rise and temperature increases accelerate.`);
-        });
-        
-        // Update economic indicators display
-        function updateEconomicIndicators() {
-            gdpValue.textContent = gdpGrowth.toFixed(1) + '%';
-            emissionsValue.textContent = emissions.toFixed(1) + ' Gt';
-            temperatureValue.textContent = temperatureRise.toFixed(1) + '°C';
-            renewableValue.textContent = renewableShare.toFixed(0) + '%';
-            carbonPriceValue.textContent = '$' + carbonPrice.toFixed(0);
-            
-            // Update pathway based on emissions
-            if (emissions > 35) {
-                pathwayValue.textContent = "3°C+ path";
-            } else if (emissions > 25) {
-                pathwayValue.textContent = "2.5°C path";
-            } else if (emissions > 15) {
-                pathwayValue.textContent = "2°C path";
-            } else {
-                pathwayValue.textContent = "1.5°C path";
-            }
-            
-            // Update balance indicator
-            const balance = (gdpGrowth / 2.5) * 0.5 + ((40 - emissions) / 35) * 0.5;
-            if (balance > 0.7) {
-                balanceValue.textContent = "Strong";
-            } else if (balance > 0.5) {
-                balanceValue.textContent = "Good";
-            } else if (balance > 0.3) {
-                balanceValue.textContent = "Moderate";
-            } else {
-                balanceValue.textContent = "Poor";
-            }
-        }
-        
-        // Update score based on policy effectiveness
-        function updateScore(policyImpact) {
-            // Base score change
-            let scoreChange = 0;
-            
-            // Reward emissions reduction
-            if (emissions < 35) scoreChange += 5;
-            if (emissions < 25) scoreChange += 10;
-            if (emissions < 15) scoreChange += 15;
-            
-            // Reward renewable energy growth
-            if (renewableShare > 40) scoreChange += 5;
-            if (renewableShare > 60) scoreChange += 10;
-            
-            // Penalize severe GDP impact
-            if (gdpGrowth < 1) scoreChange -= 10;
-            if (gdpGrowth < 0.5) scoreChange -= 15;
-            
-            // Reward policy ambition
-            scoreChange += policyImpact * 10;
-            
-            // Update score with bounds
-            score = Math.max(0, Math.min(200, score + scoreChange));
-            document.getElementById('scoreValue').textContent = Math.round(score);
-        }
-        
-        // Update status indicators
-        function updateStatusIndicators() {
-            const gdpStatus = document.getElementById('gdpStatus');
-            const emissionsStatus = document.getElementById('emissionsStatus');
-            const temperatureStatus = document.getElementById('temperatureStatus');
-            const energyStatus = document.getElementById('energyStatus');
-            
-            // GDP status
-            if (gdpGrowth > 3) {
-                gdpStatus.textContent = 'Strong';
-                gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
-            } else if (gdpGrowth > 1.5) {
-                gdpStatus.textContent = 'Stable';
-                gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
-            } else {
-                gdpStatus.textContent = 'Weak';
-                gdpStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
-            }
-            
-            // Emissions status
-            if (emissions < 20) {
-                emissionsStatus.textContent = 'Low';
-                emissionsStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
-            } else if (emissions < 30) {
-                emissionsStatus.textContent = 'Moderate';
-                emissionsStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
-            } else {
-                emissionsStatus.textContent = 'High';
-                emissionsStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
-            }
-            
-            // Temperature status
-            if (temperatureRise < 1.5) {
-                temperatureStatus.textContent = 'Limited Rise';
-                temperatureStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
-            } else if (temperatureRise < 2) {
-                temperatureStatus.textContent = 'Moderate Rise';
-                temperatureStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
-            } else {
-                temperatureStatus.textContent = 'Significant Rise';
-                temperatureStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
-            }
-            
-            // Energy status
-            if (renewableShare > 50) {
-                energyStatus.textContent = 'Advanced';
-                energyStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot positive';
-            } else if (renewableShare > 30) {
-                energyStatus.textContent = 'Growing';
-                energyStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot neutral';
-            } else {
-                energyStatus.textContent = 'Early Stage';
-                energyStatus.parentElement.querySelector('.indicator-dot').className = 'indicator-dot negative';
-            }
-        }
-        
-        // Update managerial implications
-        function updateImplications() {
-            const implications = [
-                document.getElementById('implication1'),
-                document.getElementById('implication2'),
-                document.getElementById('implication3'),
-                document.getElementById('implication4'),
-                document.getElementById('implication5')
-            ];
-            
-            const strategies = [
-                document.getElementById('strategy1'),
-                document.getElementById('strategy2'),
-                document.getElementById('strategy3'),
-                document.getElementById('strategy4')
-            ];
-            
-            // Clear previous implications
-            implications.forEach(imp => {
-                imp.textContent = "";
-            });
-            
-            strategies.forEach(strat => {
-                strat.textContent = "";
-            });
-            
-            // Generate new implications based on current conditions
-            let implicationIndex = 0;
-            
-            if (carbonPrice > 60) {
-                implications[implicationIndex++].textContent = "High carbon price significantly affects production costs and competitiveness.";
-            } else if (carbonPrice > 30) {
-                implications[implicationIndex++].textContent = "Moderate carbon pricing creates incentives for efficiency and innovation.";
-            } else {
-                implications[implicationIndex++].textContent = "Low carbon price maintains current cost structures with limited climate incentive.";
-            }
-            
-            implications[implicationIndex++].textContent = `Carbon price of $${carbonPrice} affects production costs and competitiveness.`;
-            
-            if (emissions < 25) {
-                implications[implicationIndex++].textContent = "Stringent emissions regulations require significant operational adjustments.";
-            } else {
-                implications[implicationIndex++].textContent = "Current regulatory environment allows gradual operational adaptation.";
-            }
-            
-            if (renewableShare > 40) {
-                implications[implicationIndex++].textContent = "Rapid clean energy transition creates new market opportunities and disruptions.";
-            } else {
-                implications[implicationIndex++].textContent = "Gradual energy transition maintains current business models with emerging opportunities.";
-            }
-            
-            if (temperatureRise > 2) {
-                implications[implicationIndex].textContent = "Significant climate change affects long-term strategic planning and risk management.";
-            } else if (temperatureRise > 1.5) {
-                implications[implicationIndex].textContent = "Moderate climate change requires adaptation in long-term strategic planning.";
-            } else {
-                implications[implicationIndex].textContent = "Limited climate change allows stable long-term strategic planning.";
-            }
-            
-            // Update strategic responses
-            if (carbonPrice > 50) {
-                strategies[0].textContent = "Conduct detailed carbon footprint analysis and implement reduction strategies";
-                strategies[1].textContent = "Accelerate energy efficiency investments and transition planning";
-                strategies[2].textContent = "Develop low-carbon products and services for emerging markets";
-                strategies[3].textContent = "Engage actively in climate policy development and carbon market participation";
-            } else {
-                strategies[0].textContent = "Assess carbon footprint and exposure to climate policies";
-                strategies[1].textContent = "Evaluate energy efficiency and transition opportunities";
-                strategies[2].textContent = "Develop products/services for low-carbon economy";
-                strategies[3].textContent = "Monitor policy development and prepare climate disclosures";
-            }
-        }
-        
-        // Initialize the simulation
-        updateEconomicIndicators();
-        updateStatusIndicators();
-        updateImplications();
-    </script>
-</body>
-</html>
+	var fs = require('fs');
+	var he = require('../he.js');
+	var strings = process.argv.splice(2);
+	var stdin = process.stdin;
+	var data;
+	var timeout;
+	var action;
+	var options = {};
+	var log = console.log;
+
+	var main = function() {
+		var option = strings[0];
+		var count = 0;
+
+		if (/^(?:-h|--help|undefined)$/.test(option)) {
+			log(
+				'he v%s - https://mths.be/he',
+				he.version
+			);
+			log([
+				'\nUsage:\n',
+				'\the [--escape] string',
+				'\the [--encode] [--use-named-refs] [--everything] [--allow-unsafe] [--decimal] string',
+				'\the [--decode] [--attribute] [--strict] string',
+				'\the [-v | --version]',
+				'\the [-h | --help]',
+				'\nExamples:\n',
+				'\the --escape \\<img\\ src\\=\\\'x\\\'\\ onerror\\=\\"prompt\\(1\\)\\"\\>',
+				'\techo \'&copy; &#x1D306;\' | he --decode'
+			].join('\n'));
+			return process.exit(option ? 0 : 1);
+		}
+
+		if (/^(?:-v|--version)$/.test(option)) {
+			log('v%s', he.version);
+			return process.exit(0);
+		}
+
+		strings.forEach(function(string) {
+			// Process options
+			if (string == '--escape') {
+				action = 'escape';
+				return;
+			}
+			if (string == '--encode') {
+				action = 'encode';
+				return;
+			}
+			if (string == '--use-named-refs') {
+				action = 'encode';
+				options.useNamedReferences = true;
+				return;
+			}
+			if (string == '--everything') {
+				action = 'encode';
+				options.encodeEverything = true;
+				return;
+			}
+			if (string == '--allow-unsafe') {
+				action = 'encode';
+				options.allowUnsafeSymbols = true;
+				return;
+			}
+			if (string == '--decimal') {
+				action = 'encode';
+				options.decimal = true;
+				return;
+			}
+			if (string == '--decode') {
+				action = 'decode';
+				return;
+			}
+			if (string == '--attribute') {
+				action = 'decode';
+				options.isAttributeValue = true;
+				return;
+			}
+			if (string == '--strict') {
+				action = 'decode';
+				options.strict = true;
+				return;
+			}
+			// Process string(s)
+			var result;
+			if (!action) {
+				log('Error: he requires at least one option and a string argument.');
+				log('Try `he --help` for more information.');
+				return process.exit(1);
+			}
+			try {
+				result = he[action](string, options);
+				log(result);
+				count++;
+			} catch(error) {
+				log(error.message + '\n');
+				log('Error: failed to %s.', action);
+				log('If you think this is a bug in he, please report it:');
+				log('https://github.com/mathiasbynens/he/issues/new');
+				log(
+					'\nStack trace using he@%s:\n',
+					he.version
+				);
+				log(error.stack);
+				return process.exit(1);
+			}
+		});
+		if (!count) {
+			log('Error: he requires a string argument.');
+			log('Try `he --help` for more information.');
+			return process.exit(1);
+		}
+		// Return with exit status 0 outside of the `forEach` loop, in case
+		// multiple strings were passed in.
+		return process.exit(0);
+	};
+
+	if (stdin.isTTY) {
+		// handle shell arguments
+		main();
+	} else {
+		// Either the script is called from within a non-TTY context, or `stdin`
+		// content is being piped in.
+		if (!process.stdout.isTTY) {
+			// The script was called from a non-TTY context. This is a rather uncommon
+			// use case we don’t actively support. However, we don’t want the script
+			// to wait forever in such cases, so…
+			timeout = setTimeout(function() {
+				// …if no piped data arrived after a whole minute, handle shell
+				// arguments instead.
+				main();
+			}, 60000);
+		}
+		data = '';
+		stdin.on('data', function(chunk) {
+			clearTimeout(timeout);
+			data += chunk;
+		});
+		stdin.on('end', function() {
+			strings.push(data.trim());
+			main();
+		});
+		stdin.resume();
+	}
+
+}());
