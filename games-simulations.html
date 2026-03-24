@@ -4,104 +4,363 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Monopoly Simulation</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --accent: #2457d6;
+      --ok: #0f9d58;
+      --danger: #d93025;
+      --text: #1f2937;
+      --muted: #6b7280;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      padding: 16px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    button {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+
+    button.secondary {
+      background: #475569;
+    }
+
+    .status {
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .good { color: var(--ok); }
+    .bad { color: var(--danger); }
+
+    .log {
+      height: 420px;
+      overflow: auto;
+      background: #0b1020;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <!-- Header -->
-    <header id="header">
-      <div class="header-left">
-        <div class="logo">🏦 <span>MONOPOLY</span></div>
-        <div id="current-turn-display"></div>
-      </div>
-      <div class="header-right">
-        <button id="btn-new-game" class="btn btn-secondary">New Game</button>
-      </div>
-    </header>
-    <!-- Main Game Area -->
-    <div id="main-content">
-      <!-- Board -->
-      <div id="board-wrapper">
-        <div id="board">
-          <!-- Bottom row (squares 0-10) -->
-          <div id="bottom-row" class="board-row row-bottom"></div>
-          <!-- Left col (squares 11-19) -->
-          <div id="left-col" class="board-col col-left"></div>
-          <!-- Center -->
-          <div id="board-center">
-            <div id="center-content">
-              <div class="monopoly-title">MONOPOLY</div>
-              <div id="dice-area">
-                <div class="dice" id="die1">🎲</div>
-                <div class="dice" id="die2">🎲</div>
-              </div>
-              <div id="roll-info"></div>
-              <button id="btn-roll" class="btn btn-primary">Roll Dice</button>
-              <button id="btn-end-turn" class="btn btn-secondary" style="display:none">End Turn</button>
-              <button id="btn-buy" class="btn btn-buy" style="display:none">Buy Property</button>
-              <button id="btn-pay-bail" class="btn btn-warning" style="display:none">Pay Bail ($50)</button>
-            </div>
-          </div>
-          <!-- Right col (squares 21-29) -->
-          <div id="right-col" class="board-col col-right"></div>
-          <!-- Top row (squares 30-40) -->
-          <div id="top-row" class="board-row row-top"></div>
-        </div>
-      </div>
-      <!-- Sidebar -->
-      <div id="sidebar">
-        <!-- Players Panel -->
-        <div class="panel" id="players-panel">
-          <h2 class="panel-title">Players</h2>
-          <div id="players-list"></div>
-        </div>
-        <!-- Action Log -->
-        <div class="panel" id="log-panel">
-          <h2 class="panel-title">Game Log</h2>
-          <div id="game-log"></div>
-        </div>
-      </div>
-    </div>
-    <!-- Property Modal -->
-    <div id="property-modal" class="modal hidden">
-      <div class="modal-content">
-        <button class="modal-close" id="modal-close">✕</button>
-        <div id="modal-body"></div>
-      </div>
-    </div>
-    <!-- Setup Screen -->
-    <div id="setup-screen" class="overlay">
-      <div class="setup-card">
-        <div class="setup-logo">🏦 MONOPOLY</div>
-        <h1>Welcome to Monopoly</h1>
-        <p class="setup-subtitle">Classic board game simulation</p>
-        <div class="setup-form">
-          <label>Number of Players (2–4)</label>
-          <div class="player-count-selector">
-            <button class="count-btn active" data-count="2">2</button>
-            <button class="count-btn" data-count="3">3</button>
-            <button class="count-btn" data-count="4">4</button>
-          </div>
-          <div id="player-names-inputs"></div>
-          <div class="ai-options">
-            <label>AI Players: <span id="ai-count-label">0</span></label>
-            <input type="range" id="ai-count" min="0" max="3" value="0" />
-          </div>
-          <button id="btn-start" class="btn btn-primary btn-large">Start Game</button>
-        </div>
-      </div>
-    </div>
-    <!-- Win Screen -->
-    <div id="win-screen" class="overlay hidden">
-      <div class="win-card">
-        <div class="win-emoji" id="win-emoji"></div>
-        <h1 id="win-title"></h1>
-        <p id="win-subtitle"></p>
-        <button id="btn-play-again" class="btn btn-primary btn-large">Play Again</button>
-      </div>
-    </div>
+  <h1>Monopoly Simulation</h1>
+  <p class="status">Run a simplified 4-player Monopoly game with dice, purchases, rent, and bankruptcy.</p>
+
+  <div class="controls">
+    <button id="oneTurnBtn">Play One Turn</button>
+    <button id="tenTurnsBtn">Play 10 Turns</button>
+    <button id="autoBtn">Auto Play</button>
+    <button id="stopBtn" class="secondary">Stop</button>
+    <button id="resetBtn" class="secondary">Reset Game</button>
   </div>
-  <script src="game.js"></script>
+
+  <div class="layout">
+    <section class="card">
+      <h2>Players</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Cash</th>
+            <th>Position</th>
+            <th>Properties</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="playerTableBody"></tbody>
+      </table>
+      <p class="footer-note">Rules: start cash $1500, collect $200 on passing GO, buy unowned property if affordable, pay rent on owned property, bankrupt players are removed.</p>
+    </section>
+
+    <section class="card">
+      <h2>Game Log</h2>
+      <div id="gameLog" class="log"></div>
+    </section>
+  </div>
+
+  <script>
+    const board = [
+      { name: 'GO', type: 'go' },
+      { name: 'Mediterranean Ave', type: 'property', cost: 60, rent: 10 },
+      { name: 'Baltic Ave', type: 'property', cost: 60, rent: 12 },
+      { name: 'Income Tax', type: 'tax', amount: 100 },
+      { name: 'Reading Railroad', type: 'property', cost: 200, rent: 25 },
+      { name: 'Oriental Ave', type: 'property', cost: 100, rent: 18 },
+      { name: 'Chance', type: 'chance' },
+      { name: 'Vermont Ave', type: 'property', cost: 100, rent: 20 },
+      { name: 'Jail (Visit)', type: 'jail' },
+      { name: 'St. Charles Place', type: 'property', cost: 140, rent: 24 },
+      { name: 'Electric Company', type: 'property', cost: 150, rent: 26 },
+      { name: 'States Ave', type: 'property', cost: 140, rent: 24 },
+      { name: 'Free Parking', type: 'free' },
+      { name: 'Kentucky Ave', type: 'property', cost: 220, rent: 36 },
+      { name: 'Indiana Ave', type: 'property', cost: 220, rent: 36 },
+      { name: 'Go To Jail', type: 'goToJail' }
+    ];
+
+    const chanceEffects = [
+      { text: 'Bank error in your favor. Collect $100.', amount: 100 },
+      { text: 'Pay school fees of $50.', amount: -50 },
+      { text: 'Speeding fine. Pay $25.', amount: -25 },
+      { text: 'Your investment matures. Collect $75.', amount: 75 },
+      { text: 'Doctor fee. Pay $100.', amount: -100 }
+    ];
+
+    let game;
+    let autoTimer = null;
+
+    function initGame() {
+      game = {
+        players: Array.from({ length: 4 }, (_, i) => ({
+          id: i,
+          name: `Player ${i + 1}`,
+          cash: 1500,
+          position: 0,
+          properties: [],
+          bankrupt: false
+        })),
+        propertyOwners: {},
+        turn: 0,
+        round: 1,
+        winner: null,
+        log: []
+      };
+
+      addLog('New game started.');
+      render();
+    }
+
+    function rollDie() {
+      return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function addLog(message) {
+      const stamp = `[R${game ? game.round : 1} T${game ? game.turn + 1 : 1}]`;
+      game?.log.push(`${stamp} ${message}`);
+      const logEl = document.getElementById('gameLog');
+      if (logEl && game) {
+        logEl.textContent = game.log.slice(-250).join('\n');
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    }
+
+    function transferCash(player, amount, reason) {
+      player.cash += amount;
+      const direction = amount >= 0 ? 'receives' : 'pays';
+      addLog(`${player.name} ${direction} $${Math.abs(amount)} (${reason}).`);
+      if (player.cash < 0) {
+        bankrupt(player);
+      }
+    }
+
+    function bankrupt(player) {
+      if (player.bankrupt) return;
+      player.bankrupt = true;
+      player.cash = 0;
+
+      player.properties.forEach((tileIndex) => {
+        delete game.propertyOwners[tileIndex];
+      });
+      player.properties = [];
+
+      addLog(`${player.name} is bankrupt and out of the game.`);
+
+      const active = game.players.filter((p) => !p.bankrupt);
+      if (active.length === 1) {
+        game.winner = active[0];
+        addLog(`🏆 ${active[0].name} wins the simulation.`);
+        stopAuto();
+      }
+    }
+
+    function movePlayer(player, steps) {
+      const oldPos = player.position;
+      const newPos = (oldPos + steps) % board.length;
+      if (newPos < oldPos) {
+        transferCash(player, 200, 'passed GO');
+      }
+      player.position = newPos;
+      addLog(`${player.name} rolls ${steps} and lands on ${board[newPos].name}.`);
+      resolveTile(player, newPos);
+    }
+
+    function resolveTile(player, tileIndex) {
+      if (player.bankrupt) return;
+      const tile = board[tileIndex];
+
+      if (tile.type === 'property') {
+        const ownerId = game.propertyOwners[tileIndex];
+        if (ownerId === undefined) {
+          if (player.cash >= tile.cost) {
+            transferCash(player, -tile.cost, `buying ${tile.name}`);
+            game.propertyOwners[tileIndex] = player.id;
+            player.properties.push(tileIndex);
+            addLog(`${player.name} buys ${tile.name}.`);
+          } else {
+            addLog(`${player.name} cannot afford ${tile.name}.`);
+          }
+        } else if (ownerId !== player.id) {
+          const owner = game.players[ownerId];
+          if (!owner.bankrupt) {
+            transferCash(player, -tile.rent, `rent to ${owner.name} for ${tile.name}`);
+            if (!player.bankrupt) {
+              transferCash(owner, tile.rent, `rent from ${player.name}`);
+            }
+          }
+        } else {
+          addLog(`${player.name} landed on their own property.`);
+        }
+      } else if (tile.type === 'tax') {
+        transferCash(player, -tile.amount, tile.name);
+      } else if (tile.type === 'chance') {
+        const effect = chanceEffects[Math.floor(Math.random() * chanceEffects.length)];
+        transferCash(player, effect.amount, `Chance: ${effect.text}`);
+      } else if (tile.type === 'goToJail') {
+        player.position = 8;
+        addLog(`${player.name} goes to Jail (visit tile).`);
+      } else {
+        addLog(`${player.name} has no monetary action on ${tile.name}.`);
+      }
+    }
+
+    function playTurn() {
+      if (game.winner) return;
+
+      let attempts = 0;
+      while (game.players[game.turn].bankrupt && attempts < game.players.length) {
+        game.turn = (game.turn + 1) % game.players.length;
+        attempts++;
+      }
+      if (attempts === game.players.length) return;
+
+      const current = game.players[game.turn];
+      const roll = rollDie() + rollDie();
+      movePlayer(current, roll);
+
+      game.turn = (game.turn + 1) % game.players.length;
+      if (game.turn === 0) game.round++;
+
+      render();
+    }
+
+    function playMany(turns) {
+      for (let i = 0; i < turns; i++) {
+        if (game.winner) break;
+        playTurn();
+      }
+    }
+
+    function startAuto() {
+      if (autoTimer) return;
+      autoTimer = setInterval(() => {
+        if (game.winner) {
+          stopAuto();
+          return;
+        }
+        playTurn();
+      }, 400);
+      addLog('Auto-play started.');
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+        addLog('Auto-play stopped.');
+      }
+    }
+
+    function render() {
+      const tbody = document.getElementById('playerTableBody');
+      tbody.innerHTML = '';
+
+      game.players.forEach((p) => {
+        const tr = document.createElement('tr');
+        const tileName = board[p.position].name;
+        tr.innerHTML = `
+          <td>${p.name}</td>
+          <td class="${p.cash >= 0 ? 'good' : 'bad'}">$${p.cash}</td>
+          <td>${tileName}</td>
+          <td>${p.properties.length}</td>
+          <td>${p.bankrupt ? 'Bankrupt' : 'Active'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('oneTurnBtn').addEventListener('click', () => playTurn());
+    document.getElementById('tenTurnsBtn').addEventListener('click', () => playMany(10));
+    document.getElementById('autoBtn').addEventListener('click', startAuto);
+    document.getElementById('stopBtn').addEventListener('click', stopAuto);
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      stopAuto();
+      initGame();
+    });
+
+    initGame();
+  </script>
 </body>
 </html>
