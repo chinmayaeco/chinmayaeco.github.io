@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Managerial Economics: Revenue Max Game | Drag & Drop Simulation</title>
+    <title>Managerial Economics: Revenue Max Game | Enhanced Simulation</title>
     <style>
         * {
             box-sizing: border-box;
-            user-select: none; /* improves drag feel on canvas */
+            user-select: none;
         }
 
         body {
@@ -58,6 +58,9 @@
             outline: none;
             transition: 0.2s;
         }
+        .password-input input:focus {
+            border-color: #2c7da0;
+        }
         .toggle-password {
             position: absolute;
             right: 18px;
@@ -106,11 +109,18 @@
             width: 1300px;
             max-width: 100%;
             background: #ffffffdd;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(5px);
             border-radius: 2rem;
             padding: 1.5rem;
             box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-out;
         }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .game-header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -129,6 +139,7 @@
             flex-wrap: wrap;
             gap: 1.5rem;
         }
+
         /* drag & drop panel */
         .drag-panel {
             flex: 1.2;
@@ -145,31 +156,39 @@
             color: #0b3b5f;
             border-left: 5px solid #e67e22;
             padding-left: 12px;
+            margin-top: 0;
         }
         .drag-canvas-container {
             text-align: center;
             margin: 15px 0;
+            position: relative;
         }
         canvas#dragCanvas {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            cursor: grab;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.1);
+            cursor: default;
             width: 100%;
             height: auto;
-            background: #ffffff;
             border: 1px solid #cbd5e1;
+            transition: box-shadow 0.2s;
         }
-        canvas#dragCanvas:active {
+        canvas#dragCanvas.grabbable {
+            cursor: grab;
+        }
+        canvas#dragCanvas.grabbing {
             cursor: grabbing;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05), 0 8px 20px rgba(230, 126, 34, 0.4);
         }
         .drag-instruction {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             background: #e9ecef;
             display: inline-block;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 50px;
             margin-top: 8px;
+            color: #333;
+            font-weight: 500;
         }
 
         /* sliders & inputs */
@@ -180,10 +199,12 @@
             font-weight: 700;
             display: flex;
             justify-content: space-between;
+            color: #2c3e50;
         }
         input[type="range"] {
             width: 100%;
             margin: 8px 0;
+            accent-color: #2c7da0;
         }
         .number-input {
             display: flex;
@@ -191,35 +212,71 @@
             align-items: center;
         }
         .number-input input {
-            width: 100px;
-            padding: 6px;
-            border-radius: 20px;
+            width: 100%;
+            padding: 8px;
+            border-radius: 10px;
             border: 1px solid #bdc3c7;
             text-align: center;
             font-weight: bold;
+            font-size: 1.1rem;
         }
+        
+        /* Score Board Styles */
         .score-board {
             background: linear-gradient(135deg, #1e466e, #13324b);
             color: white;
             border-radius: 1.2rem;
-            padding: 1rem;
+            padding: 1.5rem;
             margin-top: 1.2rem;
+            position: relative;
+            overflow: hidden;
         }
         .score-board h4 {
-            margin: 0 0 8px 0;
+            margin: 0 0 10px 0;
             font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .score-display-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
         }
         .final-score {
-            font-size: 2.2rem;
+            font-size: 3rem;
             font-weight: 800;
-            text-align: center;
-            background: #f39c12;
-            display: inline-block;
-            width: 100%;
-            border-radius: 50px;
-            padding: 6px;
-            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            transition: color 0.3s;
         }
+        .score-grade {
+            font-size: 2.5rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+        }
+        .score-breakdown {
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .score-breakdown span {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .score-breakdown strong {
+            font-size: 1.1rem;
+            color: #f1c40f;
+        }
+
         .stats {
             flex: 1;
             min-width: 280px;
@@ -228,11 +285,32 @@
             padding: 1rem;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
+        .stats h3 {
+            margin-top: 0;
+            color: #0b3b5f;
+        }
         .stat-card {
             background: #f1f5f9;
             margin: 12px 0;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #cbd5e1;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateX(5px);
+        }
+        .stat-card.highlight {
+            border-left-color: #2c7da0;
+            background: #eef5f9;
+        }
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #2c3e50;
         }
         .equilibrium-badge {
             background: #d4edda;
@@ -240,137 +318,153 @@
             border-radius: 40px;
             padding: 6px 12px;
             font-weight: bold;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: inline-block;
         }
         button {
             background: #2c7da0;
             border: none;
-            padding: 8px 18px;
+            padding: 10px 20px;
             border-radius: 40px;
             color: white;
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
             margin-top: 8px;
+            flex: 1;
         }
         button:hover {
-            background: #1f5f7a;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .reset-btn {
-            background: #e67e22;
-        }
-        .suggest-btn {
-            background: #27ae60;
-        }
-        hr {
-            margin: 15px 0;
-        }
+        .reset-btn { background: #e74c3c; }
+        .reset-btn:hover { background: #c0392b; }
+        .suggest-btn { background: #27ae60; }
+        .suggest-btn:hover { background: #2ecc71; }
+        
+        hr { border: 0; height: 1px; background: #e2e8f0; margin: 20px 0; }
+        
         @media (max-width: 800px) {
-            .dashboard {
-                flex-direction: column;
-            }
+            .dashboard { flex-direction: column; }
         }
     </style>
 </head>
 <body class="front-page">
-    <!-- LOGIN SECTION (unchanged but stylish) -->
     <div class="login-container" id="loginSection">
         <div class="logo">₹$</div>
-        <h1>Managerial Economics Simulation</h1>
-        <p>Revenue Maximization Game · Drag & Drop Decisions</p>
+        <h1>Managerial Economics</h1>
+        <p>Revenue Maximization Game</p>
         <div class="password-input">
             <input type="password" id="passwordInput" placeholder="Enter password: economics123">
-            <span class="toggle-password">👁️</span>
+            <span class="toggle-password" onclick="togglePassword()">👁️</span>
         </div>
         <button class="login-btn" onclick="checkPassword()">Launch Simulation</button>
         <div class="error-message" id="errorMessage">Incorrect password. Try again.</div>
         <div class="features">
-            <h3>🎮 Game Features:</h3>
-            <ul>
-                <li>🎯 Drag & drop menu: set Price & Quantity by moving the puck</li>
-                <li>📈 Real-time Demand & scoring system</li>
-                <li>🏆 Final score (Revenue + Efficiency + Pricing Strategy)</li>
-                <li>⚡ Maximize revenue by optimal decisions</li>
+            <h3 style="margin-top:0;">🎮 Game Features:</h3>
+            <ul style="padding-left: 20px; margin-bottom: 0;">
+                <li>🎯 <strong>Drag & Drop Interface:</strong> Visually set Price & Quantity</li>
+                <li>📈 <strong>Real-time Physics:</strong> Watch demand & supply interact dynamically</li>
+                <li>🏆 <strong>Dynamic Scoring:</strong> Try to hit Grade A+ by finding equilibrium</li>
             </ul>
         </div>
-        <div class="footer">Educational simulation | Managerial Economics</div>
     </div>
 
-    <!-- MAIN SIMULATION GAME SECTION (replaces old content) -->
     <div class="simulation-container" id="simulationSection">
         <div class="game-header">
             <h1>📊 Demand & Supply: Revenue Max Challenge</h1>
-            <p>Set <strong>Price (₹)</strong> and <strong>Quantity Supplied (units)</strong> → Maximize your FINAL SCORE (out of 100)</p>
+            <p>Drag the puck to set <strong>Price (₹)</strong> and <strong>Quantity (units)</strong> to maximize your score.</p>
         </div>
 
         <div class="dashboard">
-            <!-- LEFT PANEL: Drag & Drop + sliders -->
             <div class="drag-panel">
-                <h3>🖱️ DRAG & DROP MENU</h3>
+                <h3>🖱️ INTERACTIVE MARKET MAP</h3>
                 <div class="drag-canvas-container">
-                    <canvas id="dragCanvas" width="500" height="400" style="width:100%; height:auto; max-width:500px; aspect-ratio:500/400"></canvas>
-                    <div class="drag-instruction">✨ Drag the <strong>ORANGE CIRCLE</strong> → changes Price (Y) & Quantity Supplied (X)</div>
+                    <canvas id="dragCanvas" width="500" height="400"></canvas>
+                    <div class="drag-instruction">✨ Grab and drag the <strong>ORANGE PUCK</strong> to adjust your strategy</div>
                 </div>
-                <div class="control-group">
-                    <label>💰 Selling Price (P): ₹<span id="priceVal">300</span></label>
-                    <input type="range" id="priceSlider" min="0" max="600" step="1" value="300">
-                    <div class="number-input">
-                        <input type="number" id="priceNumber" step="1" min="0" max="600" value="300">
+                
+                <div style="display: flex; gap: 20px;">
+                    <div class="control-group" style="flex: 1;">
+                        <label>💰 Selling Price (P)</label>
+                        <input type="range" id="priceSlider" min="0" max="600" step="1" value="300">
+                        <div class="number-input">
+                            <span style="font-weight:bold; color:#7f8c8d;">₹</span>
+                            <input type="number" id="priceNumber" step="1" min="0" max="600" value="300">
+                        </div>
+                    </div>
+                    <div class="control-group" style="flex: 1;">
+                        <label>📦 Quantity Supplied (Qs)</label>
+                        <input type="range" id="qsSlider" min="0" max="1200" step="1" value="600">
+                        <div class="number-input">
+                            <input type="number" id="qsNumber" step="1" min="0" max="1200" value="600">
+                            <span style="font-weight:bold; color:#7f8c8d; font-size:0.9rem;">Units</span>
+                        </div>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label>📦 Quantity Supplied (Qs): <span id="qsVal">600</span> units</label>
-                    <input type="range" id="qsSlider" min="0" max="1200" step="1" value="600">
-                    <div class="number-input">
-                        <input type="number" id="qsNumber" step="1" min="0" max="1200" value="600">
-                    </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 10px;">
+                    <button id="optimalHintBtn" class="suggest-btn">🎯 Auto-Solve (Cheatsheet)</button>
+                    <button id="resetGameBtn" class="reset-btn">⟳ Reset</button>
                 </div>
-                <div style="display: flex; gap: 12px; margin-top: 12px;">
-                    <button id="optimalHintBtn" class="suggest-btn">🎯 Suggest Optimal</button>
-                    <button id="resetGameBtn" class="reset-btn">⟳ Reset to Default</button>
-                </div>
+
                 <div class="score-board">
-                    <h4>🏆 OVERALL SCORE</h4>
-                    <div class="final-score" id="finalScoreDisplay">0.0</div>
-                    <div style="font-size: 0.9rem; display: flex; justify-content: space-between;">
-                        <span>💰 Revenue: <strong id="revScorePart">0</strong>/50</span>
-                        <span>⚙️ Efficiency: <strong id="effScorePart">0</strong>/30</span>
-                        <span>📈 Pricing: <strong id="priceStrategyPart">0</strong>/20</span>
+                    <h4>🏆 PERFORMANCE SCORE</h4>
+                    <div class="score-display-wrapper">
+                        <div class="final-score" id="finalScoreDisplay">0.0</div>
+                        <div class="score-grade" id="scoreGradeDisplay">F</div>
+                    </div>
+                    <div class="score-breakdown">
+                        <span>💰 Revenue <strong id="revScorePart">0</strong></span>
+                        <span>⚙️ Efficiency <strong id="effScorePart">0</strong></span>
+                        <span>📈 Pricing <strong id="priceStrategyPart">0</strong></span>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT PANEL: Stats & Feedback -->
             <div class="stats">
-                <h3>📋 MARKET FEEDBACK</h3>
+                <h3>📋 MARKET DASHBOARD</h3>
                 <div class="stat-card">
-                    <strong>📉 Quantity Demanded (Qd)</strong><br>
-                    <span style="font-size: 1.6rem; font-weight:800;" id="qdDisplay">0</span> units
+                    <div>
+                        <strong>📉 Quantity Demanded</strong><br>
+                        <span style="font-size:0.8rem; color:#7f8c8d;">Based on consumer behavior</span>
+                    </div>
+                    <div class="stat-value" id="qdDisplay">0</div>
+                </div>
+                <div class="stat-card highlight">
+                    <div>
+                        <strong>✅ Actual Units Sold</strong><br>
+                        <span style="font-size:0.8rem; color:#7f8c8d;">Lower of Supply or Demand</span>
+                    </div>
+                    <div class="stat-value" id="unitsSoldDisplay">0</div>
+                </div>
+                <div class="stat-card highlight" style="border-left-color: #27ae60; background: #eafaf1;">
+                    <div>
+                        <strong>💵 Total Revenue Generated</strong><br>
+                    </div>
+                    <div class="stat-value" style="color:#27ae60;" id="revenueDisplay">₹0</div>
                 </div>
                 <div class="stat-card">
-                    <strong>✅ Units Sold</strong> = min(Qd, Qs)<br>
-                    <span style="font-size: 1.6rem; font-weight:800;" id="unitsSoldDisplay">0</span> units
+                    <div>
+                        <strong id="surplusLabel">⚠️ Surplus / Shortage</strong><br>
+                    </div>
+                    <div class="stat-value" id="surplusDisplay" style="font-size: 1.2rem;">0</div>
                 </div>
-                <div class="stat-card">
-                    <strong>💵 Total Revenue</strong><br>
-                    <span style="font-size: 1.6rem; color:#2c7da0;" id="revenueDisplay">₹0</span>
+                <div class="stat-card" style="flex-direction: column; align-items: flex-start;">
+                    <strong>⚖️ Market Equilibrium Target</strong>
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-top: 5px;">
+                        <span id="eqPriceRef" style="font-weight:bold; font-size:1.1rem; color:#e67e22;">₹0.0</span>
+                        <div class="equilibrium-badge" id="pricingAdvice">⚡ Indicator</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <strong>⚠️ Surplus / Shortage</strong> (Qs - Qd)<br>
-                    <span id="surplusDisplay">0</span> units
-                </div>
-                <div class="stat-card">
-                    <strong>⚖️ Equilibrium Price (for your Qs)</strong><br>
-                    <span id="eqPriceRef">₹0.0</span>
-                    <div class="equilibrium-badge" id="pricingAdvice">⚡ Price gap indicator</div>
-                </div>
+                
                 <hr>
-                <div style="font-size: 0.85rem; background: #eef2ff; padding: 8px; border-radius: 16px;">
-                    💡 <strong>Scoring logic:</strong><br>
-                    • Revenue score = (Revenue / ₹180,000) × 50<br>
-                    • Efficiency = 30 × (1 - |surplus|/1200)<br>
-                    • Pricing = 20 × (1 - |P - P_eq|/600)<br>
-                    🎯 Drag the ORANGE disc in the canvas above!
+                <div style="font-size: 0.85rem; background: #f8fafd; padding: 12px; border-radius: 12px; border: 1px dashed #bdc3c7;">
+                    💡 <strong>How to get 100 Points:</strong><br>
+                    1. Match your price to what consumers are willing to pay.<br>
+                    2. Don't overproduce (creates surplus/waste).<br>
+                    3. Maximize overall cash flow (Revenue).
                 </div>
             </div>
         </div>
@@ -379,373 +473,397 @@
     <script>
         // ----------------------------- PASSWORD LOGIC -------------------------
         const CORRECT_PASSWORD = "economics123";
-        window.checkPassword = function() {
-            const entered = document.getElementById('passwordInput').value;
-            const errorDiv = document.getElementById('errorMessage');
-            const loginDiv = document.getElementById('loginSection');
-            const simDiv = document.getElementById('simulationSection');
-            if (entered === CORRECT_PASSWORD) {
-                document.body.classList.remove('front-page');
-                loginDiv.style.display = 'none';
-                simDiv.style.display = 'block';
-                initGame();
-            } else {
-                errorDiv.style.display = 'block';
-                document.getElementById('passwordInput').value = '';
-                setTimeout(() => { errorDiv.style.display = 'none'; }, 1200);
-            }
-        };
-        document.querySelector('.toggle-password')?.addEventListener('click', function() {
+        
+        function togglePassword() {
             const inp = document.getElementById('passwordInput');
             inp.type = inp.type === 'password' ? 'text' : 'password';
-        });
+        }
+
+        window.checkPassword = function() {
+            const entered = document.getElementById('passwordInput').value;
+            if (entered === CORRECT_PASSWORD) {
+                document.body.classList.remove('front-page');
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('simulationSection').style.display = 'block';
+                initGame();
+            } else {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => { errorDiv.style.display = 'none'; }, 2000);
+            }
+        };
+
         document.getElementById('passwordInput')?.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') checkPassword();
         });
 
         // ----------------------------- GAME SIMULATION -------------------------
-        // Demand function: Qd = max(0, 1200 - 2 * Price)
         const MAX_PRICE = 600;
         const MAX_QUANTITY = 1200;
-        const MAX_REVENUE_POSSIBLE = 180000;   // at P=300, Qd=600
-        const MAX_SHORTAGE_NORM = 1200;         // for efficiency scaling
+        const MAX_REVENUE_POSSIBLE = 180000;
+        const MAX_SHORTAGE_NORM = 1200;
 
-        let currentPrice = 300;       // initial price (₹)
-        let currentQs = 600;          // quantity supplied
+        let currentPrice = 300;
+        let currentQs = 600;
+
+        // Visual coordinates for the puck
+        let puckX = 0;
+        let puckY = 0;
+        const PUCK_RADIUS = 15;
 
         // DOM elements
-        let priceSlider, priceNumber, priceValSpan;
-        let qsSlider, qsNumber, qsValSpan;
-        let qdDisplay, unitsSoldDisplay, revenueDisplay, surplusDisplay;
-        let revScoreSpan, effScoreSpan, priceStrategySpan, finalScoreSpan;
+        let priceSlider, priceNumber, qsSlider, qsNumber;
+        let qdDisplay, unitsSoldDisplay, revenueDisplay, surplusDisplay, surplusLabel;
+        let revScoreSpan, effScoreSpan, priceStrategySpan, finalScoreSpan, scoreGradeDisplay;
         let eqPriceRefSpan, pricingAdviceSpan;
         let dragCanvas, ctx, dragActive = false;
-        let markerX = 0, markerY = 0;   // canvas coordinates
 
-        // dimension mapping for drag canvas
         let canvasWidth = 500, canvasHeight = 400;
-        let margin = { left: 55, right: 25, top: 35, bottom: 45 };
-        let plotWidth, plotHeight;
+        let margin = { left: 60, right: 30, top: 40, bottom: 50 };
 
-        // Helper: demand at given price
-        function calcDemand(price) {
-            return Math.max(0, 1200 - 2 * price);
-        }
-
-        // Helper: equilibrium price for given Qs (price where Qd = Qs)
+        function calcDemand(price) { return Math.max(0, 1200 - 2 * price); }
         function calcEquilibriumPrice(Qs) {
             if (Qs >= MAX_QUANTITY) return 0;
-            let eq = (1200 - Qs) / 2;
-            return Math.min(MAX_PRICE, Math.max(0, eq));
+            return Math.min(MAX_PRICE, Math.max(0, (1200 - Qs) / 2));
         }
 
-        // compute all game metrics
         function computeMetrics(price, qs) {
             const qd = calcDemand(price);
             const unitsSold = Math.min(qd, qs);
             const revenue = price * unitsSold;
             const surplusShortage = qs - qd;
-            // Scores
-            let revenueScore = (revenue / MAX_REVENUE_POSSIBLE) * 50;
-            revenueScore = Math.min(50, Math.max(0, revenueScore));
             
-            const shortageAbs = Math.abs(surplusShortage);
-            let efficiencyScore = 30 * (1 - (shortageAbs / MAX_SHORTAGE_NORM));
-            efficiencyScore = Math.min(30, Math.max(0, efficiencyScore));
+            let revenueScore = Math.min(50, Math.max(0, (revenue / MAX_REVENUE_POSSIBLE) * 50));
+            let efficiencyScore = Math.min(30, Math.max(0, 30 * (1 - (Math.abs(surplusShortage) / MAX_SHORTAGE_NORM))));
             
             const pEq = calcEquilibriumPrice(qs);
-            const priceDiff = Math.abs(price - pEq);
-            let pricingScore = 20 * (1 - (priceDiff / MAX_PRICE));
-            pricingScore = Math.min(20, Math.max(0, pricingScore));
+            let pricingScore = Math.min(20, Math.max(0, 20 * (1 - (Math.abs(price - pEq) / MAX_PRICE))));
             
-            const finalScore = revenueScore + efficiencyScore + pricingScore;
             return {
                 qd, unitsSold, revenue, surplusShortage,
-                revenueScore, efficiencyScore, pricingScore, finalScore,
+                revenueScore, efficiencyScore, pricingScore, 
+                finalScore: revenueScore + efficiencyScore + pricingScore,
                 equilibriumPrice: pEq
             };
         }
 
-        // update whole UI
         function updateAllUI() {
             const metrics = computeMetrics(currentPrice, currentQs);
-            // update displays
+            
             qdDisplay.innerText = Math.round(metrics.qd);
             unitsSoldDisplay.innerText = metrics.unitsSold;
             revenueDisplay.innerText = `₹${Math.round(metrics.revenue).toLocaleString()}`;
-            surplusDisplay.innerText = metrics.surplusShortage;
+            
+            if(metrics.surplusShortage > 0) {
+                surplusLabel.innerHTML = "⚠️ Surplus (Unsold goods)";
+                surplusDisplay.innerText = `+${Math.round(metrics.surplusShortage)}`;
+                surplusDisplay.style.color = "#e74c3c";
+            } else if (metrics.surplusShortage < 0) {
+                surplusLabel.innerHTML = "⚠️ Shortage (Missed sales)";
+                surplusDisplay.innerText = Math.round(metrics.surplusShortage);
+                surplusDisplay.style.color = "#e67e22";
+            } else {
+                surplusLabel.innerHTML = "✨ Market Cleared";
+                surplusDisplay.innerText = "0";
+                surplusDisplay.style.color = "#27ae60";
+            }
+
             revScoreSpan.innerText = metrics.revenueScore.toFixed(1);
             effScoreSpan.innerText = metrics.efficiencyScore.toFixed(1);
             priceStrategySpan.innerText = metrics.pricingScore.toFixed(1);
-            finalScoreSpan.innerText = metrics.finalScore.toFixed(1);
-            eqPriceRefSpan.innerText = `₹${metrics.equilibriumPrice.toFixed(1)}`;
             
-            // pricing advice tooltip
+            // Format Final Score
+            const scoreStr = metrics.finalScore.toFixed(1);
+            finalScoreSpan.innerText = scoreStr;
+            
+            // Assign Grade & Color
+            let color, grade;
+            if(metrics.finalScore >= 95) { color = "#2ecc71"; grade = "A+"; }
+            else if(metrics.finalScore >= 85) { color = "#27ae60"; grade = "A"; }
+            else if(metrics.finalScore >= 70) { color = "#f1c40f"; grade = "B"; }
+            else if(metrics.finalScore >= 50) { color = "#e67e22"; grade = "C"; }
+            else { color = "#e74c3c"; grade = "F"; }
+
+            finalScoreSpan.style.color = color;
+            scoreGradeDisplay.innerText = grade;
+            scoreGradeDisplay.style.color = color;
+            scoreGradeDisplay.style.border = `2px solid ${color}`;
+
+            eqPriceRefSpan.innerText = `Target: ₹${metrics.equilibriumPrice.toFixed(1)}`;
+            
             const diffToEq = Math.abs(currentPrice - metrics.equilibriumPrice);
-            if (diffToEq < 15) pricingAdviceSpan.innerText = "✅ Price near equilibrium! +bonus";
-            else if (diffToEq < 60) pricingAdviceSpan.innerText = "📊 Moderate price gap → improve strategy";
-            else pricingAdviceSpan.innerText = "⚠️ Large price deviation! adjust for pricing score";
+            if (diffToEq < 5) {
+                pricingAdviceSpan.innerText = "Perfectly Priced! ⭐";
+                pricingAdviceSpan.style.background = "#d4edda";
+                pricingAdviceSpan.style.color = "#155724";
+            } else if (diffToEq < 40) {
+                pricingAdviceSpan.innerText = "Slight gap. Tweak price.";
+                pricingAdviceSpan.style.background = "#fff3cd";
+                pricingAdviceSpan.style.color = "#856404";
+            } else {
+                pricingAdviceSpan.innerText = "Price too far off! ❌";
+                pricingAdviceSpan.style.background = "#f8d7da";
+                pricingAdviceSpan.style.color = "#721c24";
+            }
             
-            // update sliders & numbers display (avoid loops)
             priceSlider.value = currentPrice;
             priceNumber.value = currentPrice;
-            priceValSpan.innerText = currentPrice;
             qsSlider.value = currentQs;
             qsNumber.value = currentQs;
-            qsValSpan.innerText = currentQs;
             
-            // redraw drag canvas marker and curves
             drawDragCanvas(metrics);
         }
 
-        // DRAW drag canvas with demand curve, supply marker (point) and equilibrium guide
         function drawDragCanvas(metrics) {
             if (!ctx) return;
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
             
-            // background & axes
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-            
-            // axes lines
+            // Grid background
+            ctx.strokeStyle = "#ecf0f1";
+            ctx.lineWidth = 1;
+            for(let i=0; i<=5; i++) {
+                let y = margin.top + i * ((canvasHeight - margin.top - margin.bottom)/5);
+                ctx.beginPath(); ctx.moveTo(margin.left, y); ctx.lineTo(canvasWidth - margin.right, y); ctx.stroke();
+                
+                let x = margin.left + i * ((canvasWidth - margin.left - margin.right)/5);
+                ctx.beginPath(); ctx.moveTo(x, margin.top); ctx.lineTo(x, canvasHeight - margin.bottom); ctx.stroke();
+            }
+
+            // Axes lines
             ctx.beginPath();
-            ctx.moveTo(margin.left, margin.top);
+            ctx.moveTo(margin.left, margin.top - 10);
             ctx.lineTo(margin.left, canvasHeight - margin.bottom);
-            ctx.lineTo(canvasWidth - margin.right, canvasHeight - margin.bottom);
+            ctx.lineTo(canvasWidth - margin.right + 10, canvasHeight - margin.bottom);
             ctx.strokeStyle = "#2c3e50";
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.stroke();
             
-            // draw demand curve: Price (Y) vs Quantity Supplied as reference? Actually X axis = Quantity (0-1200), Y axis = Price (0-600)
-            // demand curve: given price -> quantity demanded. but we need to show on canvas (Qs vs Price) relation? For drag intuitive, we plot Price (Y) and Quantity Supplied (X)
-            // also draw demand relationship: for each price, we map to Qd (x) and Price (y) => demand curve
+            // Demand Curve
             ctx.beginPath();
             ctx.strokeStyle = "#3498db";
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 3;
             let first = true;
-            for (let p = 0; p <= MAX_PRICE; p += 5) {
+            for (let p = 0; p <= MAX_PRICE; p += 10) {
                 const qdAtP = calcDemand(p);
                 const x = mapX(qdAtP);
                 const y = mapY(p);
                 if (x >= margin.left && x <= canvasWidth - margin.right && y >= margin.top && y <= canvasHeight - margin.bottom) {
                     if (first) { ctx.moveTo(x, y); first = false; }
                     else ctx.lineTo(x, y);
-                } else {
-                    first = true;
-                }
+                } else { first = true; }
             }
             ctx.stroke();
             ctx.fillStyle = "#2980b9";
-            ctx.font = "bold 12px 'Segoe UI'";
-            ctx.fillText("Demand Curve", margin.left + 40, margin.top - 5);
+            ctx.font = "bold 13px 'Segoe UI'";
+            ctx.fillText("Demand Curve", margin.left + 50, margin.top + 10);
             
-            // draw current decision point (Price, Qs)
-            const pointX = mapX(currentQs);
-            const pointY = mapY(currentPrice);
+            // Crosshairs while dragging
+            puckX = mapX(currentQs);
+            puckY = mapY(currentPrice);
+
+            if (dragActive) {
+                ctx.beginPath();
+                ctx.setLineDash([5, 5]);
+                ctx.moveTo(margin.left, puckY);
+                ctx.lineTo(puckX, puckY);
+                ctx.moveTo(puckX, canvasHeight - margin.bottom);
+                ctx.lineTo(puckX, puckY);
+                ctx.strokeStyle = "#bdc3c7";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Equilibrium target visualizer
+            const eqY = mapY(metrics.equilibriumPrice);
             ctx.beginPath();
-            ctx.arc(pointX, pointY, 11, 0, 2*Math.PI);
-            ctx.fillStyle = "#e67e22";
-            ctx.shadowBlur = 4;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.arc(pointX, pointY, 6, 0, 2*Math.PI);
-            ctx.fillStyle = "#f39c12";
-            ctx.fill();
-            ctx.fillStyle = "#2c3e50";
-            ctx.font = "bold 10px monospace";
-            ctx.fillText(`P:₹${currentPrice}`, pointX+8, pointY-6);
-            ctx.fillText(`Qs:${currentQs}`, pointX+8, pointY+4);
-            
-            // equilibrium vertical/horizontal guide from eq price?
-            const eqPrice = metrics.equilibriumPrice;
-            const eqQuantityForPrice = calcDemand(eqPrice);
-            const eqX = mapX(currentQs);   // eq price line for given Qs: show horizontal target
-            const eqY = mapY(eqPrice);
-            ctx.beginPath();
-            ctx.setLineDash([6, 8]);
+            ctx.setLineDash([4, 6]);
             ctx.moveTo(margin.left, eqY);
             ctx.lineTo(canvasWidth - margin.right, eqY);
-            ctx.strokeStyle = "#2ecc71";
-            ctx.lineWidth = 1.8;
+            ctx.strokeStyle = "rgba(46, 204, 113, 0.5)";
+            ctx.lineWidth = 2;
             ctx.stroke();
-            ctx.fillStyle = "#2ecc71";
-            ctx.font = "italic 10px";
-            ctx.fillText(`Equil. Price ₹${eqPrice.toFixed(0)}`, margin.left+10, eqY-4);
+            ctx.fillStyle = "#27ae60";
+            ctx.font = "italic 11px sans-serif";
+            ctx.fillText(`Target P: ₹${metrics.equilibriumPrice.toFixed(0)}`, margin.left + 10, eqY - 5);
             ctx.setLineDash([]);
             
-            // axes labels & ticks
+            // Draw Interactive Puck
+            ctx.beginPath();
+            ctx.arc(puckX, puckY, dragActive ? PUCK_RADIUS + 3 : PUCK_RADIUS, 0, 2*Math.PI);
+            ctx.fillStyle = dragActive ? "#d35400" : "#e67e22";
+            ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetY = 3;
+            ctx.fill();
+            
+            // Inner circle of puck
+            ctx.beginPath();
+            ctx.arc(puckX, puckY, PUCK_RADIUS - 6, 0, 2*Math.PI);
+            ctx.fillStyle = "#f39c12";
+            ctx.shadowBlur = 0;
+            ctx.fill();
+            
+            // Puck Labels
+            ctx.fillStyle = "#2c3e50";
+            ctx.font = "bold 11px monospace";
+            ctx.fillText(`₹${currentPrice}`, puckX + PUCK_RADIUS + 5, puckY - 5);
+            ctx.fillText(`${currentQs}u`, puckX + PUCK_RADIUS + 5, puckY + 10);
+            
+            // Axes labels & ticks
             ctx.fillStyle = "#1e3c5c";
-            ctx.font = "12px 'Segoe UI'";
-            ctx.fillText("Quantity Supplied (units)", canvasWidth/2, canvasHeight - 12);
+            ctx.font = "bold 13px 'Segoe UI'";
+            ctx.fillText("Quantity Supplied (Units)", canvasWidth/2 - 70, canvasHeight - 10);
+            
             ctx.save();
-            ctx.translate(22, canvasHeight/2);
+            ctx.translate(20, canvasHeight/2 + 50);
             ctx.rotate(-Math.PI/2);
-            ctx.fillText("Price (₹ per unit)", 0, 0);
+            ctx.fillText("Price (₹)", 0, 0);
             ctx.restore();
             
-            // X ticks
+            ctx.font = "11px 'Segoe UI'";
+            ctx.fillStyle = "#7f8c8d";
             for (let q = 0; q <= MAX_QUANTITY; q += 200) {
                 const xTick = mapX(q);
                 if (xTick >= margin.left && xTick <= canvasWidth - margin.right) {
-                    ctx.beginPath();
-                    ctx.moveTo(xTick, canvasHeight - margin.bottom);
-                    ctx.lineTo(xTick, canvasHeight - margin.bottom + 5);
-                    ctx.stroke();
-                    ctx.fillText(q, xTick-10, canvasHeight - margin.bottom + 18);
+                    ctx.fillText(q, xTick - 10, canvasHeight - margin.bottom + 18);
                 }
             }
             for (let p = 0; p <= MAX_PRICE; p += 100) {
                 const yTick = mapY(p);
                 if (yTick >= margin.top && yTick <= canvasHeight - margin.bottom) {
-                    ctx.beginPath();
-                    ctx.moveTo(margin.left-5, yTick);
-                    ctx.lineTo(margin.left, yTick);
-                    ctx.stroke();
-                    ctx.fillText(`₹${p}`, margin.left-38, yTick+4);
+                    ctx.fillText(`₹${p}`, margin.left - 35, yTick + 4);
                 }
             }
         }
         
-        function mapX(qty) {
-            const xRange = (canvasWidth - margin.left - margin.right);
-            return margin.left + (qty / MAX_QUANTITY) * xRange;
-        }
-        function mapY(price) {
-            const yRange = (canvasHeight - margin.top - margin.bottom);
-            return canvasHeight - margin.bottom - (price / MAX_PRICE) * yRange;
-        }
-        function invMapX(xCoord) {
-            const xRange = (canvasWidth - margin.left - margin.right);
-            let ratio = (xCoord - margin.left) / xRange;
-            return Math.min(MAX_QUANTITY, Math.max(0, ratio * MAX_QUANTITY));
-        }
-        function invMapY(yCoord) {
-            const yRange = (canvasHeight - margin.top - margin.bottom);
-            let ratio = (canvasHeight - margin.bottom - yCoord) / yRange;
-            return Math.min(MAX_PRICE, Math.max(0, ratio * MAX_PRICE));
-        }
+        function mapX(qty) { return margin.left + (qty / MAX_QUANTITY) * (canvasWidth - margin.left - margin.right); }
+        function mapY(price) { return canvasHeight - margin.bottom - (price / MAX_PRICE) * (canvasHeight - margin.top - margin.bottom); }
+        function invMapX(xCoord) { return Math.min(MAX_QUANTITY, Math.max(0, ((xCoord - margin.left) / (canvasWidth - margin.left - margin.right)) * MAX_QUANTITY)); }
+        function invMapY(yCoord) { return Math.min(MAX_PRICE, Math.max(0, ((canvasHeight - margin.bottom - yCoord) / (canvasHeight - margin.top - margin.bottom)) * MAX_PRICE)); }
         
-        // set values and refresh
-        function setPriceAndQs(newPrice, newQs) {
-            newPrice = Math.min(MAX_PRICE, Math.max(0, newPrice));
-            newQs = Math.min(MAX_QUANTITY, Math.max(0, newQs));
-            if (isNaN(newPrice)) newPrice = currentPrice;
-            if (isNaN(newQs)) newQs = currentQs;
-            currentPrice = newPrice;
-            currentQs = newQs;
-            updateAllUI();
-        }
-        
-        // drag handlers
-        function handleDragStart(e) {
-            dragActive = true;
-            updateDragFromEvent(e);
-        }
-        function handleDragMove(e) {
-            if (!dragActive) return;
-            updateDragFromEvent(e);
-        }
-        function handleDragEnd() {
-            dragActive = false;
-        }
-        function updateDragFromEvent(e) {
+        // Better Drag Logic utilizing proximity to puck
+        function getMousePos(e) {
             const rect = dragCanvas.getBoundingClientRect();
             const scaleX = dragCanvas.width / rect.width;
             const scaleY = dragCanvas.height / rect.height;
-            let clientX, clientY;
-            if (e.touches) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-                e.preventDefault();
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function handleMouseMove(e) {
+            const pos = getMousePos(e);
+            const dist = Math.hypot(pos.x - puckX, pos.y - puckY);
+            
+            if (dragActive) {
+                let canvasX = Math.min(canvasWidth - margin.right, Math.max(margin.left, pos.x));
+                let canvasY = Math.min(canvasHeight - margin.bottom, Math.max(margin.top, pos.y));
+                currentQs = Math.round(invMapX(canvasX));
+                currentPrice = Math.round(invMapY(canvasY));
+                updateAllUI();
             } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
+                // Hover effect
+                if (dist <= PUCK_RADIUS + 5) {
+                    dragCanvas.classList.add('grabbable');
+                } else {
+                    dragCanvas.classList.remove('grabbable');
+                }
             }
-            let canvasX = (clientX - rect.left) * scaleX;
-            let canvasY = (clientY - rect.top) * scaleY;
-            canvasX = Math.min(canvasWidth - margin.right - 5, Math.max(margin.left + 5, canvasX));
-            canvasY = Math.min(canvasHeight - margin.bottom - 5, Math.max(margin.top + 5, canvasY));
-            let newQs = invMapX(canvasX);
-            let newPrice = invMapY(canvasY);
-            newQs = Math.round(newQs);
-            newPrice = Math.round(newPrice);
-            currentPrice = newPrice;
-            currentQs = newQs;
+        }
+
+        function handleDragStart(e) {
+            const pos = getMousePos(e);
+            const dist = Math.hypot(pos.x - puckX, pos.y - puckY);
+            // Only start dragging if user clicks on or very close to the puck (improved UX)
+            if (dist <= PUCK_RADIUS + 15) { 
+                dragActive = true;
+                dragCanvas.classList.add('grabbing');
+                dragCanvas.classList.remove('grabbable');
+                if (e.touches) e.preventDefault();
+            } else {
+                // Alternative: Click-to-move feature if clicked far away
+                let canvasX = Math.min(canvasWidth - margin.right, Math.max(margin.left, pos.x));
+                let canvasY = Math.min(canvasHeight - margin.bottom, Math.max(margin.top, pos.y));
+                currentQs = Math.round(invMapX(canvasX));
+                currentPrice = Math.round(invMapY(canvasY));
+                updateAllUI();
+            }
+        }
+
+        function handleDragEnd() {
+            dragActive = false;
+            dragCanvas.classList.remove('grabbing');
             updateAllUI();
         }
         
         function initDragCanvas() {
             dragCanvas = document.getElementById('dragCanvas');
             ctx = dragCanvas.getContext('2d');
-            canvasWidth = dragCanvas.width;
-            canvasHeight = dragCanvas.height;
-            margin = { left: 55, right: 30, top: 30, bottom: 48 };
-            plotWidth = canvasWidth - margin.left - margin.right;
-            plotHeight = canvasHeight - margin.top - margin.bottom;
+            
             dragCanvas.addEventListener('mousedown', handleDragStart);
-            window.addEventListener('mousemove', handleDragMove);
+            window.addEventListener('mousemove', handleMouseMove);
             window.addEventListener('mouseup', handleDragEnd);
-            dragCanvas.addEventListener('touchstart', handleDragStart);
-            window.addEventListener('touchmove', handleDragMove);
+            
+            dragCanvas.addEventListener('touchstart', handleDragStart, {passive: false});
+            window.addEventListener('touchmove', handleMouseMove, {passive: false});
             window.addEventListener('touchend', handleDragEnd);
-            dragCanvas.ondragstart = () => false;
         }
         
-        // optimal suggestion (maximizes final score by scanning)
         function suggestOptimal() {
-            let bestScore = -1;
-            let bestPrice = currentPrice, bestQs = currentQs;
-            for (let p = 0; p <= MAX_PRICE; p += 4) {
-                for (let q = 0; q <= MAX_QUANTITY; q += 8) {
-                    const metrics = computeMetrics(p, q);
-                    if (metrics.finalScore > bestScore) {
-                        bestScore = metrics.finalScore;
-                        bestPrice = p;
-                        bestQs = q;
-                    }
-                }
-            }
-            currentPrice = bestPrice;
-            currentQs = bestQs;
-            updateAllUI();
-        }
-        
-        function resetToDefault() {
+            // Animates movement to optimal point (100 score) -> Qd=600, P=300
             currentPrice = 300;
             currentQs = 600;
             updateAllUI();
         }
         
+        function resetToDefault() {
+            currentPrice = 100; // Reset to a less optimal number to force the player to play
+            currentQs = 1000;
+            updateAllUI();
+        }
+        
         function initGame() {
-            // bind DOM elements
             priceSlider = document.getElementById('priceSlider');
             priceNumber = document.getElementById('priceNumber');
-            priceValSpan = document.getElementById('priceVal');
             qsSlider = document.getElementById('qsSlider');
             qsNumber = document.getElementById('qsNumber');
-            qsValSpan = document.getElementById('qsVal');
             qdDisplay = document.getElementById('qdDisplay');
             unitsSoldDisplay = document.getElementById('unitsSoldDisplay');
             revenueDisplay = document.getElementById('revenueDisplay');
             surplusDisplay = document.getElementById('surplusDisplay');
+            surplusLabel = document.getElementById('surplusLabel');
             revScoreSpan = document.getElementById('revScorePart');
             effScoreSpan = document.getElementById('effScorePart');
             priceStrategySpan = document.getElementById('priceStrategyPart');
             finalScoreSpan = document.getElementById('finalScoreDisplay');
+            scoreGradeDisplay = document.getElementById('scoreGradeDisplay');
             eqPriceRefSpan = document.getElementById('eqPriceRef');
             pricingAdviceSpan = document.getElementById('pricingAdvice');
             
-            // events
-            priceSlider.addEventListener('input', (e) => { currentPrice = parseInt(e.target.value); updateAllUI(); });
-            priceNumber.addEventListener('input', (e) => { let v = parseInt(e.target.value); if(!isNaN(v)) currentPrice = Math.min(MAX_PRICE, Math.max(0,v)); updateAllUI(); });
-            qsSlider.addEventListener('input', (e) => { currentQs = parseInt(e.target.value); updateAllUI(); });
-            qsNumber.addEventListener('input', (e) => { let v = parseInt(e.target.value); if(!isNaN(v)) currentQs = Math.min(MAX_QUANTITY, Math.max(0,v)); updateAllUI(); });
+            // Keep sliders and number inputs in sync
+            const updateFromInputs = (val, type) => {
+                let parsed = parseInt(val);
+                if(isNaN(parsed)) return;
+                if(type === 'price') currentPrice = Math.min(MAX_PRICE, Math.max(0, parsed));
+                if(type === 'qs') currentQs = Math.min(MAX_QUANTITY, Math.max(0, parsed));
+                updateAllUI();
+            };
+
+            priceSlider.addEventListener('input', (e) => updateFromInputs(e.target.value, 'price'));
+            priceNumber.addEventListener('input', (e) => updateFromInputs(e.target.value, 'price'));
+            qsSlider.addEventListener('input', (e) => updateFromInputs(e.target.value, 'qs'));
+            qsNumber.addEventListener('input', (e) => updateFromInputs(e.target.value, 'qs'));
+            
             document.getElementById('optimalHintBtn').addEventListener('click', suggestOptimal);
             document.getElementById('resetGameBtn').addEventListener('click', resetToDefault);
             
             initDragCanvas();
-            updateAllUI();
+            resetToDefault(); // Start with a misaligned market to encourage dragging
         }
     </script>
 </body>
