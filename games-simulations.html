@@ -2,592 +2,751 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managerial Economics: Demand-Supply Simulation (₹)</title>
-    <!-- Front page CSS -->
-    <link rel="stylesheet" href="fr.css">
-    <!-- Main simulation CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Managerial Economics: Revenue Max Game | Drag & Drop Simulation</title>
     <style>
-        body:not(.front-page) {
-            font-family: Arial, sans-serif;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-            background-color: #f5f5f5;
+        * {
+            box-sizing: border-box;
+            user-select: none; /* improves drag feel on canvas */
         }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Front page styling */
+        .login-container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: 0.2s;
+        }
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            background: #1e466e;
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 60px;
+            color: white;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 14px rgba(0,0,0,0.1);
+        }
+        .password-input {
+            position: relative;
+            margin: 1.5rem 0;
+        }
+        .password-input input {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 1rem;
+            border: 2px solid #ccc;
+            border-radius: 60px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            top: 14px;
+            cursor: pointer;
+            font-size: 1.3rem;
+            opacity: 0.6;
+        }
+        .login-btn {
+            background: #2c7da0;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.2rem;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+        .login-btn:hover {
+            background: #1f5e7a;
+            transform: scale(0.98);
+        }
+        .error-message {
+            color: #c0392b;
+            margin-top: 10px;
+            display: none;
+            font-weight: 500;
+        }
+        .features {
+            text-align: left;
+            background: #f0f4fa;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+        .footer {
+            font-size: 0.8rem;
+            color: #5d6f83;
+        }
+
+        /* SIMULATION GAME STYLES */
         .simulation-container {
             display: none;
+            width: 1300px;
+            max-width: 100%;
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
         }
-        
-        /* Simulation styles */
-        .container {
+        .game-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .game-header h1 {
+            margin: 0;
+            color: #1e3c5c;
+            font-size: 1.9rem;
+        }
+        .game-header p {
+            color: #2c3e66;
+            font-weight: 500;
+        }
+        .dashboard {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 1.5rem;
         }
-        .controls {
-            flex: 1;
-            min-width: 300px;
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
+        /* drag & drop panel */
+        .drag-panel {
+            flex: 1.2;
+            min-width: 280px;
+            background: #f8fafd;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
-        .graph {
-            flex: 2;
-            min-width: 400px;
+        .drag-panel h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #0b3b5f;
+            border-left: 5px solid #e67e22;
+            padding-left: 12px;
         }
-        canvas {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        h1 {
-            color: #2c3e50;
+        .drag-canvas-container {
             text-align: center;
+            margin: 15px 0;
         }
-        h2 {
-            color: #3498db;
-            margin-top: 0;
+        canvas#dragCanvas {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: grab;
+            width: 100%;
+            height: auto;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
         }
-        h3 {
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+        canvas#dragCanvas:active {
+            cursor: grabbing;
         }
-        label {
-            display: block;
-            margin: 10px 0 5px;
+        .drag-instruction {
+            font-size: 0.8rem;
+            background: #e9ecef;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            margin-top: 8px;
+        }
+
+        /* sliders & inputs */
+        .control-group {
+            margin: 1rem 0;
+        }
+        .control-group label {
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
         }
         input[type="range"] {
             width: 100%;
+            margin: 8px 0;
         }
-        .price-display {
-            font-size: 1.2em;
+        .number-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .number-input input {
+            width: 100px;
+            padding: 6px;
+            border-radius: 20px;
+            border: 1px solid #bdc3c7;
+            text-align: center;
             font-weight: bold;
-            color: #e74c3c;
-            margin: 10px 0;
         }
-        .equilibrium {
-            background-color: #eaf7ea;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-        .managerial-panel {
-            background-color: #f0f7fd;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 5px 5px 0;
-        }
-        .implication {
-            background-color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .implication h4 {
-            margin-top: 0;
-            color: #2980b9;
-        }
-        .tab {
-            display: inline-block;
-            padding: 10px 15px;
-            cursor: pointer;
-            background-color: #eee;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
-        }
-        .tab.active {
-            background-color: #3498db;
+        .score-board {
+            background: linear-gradient(135deg, #1e466e, #13324b);
             color: white;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin-top: 1.2rem;
         }
-        .tab-content {
-            display: none;
-            padding: 15px;
-            background-color: white;
-            border-radius: 0 5px 5px 5px;
+        .score-board h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
         }
-        .tab-content.active {
-            display: block;
+        .final-score {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            background: #f39c12;
+            display: inline-block;
+            width: 100%;
+            border-radius: 50px;
+            padding: 6px;
+            margin: 10px 0;
         }
-        .tab-container {
-            margin: 20px 0;
+        .stats {
+            flex: 1;
+            min-width: 280px;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            background: #f1f5f9;
+            margin: 12px 0;
+            padding: 10px 14px;
+            border-radius: 1rem;
+        }
+        .equilibrium-badge {
+            background: #d4edda;
+            color: #155724;
+            border-radius: 40px;
+            padding: 6px 12px;
+            font-weight: bold;
+        }
+        button {
+            background: #2c7da0;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 8px;
+        }
+        button:hover {
+            background: #1f5f7a;
+            transform: translateY(-2px);
+        }
+        .reset-btn {
+            background: #e67e22;
+        }
+        .suggest-btn {
+            background: #27ae60;
+        }
+        hr {
+            margin: 15px 0;
+        }
+        @media (max-width: 800px) {
+            .dashboard {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body class="front-page">
+    <!-- LOGIN SECTION (unchanged but stylish) -->
     <div class="login-container" id="loginSection">
         <div class="logo">₹$</div>
         <h1>Managerial Economics Simulation</h1>
-        <p>Access the demand-supply simulation with Indian market data</p>
-        
+        <p>Revenue Maximization Game · Drag & Drop Decisions</p>
         <div class="password-input">
-            <input type="password" id="passwordInput" placeholder="Enter your password">
-            <i class="toggle-password">👁️</i>
+            <input type="password" id="passwordInput" placeholder="Enter password: economics123">
+            <span class="toggle-password">👁️</span>
         </div>
-        
-        <button class="login-btn" onclick="checkPassword()">Access Simulation</button>
-        <div class="error-message" id="errorMessage">Incorrect password. Please try again.</div>
-        
+        <button class="login-btn" onclick="checkPassword()">Launch Simulation</button>
+        <div class="error-message" id="errorMessage">Incorrect password. Try again.</div>
         <div class="features">
-            <h3>Simulation Features:</h3>
+            <h3>🎮 Game Features:</h3>
             <ul>
-                <li>Interactive demand-supply curves</li>
-                <li>Real-time equilibrium calculation</li>
-                <li>Managerial decision insights</li>
-                <li>Indian market case studies</li>
+                <li>🎯 Drag & drop menu: set Price & Quantity by moving the puck</li>
+                <li>📈 Real-time Demand & scoring system</li>
+                <li>🏆 Final score (Revenue + Efficiency + Pricing Strategy)</li>
+                <li>⚡ Maximize revenue by optimal decisions</li>
             </ul>
         </div>
-        
-        <div class="footer">
-            For educational use only | <a href="#">Privacy Policy</a>
-        </div>
+        <div class="footer">Educational simulation | Managerial Economics</div>
     </div>
 
+    <!-- MAIN SIMULATION GAME SECTION (replaces old content) -->
     <div class="simulation-container" id="simulationSection">
-        <h1>Managerial Implications of Demand and Supply (Indian Rupees)</h1>
-        
-        <div class="tab-container">
-            <div class="tab active" onclick="switchTab('simulation')">Simulation</div>
-            <div class="tab" onclick="switchTab('implications')">Managerial Implications</div>
-            <div class="tab" onclick="switchTab('case-study')">Case Study</div>
+        <div class="game-header">
+            <h1>📊 Demand & Supply: Revenue Max Challenge</h1>
+            <p>Set <strong>Price (₹)</strong> and <strong>Quantity Supplied (units)</strong> → Maximize your FINAL SCORE (out of 100)</p>
         </div>
-        
-        <div id="simulation-tab" class="tab-content active">
-            <div class="container">
-                <div class="controls">
-                    <h2>Market Controls</h2>
-                    
-                    <label for="basePrice">Base Price (₹):</label>
-                    <input type="range" id="basePrice" min="10" max="1000" value="200" step="10">
-                    <div class="price-display">Current Base Price: ₹<span id="basePriceValue">200</span></div>
-                    
-                    <label for="demandFactor">Demand Factor:</label>
-                    <input type="range" id="demandFactor" min="0.5" max="2" value="1" step="0.1">
-                    <div>Demand Multiplier: <span id="demandFactorValue">1.0</span>x</div>
-                    
-                    <label for="supplyFactor">Supply Factor:</label>
-                    <input type="range" id="supplyFactor" min="0.5" max="2" value="1" step="0.1">
-                    <div>Supply Multiplier: <span id="supplyFactorValue">1.0</span>x</div>
-                    
-                    <button id="resetBtn">Reset to Default</button>
-                    
-                    <div class="equilibrium">
-                        <h3>Market Equilibrium</h3>
-                        <p>Equilibrium Price: ₹<span id="eqPrice">0</span></p>
-                        <p>Equilibrium Quantity: <span id="eqQuantity">0</span> units</p>
-                    </div>
-                    
-                    <div class="managerial-panel">
-                        <h3>Current Market Analysis</h3>
-                        <div id="dynamic-analysis">Adjust the sliders to see managerial implications...</div>
+
+        <div class="dashboard">
+            <!-- LEFT PANEL: Drag & Drop + sliders -->
+            <div class="drag-panel">
+                <h3>🖱️ DRAG & DROP MENU</h3>
+                <div class="drag-canvas-container">
+                    <canvas id="dragCanvas" width="500" height="400" style="width:100%; height:auto; max-width:500px; aspect-ratio:500/400"></canvas>
+                    <div class="drag-instruction">✨ Drag the <strong>ORANGE CIRCLE</strong> → changes Price (Y) & Quantity Supplied (X)</div>
+                </div>
+                <div class="control-group">
+                    <label>💰 Selling Price (P): ₹<span id="priceVal">300</span></label>
+                    <input type="range" id="priceSlider" min="0" max="600" step="1" value="300">
+                    <div class="number-input">
+                        <input type="number" id="priceNumber" step="1" min="0" max="600" value="300">
                     </div>
                 </div>
-                
-                <div class="graph">
-                    <h2>Demand and Supply Curve</h2>
-                    <canvas id="marketGraph" width="500" height="400"></canvas>
+                <div class="control-group">
+                    <label>📦 Quantity Supplied (Qs): <span id="qsVal">600</span> units</label>
+                    <input type="range" id="qsSlider" min="0" max="1200" step="1" value="600">
+                    <div class="number-input">
+                        <input type="number" id="qsNumber" step="1" min="0" max="1200" value="600">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 12px;">
+                    <button id="optimalHintBtn" class="suggest-btn">🎯 Suggest Optimal</button>
+                    <button id="resetGameBtn" class="reset-btn">⟳ Reset to Default</button>
+                </div>
+                <div class="score-board">
+                    <h4>🏆 OVERALL SCORE</h4>
+                    <div class="final-score" id="finalScoreDisplay">0.0</div>
+                    <div style="font-size: 0.9rem; display: flex; justify-content: space-between;">
+                        <span>💰 Revenue: <strong id="revScorePart">0</strong>/50</span>
+                        <span>⚙️ Efficiency: <strong id="effScorePart">0</strong>/30</span>
+                        <span>📈 Pricing: <strong id="priceStrategyPart">0</strong>/20</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div id="implications-tab" class="tab-content">
-            <h2>Managerial Implications of Demand and Supply</h2>
-            
-            <div class="implication">
-                <h4>1. Pricing Strategy</h4>
-                <p>Understanding where the equilibrium price settles helps managers set competitive prices. If the market price is above equilibrium, consider lowering prices to clear inventory. If below, you may have pricing power to increase.</p>
-                <p><strong>Action:</strong> Monitor the equilibrium price and adjust your pricing strategy accordingly to maximize revenue while maintaining market share.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>2. Inventory Management</h4>
-                <p>The equilibrium quantity indicates the market-clearing volume. Producing significantly more than this leads to excess inventory, while producing less means missed opportunities.</p>
-                <p><strong>Action:</strong> Align production schedules with equilibrium quantities to optimize inventory carrying costs and storage requirements.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>3. Demand Shocks</h4>
-                <p>When demand increases (rightward shift), prices and quantities both rise. Managers should prepare supply chain for increased volume while enjoying higher margins.</p>
-                <p><strong>Action:</strong> Build flexible supply chains that can ramp up quickly when demand increases unexpectedly.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>4. Supply Shocks</h4>
-                <p>Supply decreases (leftward shift) cause prices to rise but quantities to fall. This may require finding alternative suppliers or passing costs to consumers.</p>
-                <p><strong>Action:</strong> Develop contingency plans and alternative supplier relationships to mitigate supply disruptions.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>5. Elasticity Considerations</h4>
-                <p>The steepness of the curves indicates elasticity. Steeper demand means consumers are less price-sensitive, allowing for more pricing power.</p>
-                <p><strong>Action:</strong> Conduct market research to understand your product's price elasticity and adjust strategies accordingly.</p>
-            </div>
-        </div>
-        
-        <div id="case-study-tab" class="tab-content">
-            <h2>Case Study: Indian Smartphone Market</h2>
-            
-            <div class="implication">
-                <h4>Situation Analysis</h4>
-                <p>In 2020, India's smartphone market saw a demand surge due to increased remote work and education, while supply was constrained by COVID-19 disruptions.</p>
-                <p>This created a new equilibrium with 15% higher prices and 8% lower quantities sold compared to pre-pandemic levels.</p>
-            </div>
-            
-            <div class="implication">
-                <h4>Managerial Responses</h4>
-                <ul>
-                    <li><strong>Xiaomi:</strong> Leveraged existing inventory to meet demand, gaining market share</li>
-                    <li><strong>Samsung:</strong> Focused on premium segment where consumers were less price-sensitive</li>
-                    <li><strong>Oppo:</strong> Partnered with local manufacturers to reduce supply chain disruptions</li>
-                </ul>
-            </div>
-            
-            <div class="implication">
-                <h4>Key Takeaways</h4>
-                <ol>
-                    <li>During demand surges, inventory management becomes crucial</li>
-                    <li>Supply chain diversification protects against disruptions</li>
-                    <li>Different market segments respond differently to price changes</li>
-                    <li>Agile companies can gain advantage during market shifts</li>
-                </ol>
-            </div>
-            
-            <div class="managerial-panel">
-                <h3>Exercise: Apply to Your Simulation</h3>
-                <p>Try recreating this scenario in the simulation:</p>
-                <ol>
-                    <li>Increase demand by 30% (set demand factor to 1.3)</li>
-                    <li>Decrease supply by 20% (set supply factor to 0.8)</li>
-                    <li>Observe the new equilibrium and consider what strategies would be effective</li>
-                </ol>
+
+            <!-- RIGHT PANEL: Stats & Feedback -->
+            <div class="stats">
+                <h3>📋 MARKET FEEDBACK</h3>
+                <div class="stat-card">
+                    <strong>📉 Quantity Demanded (Qd)</strong><br>
+                    <span style="font-size: 1.6rem; font-weight:800;" id="qdDisplay">0</span> units
+                </div>
+                <div class="stat-card">
+                    <strong>✅ Units Sold</strong> = min(Qd, Qs)<br>
+                    <span style="font-size: 1.6rem; font-weight:800;" id="unitsSoldDisplay">0</span> units
+                </div>
+                <div class="stat-card">
+                    <strong>💵 Total Revenue</strong><br>
+                    <span style="font-size: 1.6rem; color:#2c7da0;" id="revenueDisplay">₹0</span>
+                </div>
+                <div class="stat-card">
+                    <strong>⚠️ Surplus / Shortage</strong> (Qs - Qd)<br>
+                    <span id="surplusDisplay">0</span> units
+                </div>
+                <div class="stat-card">
+                    <strong>⚖️ Equilibrium Price (for your Qs)</strong><br>
+                    <span id="eqPriceRef">₹0.0</span>
+                    <div class="equilibrium-badge" id="pricingAdvice">⚡ Price gap indicator</div>
+                </div>
+                <hr>
+                <div style="font-size: 0.85rem; background: #eef2ff; padding: 8px; border-radius: 16px;">
+                    💡 <strong>Scoring logic:</strong><br>
+                    • Revenue score = (Revenue / ₹180,000) × 50<br>
+                    • Efficiency = 30 × (1 - |surplus|/1200)<br>
+                    • Pricing = 20 × (1 - |P - P_eq|/600)<br>
+                    🎯 Drag the ORANGE disc in the canvas above!
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Password protection
+        // ----------------------------- PASSWORD LOGIC -------------------------
         const CORRECT_PASSWORD = "economics123";
-        
-        function checkPassword() {
-            const enteredPassword = document.getElementById('passwordInput').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const loginSection = document.getElementById('loginSection');
-            const simulationSection = document.getElementById('simulationSection');
-            
-            if (enteredPassword === CORRECT_PASSWORD) {
+        window.checkPassword = function() {
+            const entered = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const loginDiv = document.getElementById('loginSection');
+            const simDiv = document.getElementById('simulationSection');
+            if (entered === CORRECT_PASSWORD) {
                 document.body.classList.remove('front-page');
-                loginSection.style.display = 'none';
-                simulationSection.style.display = 'block';
-                errorMessage.style.display = 'none';
-                initializeSimulation();
+                loginDiv.style.display = 'none';
+                simDiv.style.display = 'block';
+                initGame();
             } else {
-                errorMessage.style.display = 'block';
+                errorDiv.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
-                errorMessage.classList.add('error-animation');
-                setTimeout(() => {
-                    errorMessage.classList.remove('error-animation');
-                }, 500);
+                setTimeout(() => { errorDiv.style.display = 'none'; }, 1200);
             }
-        }
-        
-        // Tab switching
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabName + '-tab').classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-        
-        // Toggle password visibility
-        document.querySelector('.toggle-password').addEventListener('click', function() {
-            const passwordInput = document.getElementById('passwordInput');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                this.textContent = '👁️';
-            } else {
-                passwordInput.type = 'password';
-                this.textContent = '👁️';
-            }
+        };
+        document.querySelector('.toggle-password')?.addEventListener('click', function() {
+            const inp = document.getElementById('passwordInput');
+            inp.type = inp.type === 'password' ? 'text' : 'password';
         });
-        
-        // Simulation code
-        function initializeSimulation() {
-            // Get DOM elements
-            const basePriceSlider = document.getElementById('basePrice');
-            const basePriceValue = document.getElementById('basePriceValue');
-            const demandFactorSlider = document.getElementById('demandFactor');
-            const demandFactorValue = document.getElementById('demandFactorValue');
-            const supplyFactorSlider = document.getElementById('supplyFactor');
-            const supplyFactorValue = document.getElementById('supplyFactorValue');
-            const eqPrice = document.getElementById('eqPrice');
-            const eqQuantity = document.getElementById('eqQuantity');
-            const resetBtn = document.getElementById('resetBtn');
-            const canvas = document.getElementById('marketGraph');
-            const ctx = canvas.getContext('2d');
-            const dynamicAnalysis = document.getElementById('dynamic-analysis');
+        document.getElementById('passwordInput')?.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // ----------------------------- GAME SIMULATION -------------------------
+        // Demand function: Qd = max(0, 1200 - 2 * Price)
+        const MAX_PRICE = 600;
+        const MAX_QUANTITY = 1200;
+        const MAX_REVENUE_POSSIBLE = 180000;   // at P=300, Qd=600
+        const MAX_SHORTAGE_NORM = 1200;         // for efficiency scaling
+
+        let currentPrice = 300;       // initial price (₹)
+        let currentQs = 600;          // quantity supplied
+
+        // DOM elements
+        let priceSlider, priceNumber, priceValSpan;
+        let qsSlider, qsNumber, qsValSpan;
+        let qdDisplay, unitsSoldDisplay, revenueDisplay, surplusDisplay;
+        let revScoreSpan, effScoreSpan, priceStrategySpan, finalScoreSpan;
+        let eqPriceRefSpan, pricingAdviceSpan;
+        let dragCanvas, ctx, dragActive = false;
+        let markerX = 0, markerY = 0;   // canvas coordinates
+
+        // dimension mapping for drag canvas
+        let canvasWidth = 500, canvasHeight = 400;
+        let margin = { left: 55, right: 25, top: 35, bottom: 45 };
+        let plotWidth, plotHeight;
+
+        // Helper: demand at given price
+        function calcDemand(price) {
+            return Math.max(0, 1200 - 2 * price);
+        }
+
+        // Helper: equilibrium price for given Qs (price where Qd = Qs)
+        function calcEquilibriumPrice(Qs) {
+            if (Qs >= MAX_QUANTITY) return 0;
+            let eq = (1200 - Qs) / 2;
+            return Math.min(MAX_PRICE, Math.max(0, eq));
+        }
+
+        // compute all game metrics
+        function computeMetrics(price, qs) {
+            const qd = calcDemand(price);
+            const unitsSold = Math.min(qd, qs);
+            const revenue = price * unitsSold;
+            const surplusShortage = qs - qd;
+            // Scores
+            let revenueScore = (revenue / MAX_REVENUE_POSSIBLE) * 50;
+            revenueScore = Math.min(50, Math.max(0, revenueScore));
             
-            // Initialize values
-            let basePrice = 200;
-            let demandFactor = 1.0;
-            let supplyFactor = 1.0;
+            const shortageAbs = Math.abs(surplusShortage);
+            let efficiencyScore = 30 * (1 - (shortageAbs / MAX_SHORTAGE_NORM));
+            efficiencyScore = Math.min(30, Math.max(0, efficiencyScore));
             
-            // Update displayed values
-            function updateDisplay() {
-                basePriceValue.textContent = basePrice;
-                demandFactorValue.textContent = demandFactor.toFixed(1);
-                supplyFactorValue.textContent = supplyFactor.toFixed(1);
-                
-                // Update managerial implications
-                updateManagerialImplications();
-            }
+            const pEq = calcEquilibriumPrice(qs);
+            const priceDiff = Math.abs(price - pEq);
+            let pricingScore = 20 * (1 - (priceDiff / MAX_PRICE));
+            pricingScore = Math.min(20, Math.max(0, pricingScore));
             
-            // Calculate demand quantity
-            function calculateDemand(price) {
-                // Demand decreases as price increases
-                return Math.max(0, 1000 * demandFactor - price * 5 * demandFactor);
-            }
+            const finalScore = revenueScore + efficiencyScore + pricingScore;
+            return {
+                qd, unitsSold, revenue, surplusShortage,
+                revenueScore, efficiencyScore, pricingScore, finalScore,
+                equilibriumPrice: pEq
+            };
+        }
+
+        // update whole UI
+        function updateAllUI() {
+            const metrics = computeMetrics(currentPrice, currentQs);
+            // update displays
+            qdDisplay.innerText = Math.round(metrics.qd);
+            unitsSoldDisplay.innerText = metrics.unitsSold;
+            revenueDisplay.innerText = `₹${Math.round(metrics.revenue).toLocaleString()}`;
+            surplusDisplay.innerText = metrics.surplusShortage;
+            revScoreSpan.innerText = metrics.revenueScore.toFixed(1);
+            effScoreSpan.innerText = metrics.efficiencyScore.toFixed(1);
+            priceStrategySpan.innerText = metrics.pricingScore.toFixed(1);
+            finalScoreSpan.innerText = metrics.finalScore.toFixed(1);
+            eqPriceRefSpan.innerText = `₹${metrics.equilibriumPrice.toFixed(1)}`;
             
-            // Calculate supply quantity
-            function calculateSupply(price) {
-                // Supply increases as price increases
-                return Math.max(0, -500 * supplyFactor + price * 5 * supplyFactor);
-            }
+            // pricing advice tooltip
+            const diffToEq = Math.abs(currentPrice - metrics.equilibriumPrice);
+            if (diffToEq < 15) pricingAdviceSpan.innerText = "✅ Price near equilibrium! +bonus";
+            else if (diffToEq < 60) pricingAdviceSpan.innerText = "📊 Moderate price gap → improve strategy";
+            else pricingAdviceSpan.innerText = "⚠️ Large price deviation! adjust for pricing score";
             
-            // Find equilibrium point
-            function findEquilibrium() {
-                // Simple linear solution for equilibrium
-                const equilibriumQuantity = (1000 * demandFactor + 500 * supplyFactor) / 
-                                           (1 + demandFactor/supplyFactor);
-                const equilibriumPrice = (equilibriumQuantity + 500 * supplyFactor) / (5 * supplyFactor);
-                
-                return {
-                    price: Math.round(equilibriumPrice),
-                    quantity: Math.round(equilibriumQuantity)
-                };
-            }
+            // update sliders & numbers display (avoid loops)
+            priceSlider.value = currentPrice;
+            priceNumber.value = currentPrice;
+            priceValSpan.innerText = currentPrice;
+            qsSlider.value = currentQs;
+            qsNumber.value = currentQs;
+            qsValSpan.innerText = currentQs;
             
-            // Update managerial implications based on current values
-            function updateManagerialImplications() {
-                const equilibrium = findEquilibrium();
-                let analysis = `<h4>Current Market Conditions</h4>`;
-                
-                // Price analysis
-                if (equilibrium.price > basePrice) {
-                    analysis += `<p>Market price (₹${equilibrium.price}) is above your base price (₹${basePrice}). 
-                                <strong>Consider raising prices</strong> to match market conditions and increase profitability.</p>`;
-                } else if (equilibrium.price < basePrice) {
-                    analysis += `<p>Market price (₹${equilibrium.price}) is below your base price (₹${basePrice}). 
-                                <strong>Consider lowering prices</strong> to remain competitive and maintain market share.</p>`;
+            // redraw drag canvas marker and curves
+            drawDragCanvas(metrics);
+        }
+
+        // DRAW drag canvas with demand curve, supply marker (point) and equilibrium guide
+        function drawDragCanvas(metrics) {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            
+            // background & axes
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            
+            // axes lines
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, canvasHeight - margin.bottom);
+            ctx.lineTo(canvasWidth - margin.right, canvasHeight - margin.bottom);
+            ctx.strokeStyle = "#2c3e50";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // draw demand curve: Price (Y) vs Quantity Supplied as reference? Actually X axis = Quantity (0-1200), Y axis = Price (0-600)
+            // demand curve: given price -> quantity demanded. but we need to show on canvas (Qs vs Price) relation? For drag intuitive, we plot Price (Y) and Quantity Supplied (X)
+            // also draw demand relationship: for each price, we map to Qd (x) and Price (y) => demand curve
+            ctx.beginPath();
+            ctx.strokeStyle = "#3498db";
+            ctx.lineWidth = 2.5;
+            let first = true;
+            for (let p = 0; p <= MAX_PRICE; p += 5) {
+                const qdAtP = calcDemand(p);
+                const x = mapX(qdAtP);
+                const y = mapY(p);
+                if (x >= margin.left && x <= canvasWidth - margin.right && y >= margin.top && y <= canvasHeight - margin.bottom) {
+                    if (first) { ctx.moveTo(x, y); first = false; }
+                    else ctx.lineTo(x, y);
                 } else {
-                    analysis += `<p>Your pricing is perfectly aligned with market equilibrium. Maintain this position for optimal results.</p>`;
+                    first = true;
                 }
-                
-                // Demand factor analysis
-                if (demandFactor > 1.2) {
-                    analysis += `<p>High demand conditions (${demandFactor.toFixed(1)}x normal). 
-                                <strong>Expand production</strong> and ensure supply chain can meet increased demand.</p>`;
-                } else if (demandFactor < 0.8) {
-                    analysis += `<p>Low demand conditions (${demandFactor.toFixed(1)}x normal). 
-                                <strong>Reduce inventory</strong> and consider promotional activities to stimulate demand.</p>`;
-                }
-                
-                // Supply factor analysis
-                if (supplyFactor < 0.8) {
-                    analysis += `<p>Supply constraints (${supplyFactor.toFixed(1)}x normal). 
-                                <strong>Explore alternative suppliers</strong> or consider price increases to manage limited inventory.</p>`;
-                } else if (supplyFactor > 1.2) {
-                    analysis += `<p>Excess supply capacity (${supplyFactor.toFixed(1)}x normal). 
-                                <strong>Negotiate better terms</strong> with suppliers or consider diversifying product offerings.</p>`;
-                }
-                
-                dynamicAnalysis.innerHTML = analysis;
             }
+            ctx.stroke();
+            ctx.fillStyle = "#2980b9";
+            ctx.font = "bold 12px 'Segoe UI'";
+            ctx.fillText("Demand Curve", margin.left + 40, margin.top - 5);
             
-            // Draw the graph
-            function drawGraph() {
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Graph dimensions
-                const margin = 50;
-                const graphWidth = canvas.width - 2 * margin;
-                const graphHeight = canvas.height - 2 * margin;
-                
-                // Find max quantity for scaling
-                const maxQuantity = Math.max(
-                    calculateDemand(0),
-                    calculateSupply(2000)
-                );
-                
-                // Draw axes
-                ctx.beginPath();
-                ctx.moveTo(margin, margin);
-                ctx.lineTo(margin, canvas.height - margin);
-                ctx.lineTo(canvas.width - margin, canvas.height - margin);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Draw axis labels
-                ctx.font = '14px Arial';
-                ctx.fillStyle = '#000';
-                ctx.textAlign = 'center';
-                ctx.fillText('Quantity', canvas.width / 2, canvas.height - 10);
-                ctx.save();
-                ctx.translate(20, canvas.height / 2);
-                ctx.rotate(-Math.PI / 2);
-                ctx.fillText('Price (₹)', 0, 0);
-                ctx.restore();
-                
-                // Draw tick marks and labels
-                // Price (Y-axis)
-                ctx.textAlign = 'right';
-                for (let p = 0; p <= 1000; p += 200) {
-                    const y = canvas.height - margin - (p / 1000) * graphHeight;
+            // draw current decision point (Price, Qs)
+            const pointX = mapX(currentQs);
+            const pointY = mapY(currentPrice);
+            ctx.beginPath();
+            ctx.arc(pointX, pointY, 11, 0, 2*Math.PI);
+            ctx.fillStyle = "#e67e22";
+            ctx.shadowBlur = 4;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(pointX, pointY, 6, 0, 2*Math.PI);
+            ctx.fillStyle = "#f39c12";
+            ctx.fill();
+            ctx.fillStyle = "#2c3e50";
+            ctx.font = "bold 10px monospace";
+            ctx.fillText(`P:₹${currentPrice}`, pointX+8, pointY-6);
+            ctx.fillText(`Qs:${currentQs}`, pointX+8, pointY+4);
+            
+            // equilibrium vertical/horizontal guide from eq price?
+            const eqPrice = metrics.equilibriumPrice;
+            const eqQuantityForPrice = calcDemand(eqPrice);
+            const eqX = mapX(currentQs);   // eq price line for given Qs: show horizontal target
+            const eqY = mapY(eqPrice);
+            ctx.beginPath();
+            ctx.setLineDash([6, 8]);
+            ctx.moveTo(margin.left, eqY);
+            ctx.lineTo(canvasWidth - margin.right, eqY);
+            ctx.strokeStyle = "#2ecc71";
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+            ctx.fillStyle = "#2ecc71";
+            ctx.font = "italic 10px";
+            ctx.fillText(`Equil. Price ₹${eqPrice.toFixed(0)}`, margin.left+10, eqY-4);
+            ctx.setLineDash([]);
+            
+            // axes labels & ticks
+            ctx.fillStyle = "#1e3c5c";
+            ctx.font = "12px 'Segoe UI'";
+            ctx.fillText("Quantity Supplied (units)", canvasWidth/2, canvasHeight - 12);
+            ctx.save();
+            ctx.translate(22, canvasHeight/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText("Price (₹ per unit)", 0, 0);
+            ctx.restore();
+            
+            // X ticks
+            for (let q = 0; q <= MAX_QUANTITY; q += 200) {
+                const xTick = mapX(q);
+                if (xTick >= margin.left && xTick <= canvasWidth - margin.right) {
                     ctx.beginPath();
-                    ctx.moveTo(margin - 5, y);
-                    ctx.lineTo(margin, y);
+                    ctx.moveTo(xTick, canvasHeight - margin.bottom);
+                    ctx.lineTo(xTick, canvasHeight - margin.bottom + 5);
                     ctx.stroke();
-                    ctx.fillText('₹' + p, margin - 10, y + 5);
+                    ctx.fillText(q, xTick-10, canvasHeight - margin.bottom + 18);
                 }
-                
-                // Quantity (X-axis)
-                ctx.textAlign = 'center';
-                for (let q = 0; q <= maxQuantity; q += 200) {
-                    const x = margin + (q / maxQuantity) * graphWidth;
-                    ctx.beginPath();
-                    ctx.moveTo(x, canvas.height - margin);
-                    ctx.lineTo(x, canvas.height - margin + 5);
-                    ctx.stroke();
-                    ctx.fillText(q, x, canvas.height - margin + 20);
-                }
-                
-                // Draw demand curve (blue)
-                ctx.beginPath();
-                for (let p = 0; p <= 1000; p += 10) {
-                    const q = calculateDemand(p);
-                    const x = margin + (q / maxQuantity) * graphWidth;
-                    const y = canvas.height - margin - (p / 1000) * graphHeight;
-                    
-                    if (p === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                }
-                ctx.strokeStyle = '#3498db';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-                ctx.fillText('Demand', margin + (calculateDemand(0) / maxQuantity) * graphWidth, 
-                            canvas.height - margin - (0 / 1000) * graphHeight - 10);
-                
-                // Draw supply curve (red)
-                ctx.beginPath();
-                for (let p = 0; p <= 1000; p += 10) {
-                    const q = calculateSupply(p);
-                    const x = margin + (q / maxQuantity) * graphWidth;
-                    const y = canvas.height - margin - (p / 1000) * graphHeight;
-                    
-                    if (p === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                }
-                ctx.strokeStyle = '#e74c3c';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-                ctx.fillText('Supply', margin + (calculateSupply(1000) / maxQuantity) * graphWidth, 
-                            canvas.height - margin - (1000 / 1000) * graphHeight - 10);
-                
-                // Find and mark equilibrium point
-                const equilibrium = findEquilibrium();
-                eqPrice.textContent = equilibrium.price;
-                eqQuantity.textContent = equilibrium.quantity;
-                
-                const eqX = margin + (equilibrium.quantity / maxQuantity) * graphWidth;
-                const eqY = canvas.height - margin - (equilibrium.price / 1000) * graphHeight;
-                
-                ctx.beginPath();
-                ctx.arc(eqX, eqY, 6, 0, Math.PI * 2);
-                ctx.fillStyle = '#2ecc71';
-                ctx.fill();
-                ctx.strokeStyle = '#27ae60';
-                ctx.stroke();
-                
-                // Draw dashed lines to axes
-                ctx.beginPath();
-                ctx.moveTo(eqX, eqY);
-                ctx.lineTo(eqX, canvas.height - margin);
-                ctx.moveTo(eqX, eqY);
-                ctx.lineTo(margin, eqY);
-                ctx.strokeStyle = '#27ae60';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 3]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                
-                // Label equilibrium point
-                ctx.fillStyle = '#27ae60';
-                ctx.font = 'bold 14px Arial';
-                ctx.fillText(`Equilibrium (${equilibrium.quantity}, ₹${equilibrium.price})`, 
-                            eqX, eqY - 15);
             }
-            
-            // Event listeners
-            basePriceSlider.addEventListener('input', function() {
-                basePrice = parseInt(this.value);
-                updateDisplay();
-                drawGraph();
-            });
-            
-            demandFactorSlider.addEventListener('input', function() {
-                demandFactor = parseFloat(this.value);
-                updateDisplay();
-                drawGraph();
-            });
-            
-            supplyFactorSlider.addEventListener('input', function() {
-                supplyFactor = parseFloat(this.value);
-                updateDisplay();
-                drawGraph();
-            });
-            
-            resetBtn.addEventListener('click', function() {
-                basePriceSlider.value = 200;
-                demandFactorSlider.value = 1.0;
-                supplyFactorSlider.value = 1.0;
-                
-                basePrice = 200;
-                demandFactor = 1.0;
-                supplyFactor = 1.0;
-                
-                updateDisplay();
-                drawGraph();
-            });
-            
-            // Initialize
-            updateDisplay();
-            drawGraph();
+            for (let p = 0; p <= MAX_PRICE; p += 100) {
+                const yTick = mapY(p);
+                if (yTick >= margin.top && yTick <= canvasHeight - margin.bottom) {
+                    ctx.beginPath();
+                    ctx.moveTo(margin.left-5, yTick);
+                    ctx.lineTo(margin.left, yTick);
+                    ctx.stroke();
+                    ctx.fillText(`₹${p}`, margin.left-38, yTick+4);
+                }
+            }
         }
         
-        // Allow pressing Enter to submit password
-        document.getElementById('passwordInput').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                checkPassword();
+        function mapX(qty) {
+            const xRange = (canvasWidth - margin.left - margin.right);
+            return margin.left + (qty / MAX_QUANTITY) * xRange;
+        }
+        function mapY(price) {
+            const yRange = (canvasHeight - margin.top - margin.bottom);
+            return canvasHeight - margin.bottom - (price / MAX_PRICE) * yRange;
+        }
+        function invMapX(xCoord) {
+            const xRange = (canvasWidth - margin.left - margin.right);
+            let ratio = (xCoord - margin.left) / xRange;
+            return Math.min(MAX_QUANTITY, Math.max(0, ratio * MAX_QUANTITY));
+        }
+        function invMapY(yCoord) {
+            const yRange = (canvasHeight - margin.top - margin.bottom);
+            let ratio = (canvasHeight - margin.bottom - yCoord) / yRange;
+            return Math.min(MAX_PRICE, Math.max(0, ratio * MAX_PRICE));
+        }
+        
+        // set values and refresh
+        function setPriceAndQs(newPrice, newQs) {
+            newPrice = Math.min(MAX_PRICE, Math.max(0, newPrice));
+            newQs = Math.min(MAX_QUANTITY, Math.max(0, newQs));
+            if (isNaN(newPrice)) newPrice = currentPrice;
+            if (isNaN(newQs)) newQs = currentQs;
+            currentPrice = newPrice;
+            currentQs = newQs;
+            updateAllUI();
+        }
+        
+        // drag handlers
+        function handleDragStart(e) {
+            dragActive = true;
+            updateDragFromEvent(e);
+        }
+        function handleDragMove(e) {
+            if (!dragActive) return;
+            updateDragFromEvent(e);
+        }
+        function handleDragEnd() {
+            dragActive = false;
+        }
+        function updateDragFromEvent(e) {
+            const rect = dragCanvas.getBoundingClientRect();
+            const scaleX = dragCanvas.width / rect.width;
+            const scaleY = dragCanvas.height / rect.height;
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
             }
-        });
+            let canvasX = (clientX - rect.left) * scaleX;
+            let canvasY = (clientY - rect.top) * scaleY;
+            canvasX = Math.min(canvasWidth - margin.right - 5, Math.max(margin.left + 5, canvasX));
+            canvasY = Math.min(canvasHeight - margin.bottom - 5, Math.max(margin.top + 5, canvasY));
+            let newQs = invMapX(canvasX);
+            let newPrice = invMapY(canvasY);
+            newQs = Math.round(newQs);
+            newPrice = Math.round(newPrice);
+            currentPrice = newPrice;
+            currentQs = newQs;
+            updateAllUI();
+        }
+        
+        function initDragCanvas() {
+            dragCanvas = document.getElementById('dragCanvas');
+            ctx = dragCanvas.getContext('2d');
+            canvasWidth = dragCanvas.width;
+            canvasHeight = dragCanvas.height;
+            margin = { left: 55, right: 30, top: 30, bottom: 48 };
+            plotWidth = canvasWidth - margin.left - margin.right;
+            plotHeight = canvasHeight - margin.top - margin.bottom;
+            dragCanvas.addEventListener('mousedown', handleDragStart);
+            window.addEventListener('mousemove', handleDragMove);
+            window.addEventListener('mouseup', handleDragEnd);
+            dragCanvas.addEventListener('touchstart', handleDragStart);
+            window.addEventListener('touchmove', handleDragMove);
+            window.addEventListener('touchend', handleDragEnd);
+            dragCanvas.ondragstart = () => false;
+        }
+        
+        // optimal suggestion (maximizes final score by scanning)
+        function suggestOptimal() {
+            let bestScore = -1;
+            let bestPrice = currentPrice, bestQs = currentQs;
+            for (let p = 0; p <= MAX_PRICE; p += 4) {
+                for (let q = 0; q <= MAX_QUANTITY; q += 8) {
+                    const metrics = computeMetrics(p, q);
+                    if (metrics.finalScore > bestScore) {
+                        bestScore = metrics.finalScore;
+                        bestPrice = p;
+                        bestQs = q;
+                    }
+                }
+            }
+            currentPrice = bestPrice;
+            currentQs = bestQs;
+            updateAllUI();
+        }
+        
+        function resetToDefault() {
+            currentPrice = 300;
+            currentQs = 600;
+            updateAllUI();
+        }
+        
+        function initGame() {
+            // bind DOM elements
+            priceSlider = document.getElementById('priceSlider');
+            priceNumber = document.getElementById('priceNumber');
+            priceValSpan = document.getElementById('priceVal');
+            qsSlider = document.getElementById('qsSlider');
+            qsNumber = document.getElementById('qsNumber');
+            qsValSpan = document.getElementById('qsVal');
+            qdDisplay = document.getElementById('qdDisplay');
+            unitsSoldDisplay = document.getElementById('unitsSoldDisplay');
+            revenueDisplay = document.getElementById('revenueDisplay');
+            surplusDisplay = document.getElementById('surplusDisplay');
+            revScoreSpan = document.getElementById('revScorePart');
+            effScoreSpan = document.getElementById('effScorePart');
+            priceStrategySpan = document.getElementById('priceStrategyPart');
+            finalScoreSpan = document.getElementById('finalScoreDisplay');
+            eqPriceRefSpan = document.getElementById('eqPriceRef');
+            pricingAdviceSpan = document.getElementById('pricingAdvice');
+            
+            // events
+            priceSlider.addEventListener('input', (e) => { currentPrice = parseInt(e.target.value); updateAllUI(); });
+            priceNumber.addEventListener('input', (e) => { let v = parseInt(e.target.value); if(!isNaN(v)) currentPrice = Math.min(MAX_PRICE, Math.max(0,v)); updateAllUI(); });
+            qsSlider.addEventListener('input', (e) => { currentQs = parseInt(e.target.value); updateAllUI(); });
+            qsNumber.addEventListener('input', (e) => { let v = parseInt(e.target.value); if(!isNaN(v)) currentQs = Math.min(MAX_QUANTITY, Math.max(0,v)); updateAllUI(); });
+            document.getElementById('optimalHintBtn').addEventListener('click', suggestOptimal);
+            document.getElementById('resetGameBtn').addEventListener('click', resetToDefault);
+            
+            initDragCanvas();
+            updateAllUI();
+        }
     </script>
 </body>
 </html>
