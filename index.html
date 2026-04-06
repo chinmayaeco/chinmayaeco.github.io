@@ -1,104 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dr. Chinmaya Behera</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chinmaya Behera - Academic Portfolio and Research in Digital Finance, Inflation & Financial Inclusion.">
+    <title>Chinmaya Behera | Research Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
-<body onload="AOS.init();">
-  <header class="navbar">
+<body>
     <nav>
-      <ul>
-        <li class="active">About</li>
-        <li><a href="education.html">Education</a></li>
-        <li><a href="publications.html">Publications</a></li>
-        <li><a href="teaching.html">Teaching</a></li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="skills.html">Skills</a></li>
-        <li><a href="games-simulations.html">Games</a></li>
-        <li><a href="poll.html">Polls</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
+        <div class="container">
+            <a href="#" class="logo">CB.</a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#research">Research</a></li>
+                <li><a href="#publications">Publications</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
     </nav>
-  </header>
 
-  <main class="about-section" data-aos="fade-up">
-    <div class="intro">
-      <div class="avatar">
-        <img src="assets/img/prof_pic.jpg" alt="Dr. Chinmaya Behera" style="width: 120px; border-radius: 50%;" />
-      </div>
-      <div class="intro-text">
-        <h1>Dr. Chinmaya Behera </h1>
-        <p class="title" style="text-align: justify;">Researcher</p>
+    <header class="hero">
+        <div class="container hero-content">
+            <span class="fade-in">Hi, my name is</span>
+            <h1 id="user-name" class="fade-in" style="animation-delay: 0.2s">Chinmaya Behera.</h1>
+            <h1 id="user-title" class="fade-in" style="color: var(--text-dim); animation-delay: 0.4s">Digital Finance Researcher.</h1>
+            <p id="user-bio" class="bio fade-in" style="animation-delay: 0.6s">
+                Loading academic profile...
+            </p>
+            <a href="#research" class="btn fade-in" style="animation-delay: 0.8s">Explore My Research</a>
+        </div>
+    </header>
 
-         <a href="chinmayaeco@gmail.com" title="Email">
-            <img src="assets/icons/email.svg" alt="Email" width="30" />
-          </a>
-          <a href="https://github.com/chinmayaeco" target="_blank" title="GitHub">
-            <img src="assets/icons/github.svg" alt="GitHub" width="30" />
-          </a>
-          <a href="https://www.linkedin.com/in/dr-chinmaya-behera-03180b23/">
-            <img src="assets/icons/lin.png" alt="LinkedIn" width="30" />
-          </a>
-          <a href="https://orcid.org/0000-0003-1650-9306?lang=en" target="_blank" title="ORCID iD">
-            <img src="assets/icons/orcid.svg" alt="ORCID" width="30" />
-          </a>
-          <a href="https://scholar.google.com/citations?user=LjcboAMAAAAJ&hl=en" target="_blank" title="Google Scholar">
-            <img src="assets/icons/google-scholar.svg" alt="Google Scholar" width="30" />
-          </a>
-          <a href="https://www.researchgate.net/profile/Chinmaya-Behera?ev=hdr_xprf?ev=hdr_xprf" target="_blank" title="ResearchGate">
-            <img src="assets/icons/researchgate.svg" alt="ResearchGate" width="30" />
-          </a>
-          <a href="https://www.instagram.com/chinmayaeco/" target="_blank" title="Instagram">
-            <img src="assets/icons/instagram.svg" alt="Instagram" width="30" />
-          </a>
-          <a href="https://www.facebook.com/chinmayaeco/" target="_blank" title="Facebook">
-            <img src="assets/icons/facebook.svg" alt="Facebook" width="30" />
-          </a>
-          </a>
-          <a href="https://chinmayaeco.github.io/" target="_blank" title="Researcher">
-            <img src="assets/icons/ai-solid.svg" alt="AI-HUB" width="30" />
-          </a>
-        
-      </div>
+    <section id="about" class="container">
+        <div class="section-title">
+            <h2>About Me</h2>
+        </div>
+        <div class="about-content">
+            <div id="about-text">
+                <!-- Data from JSON -->
+            </div>
+        </div>
+    </section>
 
-  <div class="cards">
-    <div class="card green" data-aos="zoom-in">
-      <h3>Econonmist</h3>
-      <p>Researcher</p>
-    </div>
-    
-    <div class="card red" data-aos="zoom-in" data-aos-delay="100">
-      <h3>Finance Research</h3>
-      <p>Volatilty Tranmsission </p>
-    </div>
-    
-    <div class="card blue" data-aos="zoom-in" data-aos-delay="200">
-      <h3>Energy</h3>
-      <p>Energy Transition </p>
-    </div>
-    
-    <div class="card yellow" data-aos="zoom-in" data-aos-delay="300">
-      <h3> Analytics</h3>
-      <p></p>
-    </div>
-    
-    <div class="card purple" data-aos="zoom-in" data-aos-delay="400">
-      <h3>Conference</h3>
-      <p></p>
-    </div>
-    
-    <div class="card orange" data-aos="zoom-in" data-aos-delay="500">
-      <h3>FDP</h3>
-      <p>MDP</p>
-    </div>
-  </div>
+    <section id="research" class="container">
+        <div class="section-title">
+            <h2>Research Interests</h2>
+        </div>
+        <div class="research-grid" id="interest-grid">
+            <!-- Dynamic Content -->
+        </div>
+    </section>
 
-  </main>
+    <section id="publications" class="container">
+        <div class="section-title">
+            <h2>Selected Publications</h2>
+        </div>
+        <div class="pub-list" id="publication-list">
+            <!-- Dynamic Content -->
+        </div>
+    </section>
+
+    <section id="contact" class="container">
+        <div class="section-title">
+            <h2>Get In Touch</h2>
+        </div>
+        <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+            <p class="bio">I am always open to discussions on digital finance, macroeconomic policy, and collaborative research projects.</p>
+            <a id="email-link" href="mailto:chinmaya@gim.ac.in" class="btn" style="margin-top: 2rem;">Say Hello</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#" id="linkedin-link"><i class="bi bi-linkedin"></i></a>
+                <a href="#" id="scholar-link"><i class="bi bi-google"></i></a>
+                <a href="#" id="twitter-link"><i class="bi bi-twitter-x"></i></a>
+            </div>
+            <p>&copy; 2024 Chinmaya Behera. Built with research in mind.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
