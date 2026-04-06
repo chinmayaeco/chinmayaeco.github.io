@@ -1,0 +1,67 @@
+{
+  "personalInfo": {
+    "name": "Chinmaya Behera",
+    "title": "Researcher in Economics & Finance",
+    "affiliation": "Goa Institute of Management (GIM)",
+    "email": "chinmaya@gim.ac.in",
+    "location": "Goa, India",
+    "bio": "Expert in Digital Finance, Inflation Dynamics, and Financial Inclusion with a focus on empirical analysis of the Indian economy. Committed to bridging the gap between technological advancement and macroeconomic stability.",
+    "social": {
+      "linkedin": "https://linkedin.com/in/chinmayabehera",
+      "scholar": "https://scholar.google.com/citations?user=placeholder",
+      "twitter": "https://twitter.com/chinmaya_econ"
+    }
+  },
+  "researchInterests": [
+    {
+      "title": "Digital Finance",
+      "icon": "bi-cpu",
+      "description": "Investigating how digital payment systems and fintech impact traditional banking and economic growth."
+    },
+    {
+      "title": "Inflation Dynamics",
+      "icon": "bi-graph-up-arrow",
+      "description": "Analyzing price discovery and inflation stickiness in the era of digital transactions."
+    },
+    {
+      "title": "Financial Inclusion",
+      "icon": "bi-people",
+      "description": "Exploring the role of banking expansion and digital access in marginalized communities."
+    }
+  ],
+  "publications": [
+    {
+      "title": "Digital Finance and Inflation: An Empirical Analysis from Twelve Selected Indian States",
+      "authors": "Barik, R., Behera, C., & Patra, T.",
+      "year": "2024",
+      "journal": "Working Paper / In Review",
+      "link": "#"
+    },
+    {
+      "title": "Analyzing the progress and prospects of financial inclusion in India",
+      "authors": "Barik, R., & Sharma, P.",
+      "year": "2019",
+      "journal": "Journal of Public Affairs",
+      "link": "https://doi.org/10.1002/pa.1948"
+    },
+    {
+      "title": "Methodological Advances in Panel Econometrics",
+      "authors": "Behera, C.",
+      "year": "2023",
+      "journal": "Academic Press",
+      "link": "#"
+    }
+  ],
+  "education": [
+    {
+      "degree": "Ph.D. in Economics",
+      "institution": "Prestige Institute",
+      "year": "2018"
+    },
+    {
+      "degree": "M.Phil. in Economics",
+      "institution": "University of Research",
+      "year": "2014"
+    }
+  ]
+}
